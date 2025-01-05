@@ -1,4 +1,5 @@
-import { Button } from "../ui/button";
+import { Link } from "react-router";
+import { Button, buttonVariants } from "../ui/button";
 import Icons from "../ui/icons";
 
 export default function Header() {
@@ -25,9 +26,12 @@ export default function Header() {
               <p className="text-[#475467] text-sm">UI/UX Designer</p>
             </header>
             <div className="flex gap-4">
-              <Button variant={"outline"}>
+              <Link
+                to="/dashboard/profile/settings"
+                className={buttonVariants({ variant: "outline" })}
+              >
                 <Icons.settings className="min-w-6 min-h-6" />
-              </Button>
+              </Link>
               <Button variant={"outline"}>
                 <Icons.edit className="min-w-6 min-h-6" /> Edit
               </Button>
