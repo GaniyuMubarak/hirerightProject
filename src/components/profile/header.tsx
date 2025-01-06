@@ -1,5 +1,5 @@
 import { Link } from "react-router";
-import { Button, buttonVariants } from "../ui/button";
+import { buttonVariants } from "../ui/button";
 import Icons from "../ui/icons";
 
 export default function Header() {
@@ -32,9 +32,12 @@ export default function Header() {
               >
                 <Icons.settings className="min-w-6 min-h-6" />
               </Link>
-              <Button variant={"outline"}>
+              <Link
+                to="/dashboard/profile/edit"
+                className={buttonVariants({ variant: "outline" })}
+              >
                 <Icons.edit className="min-w-6 min-h-6" /> Edit
-              </Button>
+              </Link>
             </div>
           </div>
         </div>

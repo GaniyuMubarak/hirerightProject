@@ -17,7 +17,7 @@ const navlinks = [
 export default function Navigation() {
   const location = useLocation();
 
-  console.log("loction>>", location.pathname);
+  // console.log("loction>>", location.pathname);
   return (
     <div className="bg-[#F8F8FD]">
       <div className="max-w-7xl mx-auto px-4  flex justify-between items-center">
