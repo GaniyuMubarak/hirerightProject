@@ -18,9 +18,9 @@ const navlinks = [
 ];
 export default function Header() {
   return (
-    <div className="flex justify-between items-center container mx-auto py-2">
+    <div className="flex justify-between items-center container px-4 mx-auto py-2">
       <Logo />
-      <ul className="flex items-center gap-6">
+      <ul className="flex items-center gap-6 max-lg:hidden">
         {navlinks.map((link) => (
           <li
             key={link.title}

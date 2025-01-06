@@ -5,15 +5,19 @@ import Icons from "../ui/icons";
 
 export default function () {
   return (
-    <div className="bg-[#F8F8FD] pt-24 pb-32">
-      <div className="container mx-auto grid grid-cols-2">
-        <div className=" w-11/12">
-          <h1 className="text-7xl font-abhaya font-extrabold">
+    <div className="bg-[#F8F8FD] lg:pt-24 pt-12 lg:pb-32 pb-16">
+      <div className="container px-4 mx-auto grid lg:grid-cols-2 gap-6">
+        <div className=" lg:w-11/12 max-lg:text-center">
+          <h1 className="text-5xl lg:text-7xl font-abhaya font-extrabold">
             Find Your Perfect Job Match with{" "}
             <span className="text-primary">Hire Right!</span>
           </h1>
-          <img src="/images/lines.png" alt="" className="w-9/12 mt-6" />
-          <p className="text-[#515B6F] text-xl w-11/12 mt-8">
+          <img
+            src="/images/lines.png"
+            alt=""
+            className="lg:w-9/12 w-6/12 max-lg:mx-auto lg:mt-6 mt-3"
+          />
+          <p className="text-[#515B6F] text-xl lg:w-11/12 mt-8">
             Job seekers get tailored recommendations, and companies find their
             ideal candidates instantly.
           </p>
