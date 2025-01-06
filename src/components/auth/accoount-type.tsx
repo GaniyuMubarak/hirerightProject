@@ -10,8 +10,7 @@ import {
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { Link } from "react-router";
-import { toast } from "sonner";
+import { Link, useNavigate } from "react-router";
 import { z } from "zod";
 
 const FormSchema = z.object({
@@ -24,18 +23,15 @@ export function AccountTypeForm({
   className,
   ...props
 }: React.ComponentPropsWithoutRef<"form">) {
+  const navigate = useNavigate();
+
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
   });
 
   function onSubmit(data: z.infer<typeof FormSchema>) {
-    toast("You submitted the following values:", {
-      description: (
-        <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
-          <code className="text-white">{JSON.stringify(data, null, 2)}</code>
-        </pre>
-      ),
-    });
+    console.log("Signup data>>", data);
+    navigate("/onboarding");
   }
   return (
     <Form {...form}>

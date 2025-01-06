@@ -1189,6 +1189,71 @@ const Icons = {
       />
     </svg>
   ),
+  more: (props: IconProps) => (
+    <svg
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      {...props}
+    >
+      <path
+        d="M10 19C10 20.1 10.9 21 12 21C13.1 21 14 20.1 14 19C14 17.9 13.1 17 12 17C10.9 17 10 17.9 10 19Z"
+        stroke="#5C5C5C"
+        stroke-width="1.5"
+      />
+      <path
+        d="M10 5C10 6.1 10.9 7 12 7C13.1 7 14 6.1 14 5C14 3.9 13.1 3 12 3C10.9 3 10 3.9 10 5Z"
+        stroke="#5C5C5C"
+        stroke-width="1.5"
+      />
+      <path
+        d="M10 12C10 13.1 10.9 14 12 14C13.1 14 14 13.1 14 12C14 10.9 13.1 10 12 10C10.9 10 10 10.9 10 12Z"
+        stroke="#5C5C5C"
+        stroke-width="1.5"
+      />
+    </svg>
+  ),
+  people: (props: IconProps) => (
+    <svg
+      width="32"
+      height="32"
+      viewBox="0 0 32 32"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      {...props}
+    >
+      <path
+        d="M12.2134 14.4937C12.0801 14.4803 11.9201 14.4803 11.7734 14.4937C8.60008 14.387 6.08008 11.787 6.08008 8.58699C6.08008 5.32033 8.72008 2.66699 12.0001 2.66699C15.2667 2.66699 17.9201 5.32033 17.9201 8.58699C17.9067 11.787 15.3867 14.387 12.2134 14.4937Z"
+        stroke="#5E9343"
+        stroke-width="3"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      />
+      <path
+        d="M21.8804 5.33301C24.467 5.33301 26.547 7.42634 26.547 9.99967C26.547 12.5197 24.547 14.573 22.0537 14.6663C21.947 14.653 21.827 14.653 21.707 14.6663"
+        stroke="#5E9343"
+        stroke-width="3"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      />
+      <path
+        d="M5.54695 19.413C2.32029 21.573 2.32029 25.093 5.54695 27.2397C9.21362 29.693 15.227 29.693 18.8936 27.2397C22.1203 25.0797 22.1203 21.5597 18.8936 19.413C15.2403 16.973 9.22695 16.973 5.54695 19.413Z"
+        stroke="#5E9343"
+        stroke-width="3"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      />
+      <path
+        d="M24.4531 26.667C25.4131 26.467 26.3198 26.0803 27.0665 25.507C29.1465 23.947 29.1465 21.3737 27.0665 19.8137C26.3331 19.2537 25.4398 18.8803 24.4931 18.667"
+        stroke="#5E9343"
+        stroke-width="3"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      />
+    </svg>
+  ),
 };
 
 export default Icons;

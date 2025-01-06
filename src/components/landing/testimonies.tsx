@@ -2,7 +2,7 @@ import Icons from "../ui/icons";
 
 export default function Testimonies() {
   return (
-    <div className="container mx-auto px-4 lg:py-20 py-10">
+    <div className="container mx-auto px-4 lg:py-20 py-10" id="testimonials">
       <div className="text-center max-w-5xl mx-auto lg:space-y-8 space-y-4 lg:px-8">
         <span className="text-[#EE7B36] text-sm border border-[#0A0F2914] rounded-full py-1 px-2 flex items-center gap-2 w-fit mx-auto">
           <Icons.star /> Testimonials <Icons.star />

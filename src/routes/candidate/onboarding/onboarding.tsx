@@ -14,7 +14,7 @@ export default function Onboarding() {
   const [step, setStep] = useState(0);
   return (
     <div className="max-w-7xl mx-auto px-4 pt-6 space-y-8">
-      <Logo />
+      <Logo href="/" />
       <div className="max-w-6xl mx-auto">
         <ProgressBar />
       </div>

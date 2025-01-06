@@ -16,7 +16,11 @@ import Settings from "@/routes/candidate/profile/settings.tsx";
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import { BrowserRouter, Route, Routes } from "react-router";
+import EmployerDashboardLayout from "./components/employer/layout";
 import MyJobs from "./routes/candidate/my-jobs/my-jobs";
+import EmployerDashboard from "./routes/employer/dashboard/dashboard";
+import PostJob from "./routes/employer/job/post";
+import EmployerOnboarding from "./routes/employer/onboarding/onboarding";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
@@ -29,9 +33,7 @@ createRoot(document.getElementById("root")!).render(
         <Route path="/email-verification" element={<EmailVerification />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/onboarding" element={<Onboarding />} />
-
-        {/* Dashboard  */}
-
+        {/* Candidate  */}
         <Route path="candidate" element={<DashboardLayout />}>
           <Route path="dashboard" element={<Dashboard />} />
           {/* /dashboard/jobs  */}
@@ -49,9 +51,16 @@ createRoot(document.getElementById("root")!).render(
             <Route path="edit" element={<EditProfile />} />
           </Route>
         </Route>
-        {/* <Route path="employer" element={<DashboardLayout />}>
-          <Route path="/onboarding" element={<EmployerOnboarding />} />
-        </Route> */}
+
+        {/* Employer */}
+        <Route path="/employer/onboarding" element={<EmployerOnboarding />} />
+        <Route path="employer" element={<EmployerDashboardLayout />}>
+          <Route path="dashboard" element={<EmployerDashboard />} />
+          <Route path="jobs">
+            <Route index element={<JobList />} />
+            <Route path="post" element={<PostJob />} />
+          </Route>
+        </Route>
       </Routes>
     </BrowserRouter>
   </StrictMode>

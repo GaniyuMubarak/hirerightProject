@@ -1,18 +1,19 @@
 import { AccountTypeForm } from "@/components/auth/accoount-type";
 import Icons from "@/components/ui/icons";
+import { Link } from "react-router";
 
 export default function AccountTypePage() {
   return (
     <div className="grid min-h-svh lg:grid-cols-2 ">
       <div className="flex flex-col gap-4 p-6 md:p-10">
         <div className="flex justify-center gap-2 md:justify-start">
-          <a
-            href="#"
+          <Link
+            to="/"
             className="flex items-center gap-2 text-[#AFAEAD] text-[22px] font-semibold"
           >
             <img src="/logo.svg" alt="Logo" className="size-8" />
             Logo
-          </a>
+          </Link>
         </div>
         <div className="flex flex-1 items-center justify-center mt-8">
           <div className="w-full max-w-[500px] border p-8 rounded-lg">

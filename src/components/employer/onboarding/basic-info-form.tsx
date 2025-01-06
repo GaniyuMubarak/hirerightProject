@@ -12,7 +12,7 @@ import { Input } from "../../ui/input";
 import { Label } from "../../ui/label";
 import { Textarea } from "../../ui/textarea";
 
-export default function BasicInfoForm() {
+export default function EmployerBasicInfoForm() {
   const form = useForm();
 
   return (
@@ -23,109 +23,67 @@ export default function BasicInfoForm() {
         </h2>
       </header>
 
-      <div className="mt-2 flex gap-8">
-        <div className="space-y-1.5">
-          <Label className="text-[#475467]">Profile Picture</Label>
-          <div className="flex flex-col gap-3 items-center w-72  border rounded-[12px] p-6 py-12 bg-[#F3F3F3]">
-            <div className=" h-10 w-10 flex justify-center items-center">
-              <Icons.cloudUpload />
-            </div>
-            <div className="flex flex-col text-[#475467] text-center space-y-1">
-              <p className="text-sm ">
-                <span className="text-[#EE7B36] font-medium">
-                  Click to upload
-                </span>{" "}
-                or drag and drop
-                <br />
-              </p>
+      <div className="mt-2 ">
+        <div className="flex gap-8 w-full">
+          <div className="space-y-1.5">
+            <Label className="text-[#475467]">Profile Picture</Label>
+            <div className="flex flex-col gap-3 items-center w-72  border rounded-[12px] p-6 py-12 bg-[#F3F3F3]">
+              <div className=" h-10 w-10 flex justify-center items-center">
+                <Icons.cloudUpload />
+              </div>
+              <div className="flex flex-col text-[#475467] text-center space-y-1">
+                <p className="text-sm ">
+                  <span className="text-[#EE7B36] font-medium">
+                    Click to upload
+                  </span>{" "}
+                  or drag and drop
+                  <br />
+                </p>
 
-              <p className="text-xs"> SVG, PNG, JPG or GIF (max. 800x400px)</p>
+                <p className="text-xs">
+                  {" "}
+                  SVG, PNG, JPG or GIF (max. 800x400px)
+                </p>
+              </div>
+            </div>
+          </div>
+          <div className="space-y-1.5 w-full">
+            <Label className="text-[#475467]">Banner Picture</Label>
+            <div className="flex flex-col gap-3 items-center w-full  border rounded-[12px] p-6 py-12 bg-[#F3F3F3]">
+              <div className=" h-10 w-10 flex justify-center items-center">
+                <Icons.cloudUpload />
+              </div>
+              <div className="flex flex-col text-[#475467] text-center space-y-1">
+                <p className="text-sm ">
+                  <span className="text-[#EE7B36] font-medium">
+                    Click to upload
+                  </span>{" "}
+                  or drag and drop
+                  <br />
+                </p>
+
+                <p className="text-xs">
+                  {" "}
+                  SVG, PNG, JPG or GIF (max. 800x400px)
+                </p>
+              </div>
             </div>
           </div>
         </div>
-        <div className="w-full">
+        <div className="w-full mt-8">
           <Form {...form}>
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid gap-4">
               <FormField
                 control={form.control}
                 name="first_name"
                 render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>First Name</FormLabel>
-                    <FormControl>
-                      <Input placeholder="Joe" {...field} />
-                    </FormControl>
-
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="last_name"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Last Name</FormLabel>
-                    <FormControl>
-                      <Input placeholder="Joe" {...field} />
-                    </FormControl>
-
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="phone"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Phone Number</FormLabel>
-                    <FormControl>
-                      <Input placeholder="Joe" {...field} />
-                    </FormControl>
-
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="email"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Email</FormLabel>
-                    <FormControl>
-                      <Input placeholder="Joe" {...field} />
-                    </FormControl>
-
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="job"
-                render={({ field }) => (
-                  <FormItem className="col-span-2">
-                    <FormLabel>Title/Headline</FormLabel>
-                    <FormControl>
-                      <Input placeholder="Lead Product designer" {...field} />
-                    </FormControl>
-
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="address"
-                render={({ field }) => (
-                  <FormItem className="col-span-2">
-                    <FormLabel>Address</FormLabel>
+                  <FormItem className="w-full">
+                    <FormLabel>Company Name</FormLabel>
                     <FormControl>
                       <Input
-                        placeholder="20A, Omonirie Johnson St., Lekki Phase 1, Lagos, Nigeria"
+                        placeholder="ABC.LTD"
                         {...field}
+                        className="w-full"
                       />
                     </FormControl>
 
@@ -133,26 +91,13 @@ export default function BasicInfoForm() {
                   </FormItem>
                 )}
               />
-              <FormField
-                control={form.control}
-                name="website"
-                render={({ field }) => (
-                  <FormItem className="col-span-2">
-                    <FormLabel>Website link</FormLabel>
-                    <FormControl>
-                      <Input placeholder="joe.com" {...field} />
-                    </FormControl>
 
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
               <FormField
                 control={form.control}
                 name="biography"
                 render={({ field }) => (
-                  <FormItem className="col-span-2">
-                    <FormLabel>Biography</FormLabel>
+                  <FormItem>
+                    <FormLabel>About Us</FormLabel>
                     <FormControl>
                       <Textarea
                         placeholder="Write short bio"
