@@ -1,21 +1,22 @@
+import App from "@/App.tsx";
+import DashboardLayout from "@/components/candidate/layout";
+import { Toaster } from "@/components/ui/sonner.tsx";
+import "@/index.css";
+import AccountTypePage from "@/routes/auth/account-type.tsx";
+import EmailVerification from "@/routes/auth/email-verification.tsx";
+import ForgotPassword from "@/routes/auth/forgot-password.tsx";
+import SignUpPage from "@/routes/auth/sign-up.tsx";
+import Dashboard from "@/routes/candidate/dashboard/dashboad.tsx";
+import JobDetails from "@/routes/candidate/jobs/job-details.tsx";
+import JobList from "@/routes/candidate/jobs/job-list.tsx";
+import Onboarding from "@/routes/candidate/onboarding/onboarding.tsx";
+import EditProfile from "@/routes/candidate/profile/edit.tsx";
+import Profile from "@/routes/candidate/profile/profile.tsx";
+import Settings from "@/routes/candidate/profile/settings.tsx";
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import { BrowserRouter, Route, Routes } from "react-router";
-import App from "./App.tsx";
-import { Toaster } from "./components/ui/sonner.tsx";
-import "./index.css";
-import AccountTypePage from "./routes/auth/account-type.tsx";
-import EmailVerification from "./routes/auth/email-verification.tsx";
-import ForgotPassword from "./routes/auth/forgot-password.tsx";
-import SignUpPage from "./routes/auth/sign-up.tsx";
-import Dashboard from "./routes/dashboard/dashboad.tsx";
-import DashboardLayout from "./routes/dashboard/layout.tsx";
-import JobDetails from "./routes/jobs/job-details.tsx";
-import JobList from "./routes/jobs/job-list.tsx";
-import Onboarding from "./routes/onboarding/onboarding.tsx";
-import EditProfile from "./routes/profile/edit.tsx";
-import Profile from "./routes/profile/profile.tsx";
-import Settings from "./routes/profile/settings.tsx";
+import MyJobs from "./routes/candidate/my-jobs/my-jobs";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
@@ -29,13 +30,17 @@ createRoot(document.getElementById("root")!).render(
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/onboarding" element={<Onboarding />} />
 
-        <Route path="dashboard" element={<DashboardLayout />}>
-          <Route index element={<Dashboard />} />
+        {/* Dashboard  */}
+
+        <Route path="candidate" element={<DashboardLayout />}>
+          <Route path="dashboard" element={<Dashboard />} />
           {/* /dashboard/jobs  */}
           <Route path="jobs">
             <Route index element={<JobList />} />
             <Route path=":id" element={<JobDetails />} />
           </Route>
+
+          <Route path="my-jobs" element={<MyJobs />} />
 
           {/* /dashboard/profile  */}
           <Route path="profile">
@@ -44,6 +49,9 @@ createRoot(document.getElementById("root")!).render(
             <Route path="edit" element={<EditProfile />} />
           </Route>
         </Route>
+        {/* <Route path="employer" element={<DashboardLayout />}>
+          <Route path="/onboarding" element={<EmployerOnboarding />} />
+        </Route> */}
       </Routes>
     </BrowserRouter>
   </StrictMode>
