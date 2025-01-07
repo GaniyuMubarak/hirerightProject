@@ -34,7 +34,7 @@ export default function HiringProcess() {
           Best AI matches from HIRE RIGHT
         </p>
       </header>
-      <div className="space-y-6">
+      <div className="flex flex-col gap-6">
         <CandidateHiringCard aiRecommended />
         <CandidateHiringCard aiRecommended />
         <CandidateHiringCard aiRecommended />
