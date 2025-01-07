@@ -21,6 +21,7 @@ import EmployerDashboardLayout from "./components/employer/layout";
 import MyJobs from "./routes/candidate/my-jobs/my-jobs";
 import CandidateDetails from "./routes/employer/candidate/details";
 import EmployerDashboard from "./routes/employer/dashboard/dashboard";
+import HiringProcess from "./routes/employer/job/hiring-process";
 import EmployerJobList from "./routes/employer/job/job-list";
 import PostJob from "./routes/employer/job/post";
 import EmployerOnboarding from "./routes/employer/onboarding/onboarding";
@@ -65,6 +66,7 @@ createRoot(document.getElementById("root")!).render(
           <Route path="jobs">
             <Route index element={<EmployerJobList />} />
             <Route path="post" element={<PostJob />} />
+            <Route path="applications" element={<HiringProcess />} />
           </Route>
           <Route path="candidates">
             <Route index element={<CandidatesList />} />

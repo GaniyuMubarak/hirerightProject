@@ -5,6 +5,7 @@ import Resume from "@/components/candidate/profile/resume";
 import SocialLinks from "@/components/candidate/profile/social-links";
 import { Button } from "@/components/ui/button";
 import Icons from "@/components/ui/icons";
+import { Link } from "react-router";
 
 export default function CandidateDetails() {
   return (
@@ -29,7 +30,9 @@ export default function CandidateDetails() {
             </div>
           </div>
           <div className="flex gap-4 justify-end">
-            <Button className="rounded-[6px]">View Applications</Button>
+            <Link to="/employer/jobs/applications">
+              <Button className="rounded-[6px]">View Applications</Button>
+            </Link>
             <Button variant={"ghost"} className=" border-b rounded-none">
               <Icons.more className="min-h-6 min-w-6" />
             </Button>

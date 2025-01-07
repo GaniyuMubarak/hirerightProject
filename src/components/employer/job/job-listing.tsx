@@ -6,6 +6,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { Link } from "react-router";
 import { Badge } from "../../ui/badge";
 import { Button } from "../../ui/button";
 import Icons from "../../ui/icons";
@@ -54,9 +55,11 @@ export default function EmployerJobListing() {
               </TableCell>
               <TableCell className="text-right space-x-4">
                 <div className="flex gap-4 justify-end">
-                  <Button variant={"secondary"} className="rounded-[6px]">
-                    View Applications
-                  </Button>
+                  <Link to="/employer/jobs/applications">
+                    <Button variant={"secondary"} className="rounded-[6px]">
+                      View Applications
+                    </Button>
+                  </Link>
                   <Button variant={"ghost"} className=" border-b rounded-none">
                     <Icons.more />
                   </Button>
@@ -81,9 +84,11 @@ export default function EmployerJobListing() {
               </TableCell>
               <TableCell className="text-right space-x-4">
                 <div className="flex gap-4 justify-end">
-                  <Button variant={"secondary"} className="rounded-[6px]">
-                    View Applications
-                  </Button>
+                  <Link to="/employer/jobs/applications">
+                    <Button variant={"secondary"} className="rounded-[6px]">
+                      View Applications
+                    </Button>
+                  </Link>
                   <Button variant={"ghost"} className=" border-b rounded-none">
                     <Icons.more />
                   </Button>
