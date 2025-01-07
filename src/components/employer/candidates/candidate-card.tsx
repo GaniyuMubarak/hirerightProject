@@ -10,7 +10,7 @@ export default function CandidateCard({
   aiRecommended?: Boolean;
 }) {
   return (
-    <Link to="/candidate/jobs/id">
+    <Link to="/employer/candidates/id">
       <div
         className={cn(
           "space-y-6 px-4 py-6 border rounded-[6px]",

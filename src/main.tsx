@@ -19,6 +19,7 @@ import { BrowserRouter, Route, Routes } from "react-router";
 import CandidatesList from "./components/employer/candidates/candidates-list";
 import EmployerDashboardLayout from "./components/employer/layout";
 import MyJobs from "./routes/candidate/my-jobs/my-jobs";
+import CandidateDetails from "./routes/employer/candidate/details";
 import EmployerDashboard from "./routes/employer/dashboard/dashboard";
 import EmployerJobList from "./routes/employer/job/job-list";
 import PostJob from "./routes/employer/job/post";
@@ -67,7 +68,7 @@ createRoot(document.getElementById("root")!).render(
           </Route>
           <Route path="candidates">
             <Route index element={<CandidatesList />} />
-            <Route path="post" element={<PostJob />} />
+            <Route path=":id" element={<CandidateDetails />} />
           </Route>
           <Route path="tests">
             <Route index element={<EmployerTests />} />
