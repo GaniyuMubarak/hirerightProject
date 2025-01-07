@@ -1,4 +1,4 @@
-import { AccountTypeForm } from "@/components/auth/accoount-type";
+import { AccountTypeForm } from "@/components/auth/account-type";
 import Icons from "@/components/ui/icons";
 import { Link } from "react-router";
 

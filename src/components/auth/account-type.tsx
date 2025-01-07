@@ -31,6 +31,10 @@ export function AccountTypeForm({
 
   function onSubmit(data: z.infer<typeof FormSchema>) {
     console.log("Signup data>>", data);
+    if (data.type === "employer") {
+      navigate("/employer/onboarding");
+      return;
+    }
     navigate("/onboarding");
   }
   return (

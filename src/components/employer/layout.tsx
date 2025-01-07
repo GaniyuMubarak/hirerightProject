@@ -15,15 +15,15 @@ const navlinks = [
   },
   {
     title: "Candidates",
-    href: "/employer/my-jobs",
+    href: "/employer/candidates",
   },
   {
     title: "Test",
-    href: "/employer/my-jobs",
+    href: "/employer/tests",
   },
   {
     title: "Staff",
-    href: "/employer/my-jobs",
+    href: "/employer/staffs",
   },
 ];
 

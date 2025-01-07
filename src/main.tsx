@@ -16,11 +16,16 @@ import Settings from "@/routes/candidate/profile/settings.tsx";
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import { BrowserRouter, Route, Routes } from "react-router";
+import CandidatesList from "./components/employer/candidates/candidates-list";
 import EmployerDashboardLayout from "./components/employer/layout";
 import MyJobs from "./routes/candidate/my-jobs/my-jobs";
 import EmployerDashboard from "./routes/employer/dashboard/dashboard";
+import EmployerJobList from "./routes/employer/job/job-list";
 import PostJob from "./routes/employer/job/post";
 import EmployerOnboarding from "./routes/employer/onboarding/onboarding";
+import StaffList from "./routes/employer/staff/staff-list";
+import EmployerCreatText from "./routes/employer/test/create";
+import EmployerTests from "./routes/employer/test/test";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
@@ -57,8 +62,20 @@ createRoot(document.getElementById("root")!).render(
         <Route path="employer" element={<EmployerDashboardLayout />}>
           <Route path="dashboard" element={<EmployerDashboard />} />
           <Route path="jobs">
-            <Route index element={<JobList />} />
+            <Route index element={<EmployerJobList />} />
             <Route path="post" element={<PostJob />} />
+          </Route>
+          <Route path="candidates">
+            <Route index element={<CandidatesList />} />
+            <Route path="post" element={<PostJob />} />
+          </Route>
+          <Route path="tests">
+            <Route index element={<EmployerTests />} />
+            <Route path="create" element={<EmployerCreatText />} />
+          </Route>
+          <Route path="staffs">
+            <Route index element={<StaffList />} />
+            <Route path="create" element={<EmployerCreatText />} />
           </Route>
         </Route>
       </Routes>
