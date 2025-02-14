@@ -1,19 +1,18 @@
+import UploadFileForm from "@/components/shared/upload-file-form";
 import {
-  Form,
   FormControl,
   FormField,
   FormItem,
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { useForm } from "react-hook-form";
-import Icons from "../../ui/icons";
+import Icons from "@/components/ui/icons";
+import { useFormContext } from "react-hook-form";
 import { Input } from "../../ui/input";
-import { Label } from "../../ui/label";
 import { Textarea } from "../../ui/textarea";
 
 export default function BasicInfoForm() {
-  const form = useForm();
+  const form = useFormContext();
 
   return (
     <div className="">
@@ -24,149 +23,137 @@ export default function BasicInfoForm() {
       </header>
 
       <div className="mt-2 flex gap-8">
-        <div className="space-y-1.5">
-          <Label className="text-[#475467]">Profile Picture</Label>
-          <div className="flex flex-col gap-3 items-center w-72  border rounded-[12px] p-6 py-12 bg-[#F3F3F3]">
-            <div className=" h-10 w-10 flex justify-center items-center">
-              <Icons.cloudUpload />
-            </div>
-            <div className="flex flex-col text-[#475467] text-center space-y-1">
-              <p className="text-sm ">
-                <span className="text-[#EE7B36] font-medium">
-                  Click to upload
-                </span>{" "}
-                or drag and drop
-                <br />
-              </p>
+        <UploadFileForm fieldName="user.profile_picture" />
 
-              <p className="text-xs"> SVG, PNG, JPG or GIF (max. 800x400px)</p>
-            </div>
-          </div>
-        </div>
         <div className="w-full">
-          <Form {...form}>
-            <div className="grid grid-cols-2 gap-4">
-              <FormField
-                control={form.control}
-                name="first_name"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>First Name</FormLabel>
-                    <FormControl>
-                      <Input placeholder="Joe" {...field} />
-                    </FormControl>
+          <div className="grid grid-cols-2 gap-4">
+            <FormField
+              control={form.control}
+              name="user.first_name"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>First Name</FormLabel>
+                  <FormControl>
+                    <Input placeholder="John" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="user.last_name"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Last Name</FormLabel>
+                  <FormControl>
+                    <Input placeholder="Joe" {...field} />
+                  </FormControl>
 
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="last_name"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Last Name</FormLabel>
-                    <FormControl>
-                      <Input placeholder="Joe" {...field} />
-                    </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="user.phone"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Phone Number</FormLabel>
+                  <FormControl>
+                    <Input placeholder="000000000" {...field} />
+                  </FormControl>
 
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="phone"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Phone Number</FormLabel>
-                    <FormControl>
-                      <Input placeholder="Joe" {...field} />
-                    </FormControl>
-
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="email"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Email</FormLabel>
-                    <FormControl>
-                      <Input placeholder="Joe" {...field} />
-                    </FormControl>
-
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="job"
-                render={({ field }) => (
-                  <FormItem className="col-span-2">
-                    <FormLabel>Title/Headline</FormLabel>
-                    <FormControl>
-                      <Input placeholder="Lead Product designer" {...field} />
-                    </FormControl>
-
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="address"
-                render={({ field }) => (
-                  <FormItem className="col-span-2">
-                    <FormLabel>Address</FormLabel>
-                    <FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="user.email"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Email</FormLabel>
+                  <FormControl>
+                    <div className="relative">
                       <Input
-                        placeholder="20A, Omonirie Johnson St., Lekki Phase 1, Lagos, Nigeria"
+                        placeholder="Joe@gmail.com"
                         {...field}
+                        type="email"
+                        className="pl-9"
                       />
-                    </FormControl>
+                      <Icons.mail className="absolute left-3 top-1/2 -translate-y-1/2" />
+                    </div>
+                  </FormControl>
 
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="website"
-                render={({ field }) => (
-                  <FormItem className="col-span-2">
-                    <FormLabel>Website link</FormLabel>
-                    <FormControl>
-                      <Input placeholder="joe.com" {...field} />
-                    </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="user.title"
+              render={({ field }) => (
+                <FormItem className="col-span-2">
+                  <FormLabel>Title/Headline</FormLabel>
+                  <FormControl>
+                    <Input placeholder="Lead Product designer" {...field} />
+                  </FormControl>
 
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="biography"
-                render={({ field }) => (
-                  <FormItem className="col-span-2">
-                    <FormLabel>Biography</FormLabel>
-                    <FormControl>
-                      <Textarea
-                        placeholder="Write short bio"
-                        rows={4}
-                        {...field}
-                      />
-                    </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="user.address"
+              render={({ field }) => (
+                <FormItem className="col-span-2">
+                  <FormLabel>Address</FormLabel>
+                  <FormControl>
+                    <Input
+                      placeholder="20A, Omonirie Johnson St., Lekki Phase 1, Lagos, Nigeria"
+                      {...field}
+                    />
+                  </FormControl>
 
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
-          </Form>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="user.website"
+              render={({ field }) => (
+                <FormItem className="col-span-2">
+                  <FormLabel>Website link</FormLabel>
+                  <FormControl>
+                    <Input placeholder="joe.com" {...field} />
+                  </FormControl>
+
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="user.bio"
+              render={({ field }) => (
+                <FormItem className="col-span-2">
+                  <FormLabel>Biography</FormLabel>
+                  <FormControl>
+                    <Textarea
+                      placeholder="Write short bio"
+                      rows={4}
+                      {...field}
+                    />
+                  </FormControl>
+
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
         </div>
       </div>
     </div>

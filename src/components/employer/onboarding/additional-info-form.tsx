@@ -13,11 +13,11 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { useForm } from "react-hook-form";
+import { countries } from "@/data/coutries";
+import { useFormContext } from "react-hook-form";
 import { Input } from "../../ui/input";
-
 export default function EmployerAdditionalForm() {
-  const form = useForm();
+  const form = useFormContext();
 
   return (
     <div className="">
@@ -37,17 +37,55 @@ export default function EmployerAdditionalForm() {
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Address</FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder="12 ST, New York, USA"
+                        {...field}
+                        className="w-full"
+                      />
+                    </FormControl>
+
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="city"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>City</FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder="New York"
+                        {...field}
+                        className="w-full"
+                      />
+                    </FormControl>
+
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="country"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Country</FormLabel>
                     <Select
                       onValueChange={field.onChange}
                       defaultValue={field.value}
                     >
                       <FormControl>
                         <SelectTrigger>
-                          <SelectValue placeholder="Select Platform" />
+                          <SelectValue placeholder="Select country" />
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        <SelectItem value="m@example.com">...</SelectItem>
+                        {countries.map((country) => (
+                          <SelectItem value={country}>{country}</SelectItem>
+                        ))}
                       </SelectContent>
                     </Select>
 
@@ -61,19 +99,13 @@ export default function EmployerAdditionalForm() {
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Phone Number</FormLabel>
-                    <Select
-                      onValueChange={field.onChange}
-                      defaultValue={field.value}
-                    >
-                      <FormControl>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select Platform" />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        <SelectItem value="m@example.com">...</SelectItem>
-                      </SelectContent>
-                    </Select>
+                    <FormControl>
+                      <Input
+                        placeholder="ABC.LTD"
+                        {...field}
+                        className="w-full"
+                      />
+                    </FormControl>
 
                     <FormMessage />
                   </FormItem>
@@ -86,7 +118,7 @@ export default function EmployerAdditionalForm() {
                   <FormItem>
                     <FormLabel>Email</FormLabel>
                     <FormControl>
-                      <Input placeholder="Joe@gmail.com" {...field} disabled />
+                      <Input placeholder="Joe@gmail.com" {...field} />
                     </FormControl>
 
                     <FormMessage />

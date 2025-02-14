@@ -13,12 +13,13 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { useForm } from "react-hook-form";
+import { industries } from "@/data/industries";
+import { useFormContext } from "react-hook-form";
 import { Input } from "../../ui/input";
 import { Textarea } from "../../ui/textarea";
 
 export default function EmployerCompanyForm() {
-  const form = useForm();
+  const form = useFormContext();
 
   return (
     <div className="">
@@ -34,7 +35,7 @@ export default function EmployerCompanyForm() {
             <div className="grid grid-cols-2 gap-4">
               <FormField
                 control={form.control}
-                name="email"
+                name="industry_type"
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Organization type</FormLabel>
@@ -48,7 +49,7 @@ export default function EmployerCompanyForm() {
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        <SelectItem value="m@example.com">...</SelectItem>
+                        <SelectItem value={"null"}>...</SelectItem>
                       </SelectContent>
                     </Select>
 
@@ -58,7 +59,7 @@ export default function EmployerCompanyForm() {
               />
               <FormField
                 control={form.control}
-                name="email"
+                name="industry_code"
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Industry type</FormLabel>
@@ -72,7 +73,9 @@ export default function EmployerCompanyForm() {
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        <SelectItem value="m@example.com">...</SelectItem>
+                        {industries.map((industry) => (
+                          <SelectItem value={industry}>{industry}</SelectItem>
+                        ))}
                       </SelectContent>
                     </Select>
 

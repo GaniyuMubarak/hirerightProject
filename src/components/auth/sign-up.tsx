@@ -7,36 +7,24 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
-import { Link, useNavigate } from "react-router";
-import { z } from "zod";
+import useAuthForm from "@/hooks/forms/use-auth-form";
+import { Eye, EyeOff, Loader } from "lucide-react";
+import { useState } from "react";
+import { Link } from "react-router";
 import { Checkbox } from "../ui/checkbox";
 import { Input } from "../ui/input";
-
-const FormSchema = z.object({
-  email: z
-    .string({ message: "Email is required" })
-    .email({ message: "Invalid email address" }),
-  password: z
-    .string({ message: "Password is required" })
-    .min(8, { message: "Password must be at least 8 characters" }),
-  rememberMe: z.boolean().optional(),
-});
 
 export function SignUpForm({
   className,
   ...props
 }: React.ComponentPropsWithoutRef<"form">) {
-  const navigate = useNavigate();
-  const form = useForm<z.infer<typeof FormSchema>>({
-    resolver: zodResolver(FormSchema),
-  });
+  const { form, onSubmit } = useAuthForm("sign-up");
+  const [showPassword, setShowPassword] = useState(false);
+  // const user = useCurrentUser();
+  // if (user) {
+  //   return <Navigate to={`/${user?.app_role}/dashboard`} />;
+  // }
 
-  function onSubmit(data: z.infer<typeof FormSchema>) {
-    console.log("Signup data>>", data);
-    navigate("/onboarding");
-  }
   return (
     <Form {...form}>
       <form
@@ -45,12 +33,40 @@ export function SignUpForm({
         className="space-y-8"
       >
         <div className="flex flex-col gap-2 text-left">
-          <h1 className="text-3xl font-medium text-[#020C10]">Sign in</h1>
+          <h1 className="text-3xl font-medium text-[#020C10]">Sign up</h1>
           <p className="text-balance text-base text-[#475467] ">
-            Welcome back! Please enter your details.
+            Welcome to Hire Right! Please enter your details.
           </p>
         </div>
         <div className=" mt-8 pb-4 space-y-5">
+          <FormField
+            control={form.control}
+            name="first_name"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>First Name</FormLabel>
+                <FormControl>
+                  <Input placeholder="John" {...field} />
+                </FormControl>
+
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="last_name"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Last Name</FormLabel>
+                <FormControl>
+                  <Input placeholder="Doe" {...field} />
+                </FormControl>
+
+                <FormMessage />
+              </FormItem>
+            )}
+          />
           <FormField
             control={form.control}
             name="email"
@@ -72,9 +88,25 @@ export function SignUpForm({
               <FormItem>
                 <FormLabel>Password</FormLabel>
                 <FormControl>
-                  <Input placeholder="********" {...field} type="password" />
+                  <div className="relative">
+                    <Input
+                      placeholder="********"
+                      {...field}
+                      type={showPassword ? "text" : "password"}
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword(!showPassword)}
+                      className="absolute right-3 top-1/2 -translate-y-1/2"
+                    >
+                      {showPassword ? (
+                        <EyeOff className="h-4 w-4 text-gray-500" />
+                      ) : (
+                        <Eye className="h-4 w-4 text-gray-500" />
+                      )}
+                    </button>
+                  </div>
                 </FormControl>
-
                 <FormMessage />
               </FormItem>
             )}
@@ -107,8 +139,15 @@ export function SignUpForm({
             </Link>
           </div>
 
-          <Button type="submit" className="w-full">
+          <Button
+            type="submit"
+            className="w-full"
+            disabled={form.formState.isSubmitting}
+          >
             Sign in
+            {form.formState.isSubmitting && (
+              <Loader size={14} className="ml-2 animate-spin" />
+            )}
           </Button>
         </div>
 

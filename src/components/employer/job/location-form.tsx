@@ -1,23 +1,30 @@
 import { Checkbox } from "@/components/ui/checkbox";
 import {
-  Form,
   FormControl,
   FormField,
   FormItem,
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { useForm } from "react-hook-form";
+import { useFormContext } from "react-hook-form";
+
+import CountrySelect from "@/components/ui/country-select";
+import RegionSelect from "@/components/ui/region-select";
+import { useState } from "react";
+
+const remoteRegions = [
+  { label: "North America", value: "north_america" },
+  { label: "South America", value: "south_america" },
+  { label: "Europe", value: "europe" },
+  { label: "Asia", value: "asia" },
+  { label: "Africa", value: "africa" },
+  { label: "Oceania", value: "oceania" },
+];
 
 export default function LocationForm() {
-  const form = useForm();
+  const { control, watch } = useFormContext();
+  const [selectedCountry, setSelectedCountry] = useState("");
+  const isRemote = watch("work_mode") === "remote";
 
   return (
     <div className="">
@@ -27,78 +34,90 @@ export default function LocationForm() {
 
       <div className="mt-2 flex gap-8">
         <div className="w-full">
-          <Form {...form}>
+          <div className="grid gap-6">
             <div className="grid grid-cols-2 gap-4">
               <FormField
-                control={form.control}
-                name="job-role"
+                control={control}
+                name="location"
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Country</FormLabel>
-                    <Select
-                      onValueChange={field.onChange}
-                      defaultValue={field.value}
-                    >
-                      <FormControl>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select " />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        <SelectItem value="m@example.com">...</SelectItem>
-                      </SelectContent>
-                    </Select>
-
+                    <FormControl>
+                      <CountrySelect
+                        onChange={(value) => {
+                          setSelectedCountry(value);
+                          field.onChange(`${value}`);
+                        }}
+                      />
+                    </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
               />
-              <FormField
-                control={form.control}
-                name="job-role"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>City</FormLabel>
-                    <Select
-                      onValueChange={field.onChange}
-                      defaultValue={field.value}
-                    >
-                      <FormControl>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select " />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        <SelectItem value="m@example.com">...</SelectItem>
-                      </SelectContent>
-                    </Select>
 
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
               <FormField
-                control={form.control}
-                name="job-role"
+                control={control}
+                name="city"
                 render={({ field }) => (
                   <FormItem>
-                    <div className="flex items-center gap-2">
-                      <FormControl>
-                        <Checkbox
-                          checked={field.value}
-                          onCheckedChange={field.onChange}
-                        />
-                      </FormControl>
-                      <FormLabel className="text-sm text-[#475467]">
-                        Fully Remote Position - Worldwide
-                      </FormLabel>
-                    </div>
+                    <FormLabel>City/Region</FormLabel>
+                    <FormControl>
+                      <RegionSelect
+                        onChange={(value) => console.log(value)}
+                        countryCode={selectedCountry}
+                      />
+                    </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
               />
             </div>
-          </Form>
+
+            {isRemote && (
+              <FormField
+                control={control}
+                name="remote_regions"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Remote Work Regions</FormLabel>
+                    <div className="grid grid-cols-3 gap-4">
+                      {remoteRegions.map((region) => (
+                        <FormItem
+                          key={region.value}
+                          className="flex items-center space-x-2"
+                        >
+                          <FormControl>
+                            <Checkbox
+                              checked={field.value?.includes(region.value)}
+                              onCheckedChange={(checked) => {
+                                const currentValues = field.value || [];
+                                if (checked) {
+                                  field.onChange([
+                                    ...currentValues,
+                                    region.value,
+                                  ]);
+                                } else {
+                                  field.onChange(
+                                    currentValues.filter(
+                                      (value: string) => value !== region.value
+                                    )
+                                  );
+                                }
+                              }}
+                            />
+                          </FormControl>
+                          <FormLabel className="text-sm font-normal">
+                            {region.label}
+                          </FormLabel>
+                        </FormItem>
+                      ))}
+                    </div>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            )}
+          </div>
         </div>
       </div>
     </div>

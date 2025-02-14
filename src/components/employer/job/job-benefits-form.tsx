@@ -1,56 +1,31 @@
+import { Checkbox } from "@/components/ui/checkbox";
 import {
-  Form,
   FormControl,
   FormField,
   FormItem,
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { cn } from "@/lib/utils";
-import { useForm } from "react-hook-form";
+import { useFormContext } from "react-hook-form";
 
 const benefits = [
-  {
-    label: "Lorem Ipsum",
-    value: 1,
-  },
-  {
-    label: "Lorem Ipsum",
-    value: 2,
-  },
-  {
-    label: "Lorem Ipsum Ipsum",
-    value: 3,
-  },
-  {
-    label: "Lorem Ipsum",
-    value: 4,
-  },
-  {
-    label: "Lorem Ipsum Ipsum",
-    value: 5,
-  },
-  {
-    label: "Lorem Ipsum",
-    value: 6,
-  },
-  {
-    label: "Lorem Ipsum",
-    value: 7,
-  },
-  {
-    label: "Lorem Ipsum",
-    value: 8,
-  },
-  {
-    label: "Lorem Ipsum Ipsum",
-    value: 9,
-  },
+  { label: "Health Insurance", value: "health_insurance" },
+  { label: "Dental Coverage", value: "dental_coverage" },
+  { label: "Vision Coverage", value: "vision_coverage" },
+  { label: "401(k) Plan", value: "401k" },
+  { label: "Paid Time Off", value: "pto" },
+  { label: "Remote Work", value: "remote_work" },
+  { label: "Flexible Hours", value: "flexible_hours" },
+  { label: "Professional Development", value: "professional_development" },
+  { label: "Gym Membership", value: "gym_membership" },
+  { label: "Stock Options", value: "stock_options" },
+  { label: "Performance Bonus", value: "performance_bonus" },
+  { label: "Parental Leave", value: "parental_leave" },
 ];
 
 export default function JobbenefitsForm() {
-  const form = useForm();
+  const { control } = useFormContext();
 
   return (
     <div className="">
@@ -60,49 +35,58 @@ export default function JobbenefitsForm() {
 
       <div className="mt-4 flex gap-8">
         <div className="w-full">
-          <Form {...form}>
-            <div className="flex gap-4 flex-wrap">
-              <FormField
-                control={form.control}
-                name="type"
-                render={({ field }) => (
-                  <FormItem className="space-y-1">
-                    <FormControl>
-                      <RadioGroup
-                        onValueChange={field.onChange}
-                        defaultValue={field.value}
-                        className="flex flex-wrap gap-2"
-                      >
-                        {benefits.map((benefit) => (
-                          <FormItem
-                            key={benefit.value}
-                            className={cn(
-                              "space-y-0 border-[1.5px] rounded-[3px]",
-                              field.value == benefit.value &&
-                                "border-primary bg-[#68BBE333]"
-                            )}
-                          >
-                            <FormLabel className="font-normal space-y-1 w-full py-1 px-3 cursor-pointer flex items-center justify-between space-x-3">
-                              <span>
-                                {benefit.label} {field.value == benefit.value}
-                              </span>
-                              <FormControl>
-                                <RadioGroupItem
-                                  value={benefit.value + ""}
-                                  className="hidden"
-                                />
-                              </FormControl>
-                            </FormLabel>
-                          </FormItem>
-                        ))}
-                      </RadioGroup>
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
-          </Form>
+          <FormField
+            control={control}
+            name="benefits"
+            render={({ field }) => (
+              <FormItem className="space-y-4">
+                <div className="flex flex-wrap gap-3">
+                  {benefits.map((item) => (
+                    <FormField
+                      key={item.value}
+                      control={control}
+                      name="benefits"
+                      render={({ field }) => (
+                        <FormItem
+                          key={item.value}
+                          className={cn(
+                            "flex items-center space-x-2 space-y-0 border rounded-md px-3 py-2",
+                            field.value?.includes(item.value) &&
+                              "border-primary bg-[#68BBE333]"
+                          )}
+                        >
+                          <FormControl>
+                            <Checkbox
+                              checked={field.value?.includes(item.value)}
+                              onCheckedChange={(checked) => {
+                                const currentValues = field.value || [];
+                                if (checked) {
+                                  field.onChange([
+                                    ...currentValues,
+                                    item.value,
+                                  ]);
+                                } else {
+                                  field.onChange(
+                                    currentValues.filter(
+                                      (value: string) => value !== item.value
+                                    )
+                                  );
+                                }
+                              }}
+                            />
+                          </FormControl>
+                          <FormLabel className="font-normal cursor-pointer">
+                            {item.label}
+                          </FormLabel>
+                        </FormItem>
+                      )}
+                    />
+                  ))}
+                </div>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
         </div>
       </div>
     </div>

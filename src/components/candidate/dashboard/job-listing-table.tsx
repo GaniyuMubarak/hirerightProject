@@ -73,9 +73,11 @@ export default function JobListingTable() {
                 <Badge>Active</Badge>
               </TableCell>
               <TableCell className="text-right space-x-4">
-                <Button variant={"secondary"} className="rounded-[6px]">
-                  View Details
-                </Button>
+                <Link to={"/candidate/jobs/id"}>
+                  <Button variant={"secondary"} className="rounded-[6px]">
+                    View Details
+                  </Button>
+                </Link>
                 <Button className="px-6 rounded-[6px]">Apply</Button>
               </TableCell>
             </TableRow>
@@ -99,9 +101,11 @@ export default function JobListingTable() {
                 <Badge>Active</Badge>
               </TableCell>
               <TableCell className="text-right space-x-4">
-                <Button variant={"secondary"} className="rounded-[6px]">
-                  View Details
-                </Button>
+                <Link to={"/candidate/jobs/id"}>
+                  <Button variant={"secondary"} className="rounded-[6px]">
+                    View Details
+                  </Button>
+                </Link>
                 <Button className="px-6 rounded-[6px]">Apply</Button>
               </TableCell>
             </TableRow>

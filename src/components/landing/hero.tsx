@@ -23,7 +23,7 @@ export default function () {
           </p>
 
           <Link
-            to={"/candidate/dashboard"}
+            to={"/account-type"}
             className={cn(buttonVariants(), "mt-8 rounded-[6px] px-6")}
           >
             Explore More <Icons.arrowRight className="min-h-6 min-w-6" />

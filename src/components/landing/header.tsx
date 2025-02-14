@@ -36,13 +36,13 @@ export default function Header() {
         </ul>
         <div className="flex items-center gap-4">
           <Link
-            to={"/sign-up"}
+            to={"/account-type"}
             className={cn(buttonVariants(), "rounded-[6px] px-6")}
           >
             Sign up
           </Link>
           <Link
-            to={"/sign-up"}
+            to={"/sign-in"}
             className={cn(
               buttonVariants({ variant: "outline" }),
               "text-[#EE7B36] rounded-[6px] px-6"

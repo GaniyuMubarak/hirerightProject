@@ -1,18 +1,22 @@
 import {
-  Form,
   FormControl,
   FormField,
   FormItem,
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { CirclePlus } from "lucide-react";
-import { useForm } from "react-hook-form";
+import { cn } from "@/lib/utils";
+import { CirclePlus, Trash2 } from "lucide-react";
+import { useFieldArray, useFormContext } from "react-hook-form";
 import { Button } from "../../ui/button";
 import { Input } from "../../ui/input";
 
 export default function CertificationForm() {
-  const form = useForm();
+  const form = useFormContext();
+  const { fields, append, remove } = useFieldArray({
+    control: form.control,
+    name: "certifications",
+  });
 
   return (
     <div className="">
@@ -22,61 +26,103 @@ export default function CertificationForm() {
         </h2>
       </header>
 
-      <div className="w-full pt-2">
-        <Form {...form}>
-          <div className="grid grid-cols-2 gap-4">
-            <FormField
-              control={form.control}
-              name="company"
-              render={({ field }) => (
-                <FormItem className="col-span-2">
-                  <FormLabel>Certificate Name</FormLabel>
-                  <FormControl>
-                    <Input
-                      placeholder="Foundations in UI/UX Design"
-                      {...field}
-                    />
-                  </FormControl>
-
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="year"
-              render={({ field }) => (
-                <FormItem className="col-span-2">
-                  <FormLabel>Year Obtained</FormLabel>
-                  <FormControl>
-                    <Input placeholder="2020" {...field} />
-                  </FormControl>
-
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="institution"
-              render={({ field }) => (
-                <FormItem className="col-span-2">
-                  <FormLabel>Host Institution</FormLabel>
-                  <FormControl>
-                    <Input placeholder="Coursera" {...field} />
-                  </FormControl>
-
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+      <div className="w-full pt-2 space-y-6">
+        {fields.map((field, index) => (
+          <div
+            key={field.id}
+            className={cn(
+              "relative ",
+              fields?.length > 1 && "border rounded-lg p-4 "
+            )}
+          >
+            <div className="grid grid-cols-2 gap-4">
+              <FormField
+                control={form.control}
+                name={`certifications.${index}.name`}
+                render={({ field }) => (
+                  <FormItem className="col-span-2">
+                    <div className="flex justify-between items-end">
+                      <FormLabel>Certificate Name</FormLabel>
+                      {fields?.length > 1 && (
+                        <div className="absolute -top-3 -right-3">
+                          <Button
+                            type="button"
+                            variant="ghost"
+                            size="icon"
+                            onClick={() => remove(index)}
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
+                        </div>
+                      )}
+                    </div>
+                    <FormControl>
+                      <Input placeholder="AWS Certified Developer" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name={`certifications.${index}.organization`}
+                render={({ field }) => (
+                  <FormItem className="col-span-2">
+                    <FormLabel>Issuing Organization</FormLabel>
+                    <FormControl>
+                      <Input placeholder="Amazon Web Services" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name={`certifications.${index}.issue_date`}
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Issue Date</FormLabel>
+                    <FormControl>
+                      <Input type="date" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name={`certifications.${index}.expiration_date`}
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Expiration Date</FormLabel>
+                    <FormControl>
+                      <Input type="date" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
           </div>
-        </Form>
+        ))}
 
         <div className="flex justify-center mt-6">
-          <Button type="button" variant={"ghost"} className="font-semibold">
-            <CirclePlus className="min-w-6 min-h-6" />
-            Add Row
+          <Button
+            type="button"
+            variant="ghost"
+            className="font-semibold"
+            onClick={() =>
+              append({
+                name: "",
+                organization: "",
+                issue_date: "",
+                expiration_date: "",
+                has_expiry: true,
+                is_expired: false,
+              })
+            }
+          >
+            <CirclePlus className="min-w-6 min-h-6" /> Add Certification
           </Button>
         </div>
       </div>

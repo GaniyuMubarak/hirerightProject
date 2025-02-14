@@ -1,3 +1,4 @@
+import UploadFileForm from "@/components/shared/upload-file-form";
 import {
   Form,
   FormControl,
@@ -6,14 +7,13 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { useForm } from "react-hook-form";
-import Icons from "../../ui/icons";
+import { useFormContext } from "react-hook-form";
 import { Input } from "../../ui/input";
 import { Label } from "../../ui/label";
 import { Textarea } from "../../ui/textarea";
 
 export default function EmployerBasicInfoForm() {
-  const form = useForm();
+  const form = useFormContext();
 
   return (
     <div className="">
@@ -27,47 +27,11 @@ export default function EmployerBasicInfoForm() {
         <div className="flex gap-8 w-full">
           <div className="space-y-1.5">
             <Label className="text-[#475467]">Profile Picture</Label>
-            <div className="flex flex-col gap-3 items-center w-72  border rounded-[12px] p-6 py-12 bg-[#F3F3F3]">
-              <div className=" h-10 w-10 flex justify-center items-center">
-                <Icons.cloudUpload />
-              </div>
-              <div className="flex flex-col text-[#475467] text-center space-y-1">
-                <p className="text-sm ">
-                  <span className="text-[#EE7B36] font-medium">
-                    Click to upload
-                  </span>{" "}
-                  or drag and drop
-                  <br />
-                </p>
-
-                <p className="text-xs">
-                  {" "}
-                  SVG, PNG, JPG or GIF (max. 800x400px)
-                </p>
-              </div>
-            </div>
+            <UploadFileForm fieldName="profile_image" />
           </div>
           <div className="space-y-1.5 w-full">
             <Label className="text-[#475467]">Banner Picture</Label>
-            <div className="flex flex-col gap-3 items-center w-full  border rounded-[12px] p-6 py-12 bg-[#F3F3F3]">
-              <div className=" h-10 w-10 flex justify-center items-center">
-                <Icons.cloudUpload />
-              </div>
-              <div className="flex flex-col text-[#475467] text-center space-y-1">
-                <p className="text-sm ">
-                  <span className="text-[#EE7B36] font-medium">
-                    Click to upload
-                  </span>{" "}
-                  or drag and drop
-                  <br />
-                </p>
-
-                <p className="text-xs">
-                  {" "}
-                  SVG, PNG, JPG or GIF (max. 800x400px)
-                </p>
-              </div>
-            </div>
+            <UploadFileForm fieldName="banner_image" className="w-full" />
           </div>
         </div>
         <div className="w-full mt-8">
@@ -75,7 +39,7 @@ export default function EmployerBasicInfoForm() {
             <div className="grid gap-4">
               <FormField
                 control={form.control}
-                name="first_name"
+                name="name"
                 render={({ field }) => (
                   <FormItem className="w-full">
                     <FormLabel>Company Name</FormLabel>
@@ -94,7 +58,7 @@ export default function EmployerBasicInfoForm() {
 
               <FormField
                 control={form.control}
-                name="biography"
+                name="about"
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>About Us</FormLabel>

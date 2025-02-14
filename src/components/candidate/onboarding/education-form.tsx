@@ -1,18 +1,22 @@
 import {
-  Form,
   FormControl,
   FormField,
   FormItem,
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { CirclePlus } from "lucide-react";
-import { useForm } from "react-hook-form";
+import { cn } from "@/lib/utils";
+import { CirclePlus, Trash2 } from "lucide-react";
+import { useFieldArray, useFormContext } from "react-hook-form";
 import { Button } from "../../ui/button";
 import { Input } from "../../ui/input";
 
 export default function EducationForm() {
-  const form = useForm();
+  const form = useFormContext();
+  const { fields, append, remove } = useFieldArray({
+    control: form.control,
+    name: "education",
+  });
 
   return (
     <div className="">
@@ -20,72 +24,101 @@ export default function EducationForm() {
         <h2 className="text-2xl font-semibold text-[#020C10]">Education</h2>
       </header>
 
-      <div className="w-full pt-2">
-        <Form {...form}>
-          <div className="grid grid-cols-2 gap-4">
-            <FormField
-              control={form.control}
-              name="company"
-              render={({ field }) => (
-                <FormItem className="col-span-2">
-                  <FormLabel>Name of Institition</FormLabel>
-                  <FormControl>
-                    <Input placeholder="University of Lagos" {...field} />
-                  </FormControl>
-
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="start"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Start Year</FormLabel>
-                  <FormControl>
-                    <Input placeholder="2012" {...field} />
-                  </FormControl>
-
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="end"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>End Year</FormLabel>
-                  <FormControl>
-                    <Input placeholder="2020" {...field} />
-                  </FormControl>
-
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="course"
-              render={({ field }) => (
-                <FormItem className="col-span-2">
-                  <FormLabel>Course of study</FormLabel>
-                  <FormControl>
-                    <Input placeholder="Product Designer" {...field} />
-                  </FormControl>
-
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+      <div className="w-full pt-2 space-y-6">
+        {fields.map((field, index) => (
+          <div
+            key={field.id}
+            className={cn(
+              "relative ",
+              fields?.length > 1 && "border rounded-lg p-4 "
+            )}
+          >
+            <div className="grid grid-cols-2 gap-4 ">
+              <FormField
+                control={form.control}
+                name={`education.${index}.institution`}
+                render={({ field }) => (
+                  <FormItem className="col-span-2">
+                    <div className="flex justify-between items-end">
+                      <FormLabel>Name of Institution</FormLabel>
+                      {fields?.length > 1 && (
+                        <div className="absolute -top-3 -right-3">
+                          <Button
+                            type="button"
+                            variant="ghost"
+                            size="icon"
+                            onClick={() => remove(index)}
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
+                        </div>
+                      )}
+                    </div>
+                    <FormControl>
+                      <Input placeholder="University of Lagos" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name={`education.${index}.start_date`}
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Start Date</FormLabel>
+                    <FormControl>
+                      <Input type="date" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name={`education.${index}.end_date`}
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>End Date</FormLabel>
+                    <FormControl>
+                      <Input type="date" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name={`education.${index}.field_of_study`}
+                render={({ field }) => (
+                  <FormItem className="col-span-2">
+                    <FormLabel>Course of study</FormLabel>
+                    <FormControl>
+                      <Input placeholder="Computer Science" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
           </div>
-        </Form>
+        ))}
 
         <div className="flex justify-center mt-6">
-          <Button type="button" variant={"ghost"} className="font-semibold">
-            <CirclePlus className="min-w-6 min-h-6" />
-            Add Row
+          <Button
+            type="button"
+            variant="ghost"
+            className="font-semibold"
+            onClick={() =>
+              append({
+                institution: "",
+                start_date: "",
+                end_date: "",
+                field_of_study: "",
+              })
+            }
+          >
+            <CirclePlus className="min-w-6 min-h-6" /> Add Education
           </Button>
         </div>
       </div>

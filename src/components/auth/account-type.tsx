@@ -14,8 +14,8 @@ import { Link, useNavigate } from "react-router";
 import { z } from "zod";
 
 const FormSchema = z.object({
-  type: z.enum(["candidate", "employer"], {
-    required_error: "You need to select a notification type.",
+  app_role: z.enum(["candidate", "employer"], {
+    required_error: "You need to select a role to continue.",
   }),
 });
 
@@ -30,13 +30,9 @@ export function AccountTypeForm({
   });
 
   function onSubmit(data: z.infer<typeof FormSchema>) {
-    console.log("Signup data>>", data);
-    if (data.type === "employer") {
-      navigate("/employer/onboarding");
-      return;
-    }
-    navigate("/onboarding");
+    navigate(`/sign-up?app_role=${data.app_role}`);
   }
+
   return (
     <Form {...form}>
       <form
@@ -58,7 +54,7 @@ export function AccountTypeForm({
         <div className=" mt-8 pb-12">
           <FormField
             control={form.control}
-            name="type"
+            name="app_role"
             render={({ field }) => (
               <FormItem className="space-y-3">
                 <FormControl>
@@ -112,7 +108,7 @@ export function AccountTypeForm({
 
         <div className="text-center font-mediu">
           Already have an account?{" "}
-          <Link to="/sign-up" className="font-bold text-primary">
+          <Link to="/sign-in" className="font-bold text-primary">
             Log in
           </Link>
         </div>

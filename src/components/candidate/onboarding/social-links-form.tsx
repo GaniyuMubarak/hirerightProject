@@ -1,5 +1,4 @@
 import {
-  Form,
   FormControl,
   FormField,
   FormItem,
@@ -13,13 +12,25 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { CirclePlus } from "lucide-react";
-import { useForm } from "react-hook-form";
+import { cn } from "@/lib/utils";
+import { CirclePlus, Trash2 } from "lucide-react";
+import { useFieldArray, useFormContext } from "react-hook-form";
 import { Button } from "../../ui/button";
 import { Input } from "../../ui/input";
 
+const SOCIAL_PLATFORMS = [
+  { value: "linkedin", label: "LinkedIn" },
+  { value: "github", label: "GitHub" },
+  { value: "twitter", label: "Twitter" },
+  { value: "portfolio", label: "Portfolio" },
+];
+
 export default function SocialLinksForm() {
-  const form = useForm();
+  const form = useFormContext();
+  const { fields, append, remove } = useFieldArray({
+    control: form.control,
+    name: "social_links",
+  });
 
   return (
     <div className="">
@@ -27,35 +38,54 @@ export default function SocialLinksForm() {
         <h2 className="text-2xl font-semibold text-[#020C10]">Social Links</h2>
       </header>
 
-      <div className="w-full pt-2">
-        <Form {...form}>
-          <div className="grid gap-4 w-full ">
-            <div className="flex items-end w-full ">
+      <div className="w-full pt-2 space-y-6">
+        {fields.map((field, index) => (
+          <div
+            key={field.id}
+            className={cn(
+              "relative ",
+              fields?.length > 1 && "border rounded-lg p-4 "
+            )}
+          >
+            {fields?.length > 1 && (
+              <div className="absolute -top-3 -right-3">
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => remove(index)}
+                >
+                  <Trash2 className="h-4 w-4" />
+                </Button>
+              </div>
+            )}
+
+            <div className="flex items-end w-full gap-4">
               <FormField
                 control={form.control}
-                name="link1"
+                name={`social_links.${index}.platform`}
                 render={({ field }) => (
-                  <FormItem className="w-1/4">
-                    <FormLabel>Social Link 1</FormLabel>
+                  <FormItem className="w-1/3">
+                    <FormLabel>Platform</FormLabel>
+
                     <Select
                       onValueChange={field.onChange}
                       defaultValue={field.value}
                     >
                       <FormControl>
-                        <SelectTrigger className="rounded-r-none">
+                        <SelectTrigger>
                           <SelectValue placeholder="Select Platform" />
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        <SelectItem value="m@example.com">
-                          m@example.com
-                        </SelectItem>
-                        <SelectItem value="m@google.com">
-                          m@google.com
-                        </SelectItem>
-                        <SelectItem value="m@support.com">
-                          m@support.com
-                        </SelectItem>
+                        {SOCIAL_PLATFORMS.map((platform) => (
+                          <SelectItem
+                            key={platform.value}
+                            value={platform.value}
+                          >
+                            {platform.label}
+                          </SelectItem>
+                        ))}
                       </SelectContent>
                     </Select>
                     <FormMessage />
@@ -64,29 +94,34 @@ export default function SocialLinksForm() {
               />
               <FormField
                 control={form.control}
-                name="year"
+                name={`social_links.${index}.url`}
                 render={({ field }) => (
-                  <FormItem className="w-3/4">
+                  <FormItem className="w-2/3">
+                    <FormLabel>URL</FormLabel>
                     <FormControl>
-                      <Input
-                        placeholder="2020"
-                        {...field}
-                        className="rounded-l-none"
-                      />
+                      <Input placeholder="https://" {...field} />
                     </FormControl>
-
                     <FormMessage />
                   </FormItem>
                 )}
               />
             </div>
           </div>
-        </Form>
+        ))}
 
         <div className="flex justify-center mt-6">
-          <Button type="button" variant={"ghost"} className="font-semibold">
-            <CirclePlus className="min-w-6 min-h-6" />
-            Add Row
+          <Button
+            type="button"
+            variant="ghost"
+            className="font-semibold"
+            onClick={() =>
+              append({
+                platform: "",
+                url: "",
+              })
+            }
+          >
+            <CirclePlus className="min-w-6 min-h-6" /> Add Social Link
           </Button>
         </div>
       </div>
