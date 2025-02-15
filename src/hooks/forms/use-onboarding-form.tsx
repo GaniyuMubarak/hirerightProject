@@ -67,7 +67,7 @@ const useOnboardingForm = () => {
       if (data.profile_picture) {
         await uploadPendingFile({
           files: [data.profile_picture],
-          entity_id: res?.id,
+          entity_id: user?.id,
           entityType: "UserProfile",
         });
       }
