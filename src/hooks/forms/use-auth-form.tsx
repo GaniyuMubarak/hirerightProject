@@ -67,9 +67,10 @@ const useAuthForm = (page: "sign-up" | "login") => {
       if (appRole === "employer") {
         const company = await CompanyServices.getCompany();
         if (!company?.data) {
-          navigate("/employer/onboarding");
-          return;
+          return navigate("/employer/onboarding");
         }
+
+        return navigate("/employer/dashboard");
       }
 
       //check if user has resume or redirect to onboaring
