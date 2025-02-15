@@ -23,7 +23,7 @@ export default function BasicInfoForm() {
       </header>
 
       <div className="mt-2 flex gap-8">
-        <UploadFileForm fieldName="user.profile_picture" />
+        <UploadFileForm fieldName="profile_picture" />
 
         <div className="w-full">
           <div className="grid grid-cols-2 gap-4">

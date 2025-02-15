@@ -4,6 +4,11 @@ const FileServices = {
   getFile: async (fileId: string) => {
     return requests.get(`/files/${fileId}`);
   },
+  getEntityFile: async (entity: string, entity_id: string) => {
+    return requests.get(
+      `/entity/files?entity_type=${entity}&entity_id=${entity_id}`
+    );
+  },
 
   initUpload: async (body: any) => {
     return requests.post(`/upload/init`, body);

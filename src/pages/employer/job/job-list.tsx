@@ -3,12 +3,12 @@ import JobServices from "@/services/job-services";
 import { useQuery } from "@tanstack/react-query";
 
 export default function EmployerJobList() {
-  const { data, isLoading, isError } = useQuery({
+  const { data } = useQuery({
     queryKey: ["job-listing"],
     queryFn: () => JobServices.getAllJobs(),
   });
 
-  console.log("data", data);
+  // console.log("data", data);
 
   return (
     <div className="max-w-7xl mx-auto px-4 pt-8 space-y-8 ">

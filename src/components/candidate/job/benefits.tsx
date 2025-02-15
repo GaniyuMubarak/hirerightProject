@@ -1,16 +1,14 @@
 import React from "react";
 
-export default function JobBenefits() {
+export default function JobBenefits({ job }: { job: any }) {
   return (
     <div className="flex flex-col gap-4 border rounded-[6px] p-4 w-full">
       <h2 className="font-medium text-[#1B1B1C]">Job Benefits</h2>
 
       <div className="flex gap-2 flex-wrap">
-        <BenefitsBadeg>Lorem Ipsum</BenefitsBadeg>
-        <BenefitsBadeg>Lorem Ipsum Ipsum</BenefitsBadeg>
-        <BenefitsBadeg>Lorem Ipsum Ipsum</BenefitsBadeg>
-        <BenefitsBadeg>Lorem Ipsum Ipsum</BenefitsBadeg>
-        <BenefitsBadeg>Lorem Ipsum</BenefitsBadeg>
+        {job?.benefits?.split(",")?.map((benefit: string) => (
+          <BenefitsBadeg>{benefit}</BenefitsBadeg>
+        ))}
       </div>
     </div>
   );

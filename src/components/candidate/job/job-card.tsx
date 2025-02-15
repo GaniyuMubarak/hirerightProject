@@ -5,11 +5,13 @@ import Icons from "../../ui/icons";
 
 export default function JobCard({
   aiRecommended,
+  job = {},
 }: {
   aiRecommended?: Boolean;
+  job: any;
 }) {
   return (
-    <Link to="/candidate/jobs/id">
+    <Link to={`/candidate/jobs/${job.id}`}>
       <div
         className={cn(
           "space-y-4 px-4 py-6 border rounded-[6px]",
@@ -27,12 +29,15 @@ export default function JobCard({
         )}
 
         <h2 className="text-xl font-medium tracking-[-0.012em]">
-          Product Designer
+          {job?.title}
         </h2>
         <div className="flex gap-3 items-center">
           <Badge className="rounded-[4px] py-[1px] px-2">Full-Time</Badge>
           <span className="text-sm text-[#0F132499] tracking-[-0.01em]">
-            Salary: $20,000 - $25,000
+            Salary:{" "}
+            {`${job.salary_currency} ${Number(
+              job.salary_min
+            ).toLocaleString()} - ${Number(job.salary_max).toLocaleString()}`}
           </span>
         </div>
         <div className="flex items-center gap-3">
@@ -45,10 +50,10 @@ export default function JobCard({
           </div>
           <div className="flex flex-col justify-between h-full space-y-2">
             <span className="text-lg tracking-[-0.01em] leading-none">
-              Product Designer
+              {job?.company?.name}
             </span>
             <span className="text-[#475467] tracking-[-0.01em] flex items-center gap-1.5 text-base">
-              <Icons.locationOutlined /> Lagos, Nigeria{" "}
+              <Icons.locationOutlined /> {job?.location}
             </span>
           </div>
         </div>

@@ -1,4 +1,6 @@
 export interface OnboardingFormData {
+  profile_picture: any;
+  resume: any;
   user: {
     first_name: string;
     last_name: string;

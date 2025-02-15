@@ -12,8 +12,8 @@ export default function AutoFillForm() {
         </p>
       </header>
 
-      <div className="flex gap-6">
-        <div className="flex gap-3 items-center justify-end w-60 border rounded-[12px] py-4 px-6 h-fit">
+      <div className="flex gap-6 justify-center">
+        {/* <div className="flex gap-3 items-center justify-end w-60 border rounded-[12px] py-4 px-6 h-fit">
           <Icons.pdf />
 
           <div className="flex flex-col">
@@ -22,7 +22,7 @@ export default function AutoFillForm() {
             </p>
             <p className="text-sm text-[#475467]">200 KB</p>
           </div>
-        </div>
+        </div> */}
         <div className="flex flex-col gap-3 items-center w-72  border rounded-[12px] py-4 px-6">
           <div className="border rounded-[8px] bg-white shadow-[0px_1px_2px_0px_#1018280D] h-10 w-10 flex justify-center items-center">
             <Icons.cloudUpload />
@@ -44,7 +44,11 @@ export default function AutoFillForm() {
       <p className="text-center text-lg text-black font-semibold">OR</p>
 
       <div className="flex justify-center">
-        <Button className="bg-[#0A66C2] rounded-[6px] h-[60px] w-fit px-11">
+        <Button
+          type="button"
+          className="bg-[#0A66C2] rounded-[6px] h-[60px] w-fit px-11"
+          disabled
+        >
           <div className="bg-white p-0.5 rounded-[2px] ">
             <Icons.linkedin />
           </div>{" "}

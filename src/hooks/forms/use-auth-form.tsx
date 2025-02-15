@@ -2,6 +2,7 @@ import { loginSchema, LoginSchemaType } from "@/lib/validators/auth";
 import { useUser } from "@/providers/user-context";
 import AuthServices from "@/services/auth-services";
 import CompanyServices from "@/services/company-services";
+import FileServices from "@/services/file-services";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Cookies from "js-cookie";
 import { useState } from "react";
@@ -50,10 +51,19 @@ const useAuthForm = (page: "sign-up" | "login") => {
         expires: cookieTimeOut,
       });
 
-      // TODO check email verification
+      if (page === "sign-up") {
+        navigate("/email-verification");
+        return;
+      }
+
+      if (!res?.user?.email_verified) {
+        navigate("/email-verification");
+        return;
+      }
 
       const appRole = res?.user?.app_role;
 
+      // check if employer has a company of redirect to onboarding
       if (appRole === "employer") {
         const company = await CompanyServices.getCompany();
         if (!company) {
@@ -62,10 +72,14 @@ const useAuthForm = (page: "sign-up" | "login") => {
         }
       }
 
-      if (page === "sign-up") {
-        navigate("/email-verification");
-        return;
-      }
+      //check if user has resume or redirect to onboaring
+      const resume = await FileServices.getEntityFile(
+        "CandidateResume",
+        res?.user?.id
+      );
+
+      if (!resume) return navigate(`/${appRole}/dashboard`);
+
       navigate(`/${appRole}/dashboard`);
     } catch (err: any) {
       toast.error(err?.response?.data?.message || "An error occurred");

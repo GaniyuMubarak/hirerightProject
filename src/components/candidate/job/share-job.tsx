@@ -1,7 +1,7 @@
 import { Button } from "../../ui/button";
 import Icons from "../../ui/icons";
 
-export default function ShareJob() {
+export default function ShareJob({ job }: { job: any }) {
   return (
     <div className="flex flex-col gap-4 border rounded-[6px] p-4 w-full">
       <h2 className="font-medium text-[#1B1B1C]">Share this Job</h2>

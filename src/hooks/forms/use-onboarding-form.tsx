@@ -4,10 +4,14 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router";
 import { toast } from "sonner";
+import { useCurrentUser } from "../use-current-user";
+import { useFileUpload } from "../use-file-upload";
 
 const useOnboardingForm = () => {
   const [loading, setLoading] = useState(false);
   const navigator = useNavigate();
+  const { uploadPendingFile } = useFileUpload();
+  const user = useCurrentUser();
   const form = useForm<OnboardingFormData>({
     defaultValues: {
       user: {
@@ -59,8 +63,22 @@ const useOnboardingForm = () => {
     setLoading(true);
 
     try {
-      await ProfileServices.updateProfile(data);
-      toast.success("Profile updated successfully");
+      const res = await ProfileServices.updateProfile(data);
+      if (data.profile_picture) {
+        await uploadPendingFile({
+          files: [data.profile_picture],
+          entity_id: res?.id,
+          entityType: "UserProfile",
+        });
+      }
+      if (data.resume) {
+        await uploadPendingFile({
+          files: [data.resume],
+          entity_id: user?.id,
+          entityType: "CandidateResume",
+        });
+      }
+      toast.success(res?.message || "Profile updated successfully");
       navigator("/candidate/dashboard");
     } catch (err: any) {
       toast.error(err?.response?.data?.message || "An error occurred");

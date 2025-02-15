@@ -32,7 +32,7 @@ export default function EmployerJobListing({ job = {} }: { job: any }) {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {job?.data?.data.map((job) => (
+            {job?.data?.data.map((job: any) => (
               <TableRow key={job.id}>
                 <TableCell>
                   <div className="flex flex-col justify-between h-full space-y-2">
@@ -65,7 +65,7 @@ export default function EmployerJobListing({ job = {} }: { job: any }) {
                 </TableCell>
                 <TableCell className="text-right space-x-4">
                   <div className="flex gap-4 justify-end">
-                    <Link to="/employer/jobs/applications">
+                    <Link to={`/employer/jobs/application`}>
                       <Button variant={"secondary"} className="rounded-[6px]">
                         View Applications
                       </Button>

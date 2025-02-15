@@ -1,7 +1,7 @@
+import dayjs from "dayjs";
 import React from "react";
 import Icons from "../../ui/icons";
-
-export default function JobOverview() {
+export default function JobOverview({ job }: { job: any }) {
   return (
     <div className="flex flex-col gap-4 border rounded-[6px] p-4 w-full">
       <h2 className="font-medium text-[#1B1B1C]">Job Overview</h2>
@@ -9,17 +9,17 @@ export default function JobOverview() {
         <OverviewCard
           icon={<Icons.calendar />}
           title={"Job Posted"}
-          desc={"23 Oct, 2024"}
+          desc={dayjs(job?.created_at).format("DD MMM, YYYY")}
         />
         <OverviewCard
           icon={<Icons.timer />}
           title={"Job expires"}
-          desc={"12 Nov, 2024"}
+          desc={dayjs(job?.deadline).format("DD MMM, YYYY")}
         />
         <OverviewCard
           icon={<Icons.barChart />}
           title={"Experience level"}
-          desc={"Senior Level"}
+          desc={job?.experience_level}
         />
         <OverviewCard
           icon={<Icons.wallet />}

@@ -8,11 +8,19 @@ import Icons from "../ui/icons";
 type UploadFileFormProps = {
   fieldName: string;
   className?: string;
+  fileType?: string;
+  iconClassName?: string;
+  accept?: string;
+  review?: boolean;
 };
 
 export default function UploadFileForm({
   fieldName = "image",
   className,
+  fileType = "SVG, PNG, JPG or GIF (max. 800x400px)",
+  iconClassName,
+  accept = "image/*",
+  review = true,
 }: UploadFileFormProps) {
   const { setValue, watch } = useFormContext();
   const uploadedFile = watch(fieldName);
@@ -37,13 +45,13 @@ export default function UploadFileForm({
 
   const { getRootProps, getInputProps } = useDropzone({
     onDrop,
-    accept: { "image/*": [] },
+    accept: { [accept]: [] },
     multiple: false,
   });
 
   return (
     <div>
-      {uploadedFile?.url ? (
+      {uploadedFile?.url && review ? (
         <div className={cn("relative w-72 border rounded-[12px]", className)}>
           <img
             src={uploadedFile.url}
@@ -65,7 +73,12 @@ export default function UploadFileForm({
             className
           )}
         >
-          <div className="h-10 w-10 flex justify-center items-center">
+          <div
+            className={cn(
+              "h-10 w-10 flex justify-center items-center",
+              iconClassName
+            )}
+          >
             <Icons.cloudUpload />
           </div>
           <div className="flex flex-col text-[#475467] text-center space-y-1">
@@ -75,7 +88,7 @@ export default function UploadFileForm({
               </span>{" "}
               or drag and drop
             </p>
-            <p className="text-xs">SVG, PNG, JPG or GIF (max. 800x400px)</p>
+            <p className="text-xs">{fileType}</p>
           </div>
         </div>
       )}
