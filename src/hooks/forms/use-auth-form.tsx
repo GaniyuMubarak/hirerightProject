@@ -56,17 +56,17 @@ const useAuthForm = (page: "sign-up" | "login") => {
         return;
       }
 
-      if (!res?.user?.email_verified) {
-        navigate("/email-verification");
-        return;
-      }
+      // if (!res?.user?.email_verified) {
+      //   navigate("/email-verification");
+      //   return;
+      // }
 
       const appRole = res?.user?.app_role;
 
       // check if employer has a company of redirect to onboarding
       if (appRole === "employer") {
         const company = await CompanyServices.getCompany();
-        if (!company) {
+        if (!company?.data) {
           navigate("/employer/onboarding");
           return;
         }
