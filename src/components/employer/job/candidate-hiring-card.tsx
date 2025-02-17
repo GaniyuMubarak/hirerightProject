@@ -6,9 +6,11 @@ import { Link } from "react-router";
 import Icons from "../../ui/icons";
 
 export default function CandidateHiringCard({
+  candidate,
   aiRecommended,
 }: {
   aiRecommended?: Boolean;
+  candidate: any;
 }) {
   return (
     <Link to="/employer/candidates/id">
@@ -29,10 +31,10 @@ export default function CandidateHiringCard({
             </div>
             <div className="flex flex-col justify-between h-full space-y-2">
               <span className="text-base font-medium tracking-[-0.01em] leading-none">
-                Samson Bond
+                {candidate?.candidate_name}
               </span>
               <span className="text-[#0F132499] tracking-[-0.01em] text-base">
-                UI/UX Designer
+                {candidate?.job_title}
               </span>
             </div>
           </div>

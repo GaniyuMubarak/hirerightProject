@@ -2,8 +2,19 @@ import CandidateHiringCard from "@/components/employer/job/candidate-hiring-card
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import Icons from "@/components/ui/icons";
+import CompanyServices from "@/services/company-services";
+import { useQuery } from "@tanstack/react-query";
+import { useParams } from "react-router";
 
 export default function HiringProcess() {
+  const params = useParams();
+  const { data } = useQuery({
+    queryKey: ["application-listing"],
+    queryFn: () => CompanyServices.getJobApplications(params.jobId as string),
+  });
+
+  console.log("data", data?.data);
+
   return (
     <div className="max-w-7xl mx-auto px-4 pt-8 space-y-8 ">
       <div className="flex justify-between items-center gap-4 border p-4 bg-white rounded-[8px]">
@@ -35,11 +46,9 @@ export default function HiringProcess() {
         </p>
       </header>
       <div className="flex flex-col gap-6">
-        <CandidateHiringCard aiRecommended />
-        <CandidateHiringCard aiRecommended />
-        <CandidateHiringCard aiRecommended />
-        <CandidateHiringCard />
-        <CandidateHiringCard />
+        {data?.data?.map((item: any) => (
+          <CandidateHiringCard candidate={item} key={item.id} />
+        ))}
       </div>
     </div>
   );

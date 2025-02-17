@@ -76,7 +76,10 @@ export default function App() {
                 <Route path="jobs">
                   <Route index element={<EmployerJobList />} />
                   <Route path="post" element={<PostJob />} />
-                  <Route path="applications" element={<HiringProcess />} />
+                  <Route
+                    path=":jobId/applications"
+                    element={<HiringProcess />}
+                  />
                 </Route>
                 <Route path="candidates">
                   <Route index element={<CandidatesList />} />

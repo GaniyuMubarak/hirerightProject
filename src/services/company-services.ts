@@ -13,6 +13,9 @@ const CompanyServices = {
   getStaffs: async () => {
     return requests.get("/employers/company/staffs");
   },
+  getJobApplications: async (jobId: string) => {
+    return requests.get(`/employers/jobs/${jobId}/applications`);
+  },
 };
 
 export default CompanyServices;

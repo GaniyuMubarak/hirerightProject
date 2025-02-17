@@ -77,7 +77,7 @@ export default function EmployerJobListingTable({ jobs }: { jobs: any }) {
                 </TableCell>
                 <TableCell className="text-right space-x-4">
                   <div className="flex gap-4 justify-end">
-                    <Link to={`/employer/jobs/applications`}>
+                    <Link to={`/employer/jobs/${job.id}/applications`}>
                       <Button className="rounded-[6px]">
                         View Applications
                       </Button>
