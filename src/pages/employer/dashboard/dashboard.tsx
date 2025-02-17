@@ -4,6 +4,7 @@ import { buttonVariants } from "@/components/ui/button";
 import Icons from "@/components/ui/icons";
 import { cn } from "@/lib/utils";
 import CompanyServices from "@/services/company-services";
+import JobServices from "@/services/job-services";
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "react-router";
 
@@ -13,8 +14,10 @@ export default function EmployerDashboard() {
     queryFn: () => CompanyServices.dashboard(),
   });
 
-  // console.log("data", data);
-
+  const { data: jobList } = useQuery({
+    queryKey: ["job-listing"],
+    queryFn: () => JobServices.getAllJobs(),
+  });
   return (
     <div>
       <div className="max-w-7xl mx-auto px-4 pt-8 space-y-8 ">
@@ -48,7 +51,7 @@ export default function EmployerDashboard() {
           />
         </div>
 
-        <EmployerJobListingTable />
+        <EmployerJobListingTable jobs={jobList} />
       </div>
     </div>
   );
