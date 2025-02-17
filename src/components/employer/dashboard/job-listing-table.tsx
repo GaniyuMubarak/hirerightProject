@@ -22,7 +22,7 @@ export default function EmployerJobListingTable({ jobs }: { jobs: any }) {
         </div>
 
         <Link
-          to="/candidate/jobs"
+          to="/employer/jobs"
           className={cn(
             buttonVariants({ variant: "outline" }),
             "border-[#D0D5DD] shadow-[0px_1px_2px_0px_#1018280D] h-9"
