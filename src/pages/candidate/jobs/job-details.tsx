@@ -28,7 +28,7 @@ export default function JobDetails() {
     <>
       <ApplyDialog />
       <div className="max-w-7xl mx-auto px-4 pt-8 space-y-8 ">
-        <div className="border">
+        <div className="border max-lg:divide-y">
           <div className="p-4">
             <JobTitle job={job} />
           </div>

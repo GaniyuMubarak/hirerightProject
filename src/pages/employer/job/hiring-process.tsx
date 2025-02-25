@@ -13,7 +13,7 @@ export default function HiringProcess() {
     queryFn: () => CompanyServices.getJobApplications(params.jobId as string),
   });
 
-  console.log("data", data?.data);
+  // console.log("data", data?.data);
 
   return (
     <div className="max-w-7xl mx-auto px-4 pt-8 space-y-8 ">

@@ -22,11 +22,11 @@ export default function BasicInfoForm() {
         </h2>
       </header>
 
-      <div className="mt-2 flex gap-8">
-        <UploadFileForm fieldName="profile_picture" />
+      <div className="mt-2 flex max-lg:flex-col gap-8">
+        <UploadFileForm fieldName="profile_picture" className="max-lg:w-full" />
 
         <div className="w-full">
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid lg:grid-cols-2 gap-4">
             <FormField
               control={form.control}
               name="user.first_name"
@@ -94,7 +94,7 @@ export default function BasicInfoForm() {
               control={form.control}
               name="user.title"
               render={({ field }) => (
-                <FormItem className="col-span-2">
+                <FormItem className="lg:col-span-2">
                   <FormLabel>Title/Headline</FormLabel>
                   <FormControl>
                     <Input placeholder="Lead Product designer" {...field} />
@@ -108,7 +108,7 @@ export default function BasicInfoForm() {
               control={form.control}
               name="user.address"
               render={({ field }) => (
-                <FormItem className="col-span-2">
+                <FormItem className="lg:col-span-2">
                   <FormLabel>Address</FormLabel>
                   <FormControl>
                     <Input
@@ -125,7 +125,7 @@ export default function BasicInfoForm() {
               control={form.control}
               name="user.website"
               render={({ field }) => (
-                <FormItem className="col-span-2">
+                <FormItem className="lg:col-span-2">
                   <FormLabel>Website link</FormLabel>
                   <FormControl>
                     <Input placeholder="joe.com" {...field} />
@@ -139,7 +139,7 @@ export default function BasicInfoForm() {
               control={form.control}
               name="user.bio"
               render={({ field }) => (
-                <FormItem className="col-span-2">
+                <FormItem className="lg:col-span-2">
                   <FormLabel>Biography</FormLabel>
                   <FormControl>
                     <Textarea

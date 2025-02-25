@@ -7,9 +7,9 @@ export default function JobTitle({ job }: { job: any }) {
   const { open } = useDialog("apply-dialog");
 
   return (
-    <div className="flex items-center justify-between gap-4">
+    <div className="flex max-lg:flex-col lg:items-center justify-between gap-4">
       <div className="flex items-center gap-3">
-        <div className="h-[100px] w-[100px]">
+        <div className="w-10 h-10 lg:h-[100px] lg:w-[100px]">
           <img
             src="/logo.svg"
             alt="Logo"
@@ -27,7 +27,7 @@ export default function JobTitle({ job }: { job: any }) {
         </div>
       </div>
 
-      <div className="flex gap-4">
+      <div className="flex gap-4 max-lg:justify-end">
         <Button variant={"secondary"} className="rounded-[6px] text-[#1B1B1C] ">
           <Icons.bookmarkSm className="min-w-6 min-h-6" />
         </Button>

@@ -7,9 +7,9 @@ export default function Resume() {
         Experience and Certifications
       </h2>
       <div className="space-y-3">
-        <div className="flex items-center justify-between">
-          <div className="flex gap-2 text-[#1B1B1C] text-lg font-medium">
-            <h3>Product Designer</h3> |{" "}
+        <div className="flex max-lg:flex-col lg:items-center justify-between">
+          <div className="flex max-lg:flex-col gap-2 text-[#1B1B1C] text-lg font-medium">
+            <h3>Product Designer</h3> <span className="max-lg:hidden">|</span>
             <span>Compugeen Africa, Lagos, Nigeria</span>
           </div>
           <span>Jan 2023 - Oct 2023</span>
@@ -55,14 +55,13 @@ export default function Resume() {
 export function ResumeInfoCard() {
   return (
     <div className="space-y-3">
-      <div className="flex items-center justify-between">
-        <div className="flex gap-2 text-[#1B1B1C] text-lg font-medium">
-          <h3>Product Designer</h3> |{" "}
+      <div className="flex max-lg:flex-col lg:items-center justify-between">
+        <div className="flex max-lg:flex-col gap-2 text-[#1B1B1C] text-lg font-medium">
+          <h3>Product Designer</h3> <span className="max-lg:hidden">|</span>
           <span>Compugeen Africa, Lagos, Nigeria</span>
         </div>
-        <span className="font-medium">Jan 2023 - Oct 2023</span>
+        <span>Jan 2023 - Oct 2023</span>
       </div>
-
       <p className="text-[#1B1B1C] ">
         Responsible for a variety of tasks and roles. Some roles and
         responsibilities include:

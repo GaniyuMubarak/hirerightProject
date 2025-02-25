@@ -5,9 +5,9 @@ import { Link } from "react-router";
 
 export default function CandidateHeader() {
   return (
-    <div className="flex justify-between items-center gap-4">
+    <div className="flex max-lg:flex-col justify-between lg:items-center gap-6">
       <div className="flex items-center gap-3">
-        <div className="h-[100px] w-[100px] rounded-[6px] shadow-[0px_3px_4px_-1px_#10182814]">
+        <div className="h-10 lg:h-[100px] w-10 lg:w-[100px] rounded-[6px] shadow-[0px_3px_4px_-1px_#10182814]">
           <img
             src="/logo.svg"
             alt="Logo"
@@ -23,7 +23,7 @@ export default function CandidateHeader() {
       </div>
       <div className="flex gap-4 justify-end">
         <Link to="/employer/jobs/applications">
-          <Button className="rounded-[6px]">View Applications</Button>
+          <Button className="rounded-[6px]">Start Hiring Process</Button>
         </Link>
         <Button variant={"ghost"} className=" border-b rounded-none">
           <Icons.more className="min-h-6 min-w-6" />

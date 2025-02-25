@@ -26,8 +26,10 @@ export default function JobTitleForm() {
 
   return (
     <div className="">
-      <header className="space-y-1 border-b pb-2 w-full">
-        <h2 className="text-xl font-medium text-[#020C10]">Job Title</h2>
+      <header className="space-y-1 border-b pb-2 w-full max-lg:pb-2">
+        <h2 className="max-lg:hidden text-xl font-medium text-[#020C10]">
+          Job Title
+        </h2>
       </header>
       <div className="mt-2 flex gap-8">
         <div className="w-full">

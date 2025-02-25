@@ -12,21 +12,26 @@ export default function CandidatesList() {
       <Tabs defaultValue="all" className="w-full space-y-8">
         <div className="flex justify-between items-end gap-4">
           <TabsList className="border-b w-full justify-start ">
-            <TabsTrigger value="all">All Candidates (234)</TabsTrigger>
+            <TabsTrigger value="all">All (234)</TabsTrigger>
             <TabsTrigger value="shotlisted">Shortlisted</TabsTrigger>
-            <TabsTrigger value="candidates">Candidates</TabsTrigger>
+            <TabsTrigger value="candidates">Dropped</TabsTrigger>
           </TabsList>
 
-          <Button variant={"outline"} className="rounded-[1px] px-6">
+          <Button
+            variant={"outline"}
+            className="rounded-[1px] lg:px-6 max-lg:border-none"
+          >
             <Icons.filter />
-            Sort
+            <span className="max-lg:hidden">Sort</span>
           </Button>
         </div>
         <TabsContent value="all">
           <div className="space-y-6">
-            <header className="space-y-1 border-b pb-5">
-              <h1 className="text-2xl font-semibold">AI Recommended for you</h1>
-              <p className="text-[#475467] text-sm">
+            <header className="lg:space-y-1 border-b pb-5">
+              <h1 className="text-lg lg:text-2xl font-semibold">
+                AI Recommended for you
+              </h1>
+              <p className="text-[#475467] text-xs lg:text-sm">
                 Best AI matches from HIRE RIGHT
               </p>
             </header>

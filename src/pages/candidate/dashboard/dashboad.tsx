@@ -21,8 +21,8 @@ export default function Dashboard() {
     <div>
       <ApplyDialog />
       <div className="max-w-7xl mx-auto px-4 pt-8 space-y-8 ">
-        <header className="space-y-3 border-b pb-5">
-          <h1 className="text-3xl font-medium">
+        <header className="space-y-1 lg:space-y-3  border-b pb-5">
+          <h1 className="text-2xl lg:text-3xl font-medium">
             Welcome back, {user?.first_name}
           </h1>
           <p className="text-[#475467] text-sm">
@@ -30,21 +30,21 @@ export default function Dashboard() {
           </p>
         </header>
 
-        <div className="flex gap-6 items-center w-full">
+        <div className="flex gap-6 items-center w-full overflow-x-scroll scroll-thumb-hidden">
           <StatsCard
-            className="bg-[#78439326] border-[#784393]"
+            className="bg-[#78439326] border-[#784393]  min-w-[280px]"
             value={dashboard?.data?.applied_jobs}
             description={"Applied Jobs"}
             icon={<Icons.briefcase />}
           />
           <StatsCard
-            className="bg-[#5E934326] border-[#5E9343]"
+            className="bg-[#5E934326] border-[#5E9343]  min-w-[280px]"
             value={dashboard?.data?.saved_jobs}
             description={"Saved Jobs"}
             icon={<Icons.bookmark />}
           />
           <StatsCard
-            className="bg-[#E2C46526] border-[#E2C465]"
+            className="bg-[#E2C46526] border-[#E2C465]  min-w-[280px]"
             value={dashboard?.data?.job_alerts}
             description={"Job Alerts"}
             icon={<Icons.bell className="size-8 text-[#E2C465] stroke-2" />}

@@ -15,10 +15,10 @@ export default function ResumeForm() {
         </h2>
       </header>
 
-      <div className="grid grid-cols-[240px_2fr] gap-6 mt-2">
+      <div className="grid lg:grid-cols-[240px_2fr] gap-6 mt-2">
         <div>
           {resume && (
-            <div className="flex gap-3 items-center justify-end w-60 border rounded-[12px] py-4 px-6 h-fit">
+            <div className="flex gap-3 items-center justify-end lg:w-60 border rounded-[12px] py-4 px-6 h-fit">
               {resume.type ===
               "application/vnd.openxmlformats-officedocument.wordprocessingml.document" ? (
                 <Icons.docx className="min-w-6" />
@@ -39,7 +39,7 @@ export default function ResumeForm() {
         </div>
         <UploadFileForm
           fieldName="resume"
-          className="bg-white py-4 px-6"
+          className="bg-white py-4 px-6 max-lg:w-full"
           fileType="PDF, DOCX or TXT"
           iconClassName="border rounded-[8px] bg-white shadow-[0px_1px_2px_0px_#1018280D]"
           accept="application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document,text/plain"

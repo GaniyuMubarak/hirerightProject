@@ -25,7 +25,7 @@ export default function ContactInfo() {
           title={"Location"}
           desc={"Lagos, Nogeria"}
         />
-        <div className="col-span-3">
+        <div className="lg:col-span-3">
           <ContactCard
             icon={<Icons.link />}
             title={"Website"}

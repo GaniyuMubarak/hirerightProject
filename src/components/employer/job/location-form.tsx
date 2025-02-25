@@ -35,7 +35,7 @@ export default function LocationForm() {
       <div className="mt-2 flex gap-8">
         <div className="w-full">
           <div className="grid gap-6">
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid lg:grid-cols-2 gap-4">
               <FormField
                 control={control}
                 name="location"
@@ -80,7 +80,7 @@ export default function LocationForm() {
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Remote Work Regions</FormLabel>
-                    <div className="grid grid-cols-3 gap-4">
+                    <div className="grid grid-cols-2 lg:grid-cols-3 gap-4">
                       {remoteRegions.map((region) => (
                         <FormItem
                           key={region.value}

@@ -36,7 +36,7 @@ export default function SalaryForm() {
       <div className="mt-2 flex gap-8">
         <div className="w-full">
           <div className="grid gap-4">
-            <div className="grid grid-cols-3 gap-4">
+            <div className="grid lg:grid-cols-3 gap-4">
               <FormField
                 control={control}
                 name="salary_min"

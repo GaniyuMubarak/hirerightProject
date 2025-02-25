@@ -124,3 +124,13 @@ html {
 .color {
   background-color: hsl(216, 18%, 34%);
 }
+
+.scroll-thumb-hidden::-webkit-scrollbar {
+  display: none;
+}
+
+/* Hide scrollbar for IE, Edge and Firefox */
+.scroll-thumb-hidden {
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+}

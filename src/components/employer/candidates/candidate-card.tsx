@@ -13,7 +13,7 @@ export default function CandidateCard({
     <Link to="/employer/candidates/id">
       <div
         className={cn(
-          "space-y-6 px-4 py-6 border rounded-[6px]",
+          "space-y-4 lg:space-y-6 px-4 p-4 lg:py-6 border rounded-[6px]",
           aiRecommended && "bg-[#F8F8FD]"
         )}
       >
@@ -44,7 +44,6 @@ export default function CandidateCard({
             </span>
           </div>
         </div>
-
         <Separator />
         <ul className="space-y-4 list-disc list-inside">
           <li>7+ Years of Experience</li>

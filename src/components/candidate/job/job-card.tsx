@@ -14,7 +14,7 @@ export default function JobCard({
     <Link to={`/candidate/jobs/${job.id}`}>
       <div
         className={cn(
-          "space-y-4 px-4 py-6 border rounded-[6px]",
+          "space-y-4 px-4 py-4 lg:py-6 border rounded-[6px]",
           aiRecommended && "bg-[#F8F8FD]"
         )}
       >
@@ -22,7 +22,7 @@ export default function JobCard({
           <div className="flex justify-end text-[#175CD3] text-sm">
             <div className="flex items-center gap-1 bg-[#EFF8FF] border border-[#B2DDFF] rounded-[4px] px-3 py-1.5">
               <Icons.bot />
-              <span>AI-recommended </span>
+              <span className="max-lg:hidden">AI-recommended </span>
               <Icons.stars />
             </div>
           </div>

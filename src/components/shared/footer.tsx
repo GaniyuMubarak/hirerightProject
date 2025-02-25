@@ -27,11 +27,11 @@ const footetlinks = [
 export default function Footer() {
   return (
     <div className="bg-[#F8F8FD] ">
-      <div className="max-w-7xl mx-auto px-4 py-6 flex justify-between items-center">
-        <div className="w-1/6">
+      <div className="max-w-7xl mx-auto px-4 py-6 flex max-lg:flex-col max-lg:gap-16 justify-between items-center">
+        <div className="lg:w-1/6">
           <img src="/logo.svg" alt="Logo" className="size-8 " />
         </div>
-        <ul className="flex items-center justify-center gap-6 w-4/6">
+        <ul className="flex max-lg:flex-col  items-center justify-center gap-6 w-4/6">
           {footetlinks.map((link) => (
             <li
               key={link.title}
@@ -41,7 +41,7 @@ export default function Footer() {
             </li>
           ))}
         </ul>
-        <div className="flex gap-6 items-center justify-end w-1/6">
+        <div className="flex gap-6 items-center justify-end lg:w-1/6">
           <a href="#" target="_blank">
             <Icons.twitter />
           </a>

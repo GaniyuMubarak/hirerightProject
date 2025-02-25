@@ -15,8 +15,10 @@ export default function PostJob() {
 
   return (
     <div>
-      <div className="max-w-5xl mx-auto pt-6">
-        <h1 className="text-[28px] font-semibold text-[#1B1B1C]">Post a Job</h1>
+      <div className="max-w-5xl mx-auto px-5 pt-6">
+        <h1 className="text-lg lg:text-[28px] font-semibold text-[#1B1B1C] ">
+          Post a Job
+        </h1>
 
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
@@ -31,7 +33,7 @@ export default function PostJob() {
             <div className="flex justify-end">
               <Button
                 type="submit"
-                className="rounded-[6px] px-6"
+                className="rounded-[6px] px-6 max-lg:w-full"
                 disabled={form.formState.isSubmitting}
               >
                 Proceed{" "}

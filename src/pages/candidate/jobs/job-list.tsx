@@ -56,8 +56,10 @@ export default function JobList() {
 
       <div className={cn("space-y-4", winLocation?.search !== "" && "hidden")}>
         <header className="space-y-1 border-b pb-5">
-          <h1 className="text-2xl font-semibold">AI Recommended for you</h1>
-          <p className="text-[#475467] text-sm">
+          <h1 className="text-lg lg:text-2xl font-semibold">
+            AI Recommended for you
+          </h1>
+          <p className="text-[#475467] text-xs lg:text-sm">
             Best AI matches from HIRE RIGHT
           </p>
         </header>
@@ -69,8 +71,10 @@ export default function JobList() {
       </div>
       <div className="space-y-4">
         <header className="space-y-1 border-b pb-5">
-          <h1 className="text-2xl font-semibold">Jobs for You</h1>
-          <p className="text-[#475467] text-sm">Get the right job for you.</p>
+          <h1 className="text-lg lg:text-2xl font-semibold">Jobs for You</h1>
+          <p className="text-[#475467] text-xs lg:text-sm">
+            Get the right job for you.
+          </p>
         </header>
         <div className="grid lg:grid-cols-3 gap-6">
           {jobList?.data?.data?.map((job: any) => (

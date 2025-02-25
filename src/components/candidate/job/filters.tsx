@@ -49,12 +49,15 @@ export default function Filters() {
   };
 
   return (
-    <form onSubmit={handleSearch} className="px-4 flex items-center divide-x shadow-[0px_2px_8px_0px_#1A1A1A1F] rounded-[6px]">
-      <div className="flex items-center w-full px-4">
+    <form
+      onSubmit={handleSearch}
+      className="px-4 flex items-center divide-x shadow-[0px_2px_8px_0px_#1A1A1A1F] rounded-[6px]"
+    >
+      <div className="flex items-center w-full lg:px-4">
         <Icons.search />
         <Input
-          placeholder="Search by: Job title, Position or Keywords..."
-          className="h-20 focus:outline-none focus-visible:ring-0 border-none shadow-none w-full text-base"
+          placeholder="Search"
+          className="h-14 lg:h-20 focus:outline-none focus-visible:ring-0 border-none shadow-none w-full text-base"
           value={search.q}
           onChange={(e) => handleInputChange("q", e.target.value)}
         />
@@ -63,13 +66,13 @@ export default function Filters() {
         <Icons.locationOutlined />
         <Input
           placeholder="Location"
-          className="h-20 focus:outline-none focus-visible:ring-0 border-none shadow-none w-full text-base"
+          className="h-14 lg:h-20 focus:outline-none focus-visible:ring-0 border-none shadow-none w-full text-base"
           value={search.location}
           onChange={(e) => handleInputChange("location", e.target.value)}
         />
       </div>
 
-      <div className="flex gap-4">
+      <div className="flex gap-4 max-lg:hidden">
         <Button
           type="button"
           variant={"secondary"}

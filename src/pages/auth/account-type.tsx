@@ -6,7 +6,7 @@ export default function AccountTypePage() {
   return (
     <div className="grid min-h-svh lg:grid-cols-2 ">
       <div className="flex flex-col gap-4 p-6 md:p-10">
-        <div className="flex justify-center gap-2 md:justify-start">
+        <div className="flex  gap-2 md:justify-start">
           <Link
             to="/"
             className="flex items-center gap-2 text-[#AFAEAD] text-[22px] font-semibold"
@@ -15,8 +15,8 @@ export default function AccountTypePage() {
             Logo
           </Link>
         </div>
-        <div className="flex flex-1 items-center justify-center mt-8">
-          <div className="w-full max-w-[500px] border p-8 rounded-lg">
+        <div className="flex flex-1 lg:items-center justify-center mt-8 max-lg:mt-20">
+          <div className="w-full max-w-[500px] border p-4 lg:p-8 rounded-lg">
             <AccountTypeForm />
           </div>
         </div>

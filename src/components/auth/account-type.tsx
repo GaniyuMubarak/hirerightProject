@@ -40,8 +40,8 @@ export function AccountTypeForm({
         {...props}
         className="space-y-8"
       >
-        <div className="flex flex-col items-center gap-2 text-center">
-          <h1 className="text-4xl font-medium text-[#020C10]">
+        <div className="flex flex-col items-center lg:gap-2 text-center">
+          <h1 className="text-xl lg:text-4xl font-medium text-[#020C10]">
             Welcome to{" "}
             <span className="text-primary font-abhaya font-extrabold">
               Hire Right

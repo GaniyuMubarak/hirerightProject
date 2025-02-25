@@ -24,10 +24,10 @@ export default function MyJobList({ job = {} }: { job: any }) {
         <Table>
           <TableHeader className="bg-[#F9FAFB]">
             <TableRow>
-              <TableHead className="w-[22%] ">Job/s</TableHead>
-              <TableHead>company Name</TableHead>
-              <TableHead>Applied At</TableHead>
-              <TableHead>Status</TableHead>
+              <TableHead className="lg:w-[22%] w-[60%] ">Job</TableHead>
+              <TableHead className="">Company</TableHead>
+              <TableHead className="max-lg:hidden">Applied At</TableHead>
+              <TableHead className="max-lg:hidden">Status</TableHead>
               <TableHead className="text-right"></TableHead>
             </TableRow>
           </TableHeader>
@@ -36,18 +36,18 @@ export default function MyJobList({ job = {} }: { job: any }) {
               <TableRow key={job.id}>
                 <TableCell>{job.job_title}</TableCell>
                 <TableCell>{job.company_name}</TableCell>
-                <TableCell>
+                <TableCell className="max-lg:hidden">
                   {dayjs(job.applied_at).format("MMM DD, YYYY")}
                 </TableCell>
 
-                <TableCell>
+                <TableCell className="max-lg:hidden">
                   <Badge className="capitalize">{job.status}</Badge>
                 </TableCell>
                 <TableCell className="text-right space-x-4">
                   <div className="flex gap-4 justify-end">
                     <Link to={`/candidate/jobs/${job.job_id}`}>
                       <Button variant={"secondary"} className="rounded-[6px]">
-                        View Application
+                        View <span className="max-lg:hidden">Application</span>
                       </Button>
                     </Link>
                   </div>

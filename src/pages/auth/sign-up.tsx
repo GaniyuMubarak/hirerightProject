@@ -6,11 +6,11 @@ export default function SignUpPage() {
   return (
     <div className="grid min-h-svh lg:grid-cols-2 ">
       <div className="flex flex-col gap-4 p-6 md:p-10">
-        <div className="flex justify-center gap-2 md:justify-start">
+        <div className="flex  gap-2 md:justify-start">
           <Logo href="/" />
         </div>
-        <div className="flex flex-1 items-center justify-center">
-          <div className="w-full max-w-[500px] p-8 rounded-lg">
+        <div className="flex flex-1 lg:items-center justify-center max-lg:mt-20">
+          <div className="w-full lg:max-w-[500px] lg:p-8 rounded-lg">
             <SignUpForm />
           </div>
         </div>
