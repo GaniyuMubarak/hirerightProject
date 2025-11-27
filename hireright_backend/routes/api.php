@@ -37,20 +37,6 @@ Route::get('/test-log', function () {
     return 'Log test complete.';
 });
 
-Route::post('/direct-register', function(Request $request) {
-    $user = \App\Models\User::create([
-        'first_name' => $request->first_name,
-        'last_name' => $request->last_name,
-        'email' => $request->email,
-        'password' => Hash::make($request->password),
-        'app_role' => $request->app_role ?? 'candidate',
-    ]);
-    
-    return response()->json([
-        'message' => 'Direct registration works!',
-        'user' => $user
-    ], 201);
-});
 
 // Auth Routes
 Route::prefix('auth')->group(function () {
