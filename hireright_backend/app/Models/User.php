@@ -5,12 +5,11 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-use Tymon\JWTAuth\Contracts\JWTSubject;
+use Laravel\Sanctum\HasApiTokens;
 
-
-class User extends Authenticatable implements JWTSubject
+class User extends Authenticatable
 {
-    use HasFactory, Notifiable;
+    use HasFactory, Notifiable, HasApiTokens;
 
     protected $fillable = [
         'first_name',
@@ -45,7 +44,11 @@ class User extends Authenticatable implements JWTSubject
         'facebook_url',
         'instagram_url',
         'youtube_url',
-        'tiktok_url'
+        'tiktok_url',
+        'email_otp_expiry',
+        'phone_otp_expiry',
+        'password_otp_expiry',
+        'login_otp_expiry',
     ];
 
     protected $hidden = [
@@ -70,19 +73,9 @@ class User extends Authenticatable implements JWTSubject
         'password' => 'hashed',
     ];
 
-    public function getJWTIdentifier()
-    {
-        return $this->getKey();
-    }
-
     public function company()
     {
         return $this->belongsTo(Company::class, 'company_id');
-    }
-
-    public function getJWTCustomClaims()
-    {
-        return [];
     }
 
     public function hasRole($role)

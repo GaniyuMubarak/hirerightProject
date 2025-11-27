@@ -26,6 +26,8 @@ use App\Http\Controllers\HealthController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\UserProfileController;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 
 // Health check
 Route::get('/health', [HealthController::class, 'check']);
@@ -35,18 +37,35 @@ Route::get('/test-log', function () {
     return 'Log test complete.';
 });
 
+Route::post('/direct-register', function(Request $request) {
+    $user = \App\Models\User::create([
+        'first_name' => $request->first_name,
+        'last_name' => $request->last_name,
+        'email' => $request->email,
+        'password' => Hash::make($request->password),
+        'app_role' => $request->app_role ?? 'candidate',
+    ]);
+    
+    return response()->json([
+        'message' => 'Direct registration works!',
+        'user' => $user
+    ], 201);
+});
+
 // Auth Routes
 Route::prefix('auth')->group(function () {
     Route::post('register', [AuthController::class, 'register']);
     Route::post('login', [AuthController::class, 'login']);
-    Route::post('logout', [AuthController::class, 'logout'])->middleware('auth:api');
-    Route::post('refresh', [AuthController::class, 'refresh'])->middleware('auth:api');
-    Route::post('forgot/password', [AuthController::class, 'forgotPassword']);
-    Route::post('reset/password', [AuthController::class, 'resetPassword']);
+    Route::post('logout', [AuthController::class, 'logout'])->middleware('auth:sanctum');
+    Route::post('validate/email-otp', [AuthController::class, 'validateEmailOtp']);
+    Route::post('validate/phone-otp', [AuthController::class, 'validatePhoneOtp']);
+    Route::post('resend-otp', [AuthController::class, 'resendOtp']);
+    Route::post('request-password-reset', [AuthController::class, 'requestPasswordReset']);
+    Route::post('reset-password', [AuthController::class, 'resetPassword']);
 });
 
 // Candidate Routes
-Route::middleware(['auth:api', 'can:candidate'])->prefix('candidates')->group(function () {
+Route::middleware(['auth:sanctum', 'can:candidate'])->prefix('candidates')->group(function () {
     // Company Dashboard
     Route::get('dashboard', [CandidateController::class, 'dashboard']);
     //
@@ -95,7 +114,7 @@ Route::middleware(['auth:api', 'can:candidate'])->prefix('candidates')->group(fu
 });
 
 // Employer Routes
-Route::middleware(['auth:api', 'can:employer'])->prefix('employers')->group(function () {
+Route::middleware(['auth:sanctum', 'can:employer'])->prefix('employers')->group(function () {
     // Company Dashboard
     Route::get('dashboard', [CompanyController::class, 'dashboard']);
     // Company Profile
@@ -135,7 +154,7 @@ Route::middleware(['auth:api', 'can:employer'])->prefix('employers')->group(func
 });
 
 // Admin Routes
-Route::middleware(['auth:api', 'role:admin'])->prefix('admin')->group(function () {
+Route::middleware(['auth:sanctum', 'role:admin'])->prefix('admin')->group(function () {
     Route::apiResource('users', UserController::class);
     Route::put('users/{userId}/status', [UserController::class, 'updateStatus']);
     Route::get('users/{userId}/activity', [UserController::class, 'activityLog']);
@@ -159,12 +178,12 @@ Route::middleware(['auth:api', 'role:admin'])->prefix('admin')->group(function (
 });
 
 // Common Routes
-Route::middleware('auth:api')->group(function () {
+Route::middleware('auth:sanctum')->group(function () {
     Route::get('profile', [UserProfileController::class, 'viewProfile']);
     Route::put('profile', [UserProfileController::class, 'updateProfile']);
 });
 
-Route::middleware(['auth:api'])->prefix('storage')->group(function () {
+Route::middleware(['auth:sanctum'])->prefix('storage')->group(function () {
     // Initialize & confirm file upload 
     Route::prefix('upload')->group(function () {
         Route::post('init', [FileStorageController::class, 'initializeUpload']);

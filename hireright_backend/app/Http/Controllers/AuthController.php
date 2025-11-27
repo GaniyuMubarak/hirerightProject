@@ -7,7 +7,6 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
-use Tymon\JWTAuth\Facades\JWTAuth;
 use App\Jobs\SendOtpEmailJob;
 
 class AuthController extends Controller
@@ -20,18 +19,22 @@ class AuthController extends Controller
             'email' => 'required|email',
             'password' => 'required|string',
         ]);
-        // Attempt to authenticate the user using JWT
-        if (!$token = JWTAuth::attempt($request->only('email', 'password'))) {
+        
+        $user = User::where('email', $request->email)->first();
+        
+        if (!$user || !Hash::check($request->password, $user->password)) {
             return response()->json(['message' => 'Invalid email or password.'], 401);
         }
-        // Get the authenticated user
-        $user = JWTAuth::user();
+        
         // Update login count and last seen
         $user->update([
             'last_seen' => now(),
             'login_count' => $user->login_count + 1,
         ]);
-        // Return the JWT token and user info
+        
+        // Create token using Sanctum
+        $token = $user->createToken('auth_token')->plainTextToken;
+        
         return response()->json([
             'token' => $token,
             'user' => $user,
@@ -55,7 +58,7 @@ class AuthController extends Controller
         }
 
         $otp = rand(100000, 999999);
-        //
+        
         $user = User::create([
             'first_name' => $request->first_name,
             'last_name' => $request->last_name,
@@ -65,8 +68,8 @@ class AuthController extends Controller
             'password' => Hash::make($request->password),
             'app_role' => $request->app_role,
             'email_verified' => false,
-            'email_otp' => $otp,
-            'phone_otp' => rand(100000, 999999),
+            'email_otp' => Hash::make($otp),
+            'phone_otp' => Hash::make(rand(100000, 999999)),
             'email_otp_expiry' => now()->addMinutes(10),
             'phone_otp_expiry' => now()->addMinutes(10),
         ]);
@@ -74,7 +77,8 @@ class AuthController extends Controller
         // Dispatch the OTP email job asynchronously
         SendOtpEmailJob::dispatch($user, $otp);
 
-        $token = JWTAuth::attempt(['email' => $request->email, 'password' => $request->password]);
+        // Create token using Sanctum
+        $token = $user->createToken('auth_token')->plainTextToken;
 
         return response()->json([
             'token' => $token,
@@ -214,8 +218,9 @@ class AuthController extends Controller
 
     public function logout(Request $request)
     {
-        // Invalidate the token so it can no longer be used
-        JWTAuth::invalidate(JWTAuth::getToken());
+        // Delete the current access token
+        $request->user()->currentAccessToken()->delete();
+        
         return response()->json(['message' => 'Logged out successfully.']);
     }
 }
