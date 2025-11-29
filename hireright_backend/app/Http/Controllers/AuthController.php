@@ -67,7 +67,7 @@ class AuthController extends Controller
             'signup_strategy' => 'form',
             'password' => Hash::make($request->password),
             'app_role' => $request->app_role,
-            'email_verified' => false,
+            'email_verified' => false,        
             'email_otp' => Hash::make($otp),
             'phone_otp' => Hash::make(rand(100000, 999999)),
             'email_otp_expiry' => now()->addMinutes(10),
