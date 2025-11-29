@@ -100,6 +100,7 @@ Route::middleware(['auth:sanctum', 'can:candidate'])->prefix('candidates')->grou
 });
 
 // Employer Routes
+// Employer Routes
 Route::middleware(['auth:sanctum', 'can:employer'])->prefix('employers')->group(function () {
     // Company Dashboard
     Route::get('dashboard', [CompanyController::class, 'dashboard']);
@@ -123,7 +124,13 @@ Route::middleware(['auth:sanctum', 'can:employer'])->prefix('employers')->group(
     Route::delete('jobs/{jobId}/test', [CompanyJobController::class, 'removeTest']);
 
     // Test Management
-    Route::apiResource('tests', CompanyTestController::class);
+    Route::apiResource('tests', CompanyTestController::class)->names([
+        'index' => 'company.tests.index',
+        'store' => 'company.tests.store',
+        'show' => 'company.tests.show',
+        'update' => 'company.tests.update',
+        'destroy' => 'company.tests.destroy',
+    ]);
     Route::post('tests/{test}/questions', [CompanyTestController::class, 'addQuestion']);
     Route::put('tests/{test}/questions/{question}', [CompanyTestController::class, 'updateQuestion']);
     Route::delete('tests/{test}/questions/{question}', [CompanyTestController::class, 'removeQuestion']);
@@ -138,7 +145,6 @@ Route::middleware(['auth:sanctum', 'can:employer'])->prefix('employers')->group(
 
     Route::get('dashboard/stats', [CompanyController::class, 'dashboard']);
 });
-
 // Admin Routes
 Route::middleware(['auth:sanctum', 'role:admin'])->prefix('admin')->group(function () {
     Route::apiResource('users', UserController::class);
@@ -149,7 +155,14 @@ Route::middleware(['auth:sanctum', 'role:admin'])->prefix('admin')->group(functi
     Route::put('companies/{company}/verify', [AdminCompanyController::class, 'verifyCompany']);
     Route::put('companies/{company}/status', [AdminCompanyController::class, 'updateStatus']);
 
-    Route::apiResource('tests', AdminTestController::class);
+    // Route::apiResource('tests', AdminTestController::class);
+    Route::apiResource('tests', AdminTestController::class)->names([
+    'index' => 'admin.tests.index',
+    'store' => 'admin.tests.store',
+    'show' => 'admin.tests.show',
+    'update' => 'admin.tests.update',
+    'destroy' => 'admin.tests.destroy',
+]);
     Route::put('tests/{test}/status', [AdminTestController::class, 'updateStatus']);
 
     Route::get('settings', [SettingController::class, 'index']);
