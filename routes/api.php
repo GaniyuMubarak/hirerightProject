@@ -37,15 +37,12 @@ Route::get('/test-log', function () {
     return 'Log test complete.';
 });
 
-Route::get('/debug-env', function() {
+Route::get('/debug-jobs', function() {
     return response()->json([
-        'PORT_env' => env('PORT'),
-        'PORT_server' => $_SERVER['PORT'] ?? 'not set',
-        'all_env' => [
-            'APP_ENV' => env('APP_ENV'),
-            'DB_CONNECTION' => env('DB_CONNECTION'),
-            'DB_HOST' => env('DB_HOST'),
-        ]
+        'pending_jobs' => DB::table('jobs')->count(),
+        'failed_jobs' => DB::table('failed_jobs')->count(),
+        'recent_jobs' => DB::table('jobs')->latest('id')->take(5)->get(),
+        'recent_failed' => DB::table('failed_jobs')->latest('id')->take(5)->get()
     ]);
 });
 // Auth Routes
