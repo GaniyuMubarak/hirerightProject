@@ -89,26 +89,46 @@ class AuthController extends Controller
 
     // Email OTP validation
     public function validateEmailOtp(Request $request)
-    {
-        // Validate the request input
-        $request->validate([
-            'email' => 'required|email',
-            'otp' => 'required|string',
-        ]);
-        // Retrieve the user by email
-        $user = User::where('email', $request->email)->first();
-        // Check if the user exists, OTP matches, and the OTP is not expired
-        if (!$user || !Hash::check($request->otp, $user->email_otp) || $user->email_otp_expiry < now()) {
-            return response()->json(['message' => 'Invalid or expired OTP.'], 422);
-        }
-        // Update the user's email verification status
-        $user->update([
-            'email_verified' => true,
-            'email_otp' => null, // Clear the OTP after successful validation
-            'email_otp_expiry' => null
-        ]);
-        return response()->json(['message' => 'Email verified successfully.']);
+{
+    $request->validate([
+        'email' => 'required|email',
+        'otp' => 'required|string',
+    ]);
+
+    $user = User::where('email', $request->email)->first();
+
+    if (!$user) {
+        return response()->json(['message' => 'User not found.'], 404);
     }
+
+    // Already verified?
+    if ($user->email_verified === true) {
+        return response()->json(['message' => 'Email already verified.'], 200);
+    }
+
+    // OTP or expiry validation
+    if (!Hash::check($request->otp, $user->email_otp) || $user->email_otp_expiry < now()) {
+        return response()->json(['message' => 'Invalid or expired OTP.'], 422);
+    }
+
+    // Update user email status
+    $user->update([
+        'email_verified' => true,
+        'email_verified_at' => now(),
+        'email_otp' => null,
+        'email_otp_expiry' => null,
+    ]);
+
+    // Issue new fresh token
+    $token = $user->createToken('auth_token')->plainTextToken;
+
+    return response()->json([
+        'message' => 'Email verified successfully.',
+        'token' => $token,
+        'user' => $user
+    ]);
+}
+
 
     // Phone OTP validation
     public function validatePhoneOtp(Request $request)

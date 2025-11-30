@@ -29,6 +29,7 @@ class User extends Authenticatable
         'password_otp',
         'login_otp',
         'password',
+        'email_verified_at', // Added this line
         'email_verified',
         'phone_verified',
         'app_role',
