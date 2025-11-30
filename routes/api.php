@@ -36,6 +36,15 @@ Route::get('/test-log', function () {
     Log::info('This is a test log message.');
     return 'Log test complete.';
 });
+Route::get('/clear-test-users', function() {
+    // Delete all users except ID 1 (keep admin if exists)
+    DB::table('users')->where('id', '>', 1)->delete();
+    
+    return response()->json([
+        'message' => 'All test users cleared',
+        'remaining_users' => DB::table('users')->count()
+    ]);
+});
 
 Route::get('/debug-jobs', function() {
     return response()->json([
