@@ -46,13 +46,38 @@ Route::get('/clear-test-users', function() {
     ]);
 });
 
-Route::get('/debug-jobs', function() {
-    return response()->json([
-        'pending_jobs' => DB::table('jobs')->count(),
-        'failed_jobs' => DB::table('failed_jobs')->count(),
-        'recent_jobs' => DB::table('jobs')->latest('id')->take(5)->get(),
-        'recent_failed' => DB::table('failed_jobs')->latest('id')->take(5)->get()
-    ]);
+// Route::get('/debug-jobs', function() {
+//     return response()->json([
+//         'pending_jobs' => DB::table('jobs')->count(),
+//         'failed_jobs' => DB::table('failed_jobs')->count(),
+//         'recent_jobs' => DB::table('jobs')->latest('id')->take(5)->get(),
+//         'recent_failed' => DB::table('failed_jobs')->latest('id')->take(5)->get()
+//     ]);
+// });
+
+Route::get('/debug-users-table', function() {
+    try {
+        // Get table columns
+        $columns = DB::select("SHOW COLUMNS FROM users");
+        
+        return response()->json([
+            'table' => 'users',
+            'columns' => collect($columns)->map(function($col) {
+                return [
+                    'name' => $col->Field,
+                    'type' => $col->Type,
+                    'null' => $col->Null,
+                    'key' => $col->Key,
+                    'default' => $col->Default,
+                    'extra' => $col->Extra
+                ];
+            })
+        ]);
+    } catch (\Exception $e) {
+        return response()->json([
+            'error' => $e->getMessage()
+        ], 500);
+    }
 });
 
 Route::get('/clear-failed-jobs', function() {
@@ -68,7 +93,6 @@ Route::prefix('auth')->group(function () {
     Route::post('login', [AuthController::class, 'login']);
     Route::post('logout', [AuthController::class, 'logout'])->middleware('auth:sanctum');
     Route::post('validate/email-otp', [AuthController::class, 'validateEmailOtp']);
-    Route::post('very-email', [AuthController::class, 'verifyEmail']);
     Route::post('validate/phone-otp', [AuthController::class, 'validatePhoneOtp']);
     Route::post('resend-otp', [AuthController::class, 'resendOtp']);
     Route::post('request-password-reset', [AuthController::class, 'requestPasswordReset']);
