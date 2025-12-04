@@ -43,50 +43,50 @@ class AuthController extends Controller
 
     // User registration
     // Only customers can register. The rest have to be invited.
-    public function register(Request $request)
-    {
-        $validator = Validator::make($request->all(), [
-            'first_name' => 'required|string',
-            'last_name' => 'required|string',
-            'email' => 'required|string|email|unique:users',
-            'password' => 'required|string|confirmed',
-            'app_role' => 'required|in:admin,candidate,employer',
-        ]);
+   public function register(Request $request)
+{
+    $validator = Validator::make($request->all(), [
+        'first_name' => 'required|string',
+        'last_name' => 'required|string',
+        'email' => 'required|string|email|unique:users',
+        'password' => 'required|string|confirmed',
+        'app_role' => 'required|in:admin,candidate,employer',
+    ]);
 
-        if ($validator->fails()) {
-            return response()->json($validator->errors(), 422);
-        }
-
-        $otp = rand(100000, 999999);
-        
-        $user = User::create([
-            'first_name' => $request->first_name,
-            'last_name' => $request->last_name,
-            'email' => $request->email,
-            'phone' => $request->phone,
-            'signup_strategy' => 'form',
-            'password' => Hash::make($request->password),
-            'app_role' => $request->app_role,
-            'email_verified' => false,        
-            'email_otp' => Hash::make($otp),
-            'phone_otp' => Hash::make(rand(100000, 999999)),
-            'email_otp_expiry' => now()->addMinutes(10),
-            'phone_otp_expiry' => now()->addMinutes(10),
-        ]);
-
-        // Dispatch the OTP email job asynchronously
-        SendOtpEmailJob::dispatch($user, $otp);
-
-        // Create token using Sanctum
-        $token = $user->createToken('auth_token')->plainTextToken;
-
-        return response()->json([
-            'token' => $token,
-            'user' => $user,
-            'message' => 'Welcome to the family. Please verify your email.'
-        ]);
+    if ($validator->fails()) {
+        return response()->json($validator->errors(), 422);
     }
 
+    $otp = rand(100000, 999999);
+    
+    $user = User::create([
+        'first_name' => $request->first_name,
+        'last_name' => $request->last_name,
+        'email' => $request->email,
+        'phone' => $request->phone,
+        'signup_strategy' => 'form',
+        'password' => Hash::make($request->password),
+        'app_role' => $request->app_role,
+        'email_verified' => true,  // ← AUTO-VERIFY
+        'email_verified_at' => now(),  // ← SET VERIFIED DATE
+        'email_otp' => Hash::make($otp),
+        'phone_otp' => Hash::make(rand(100000, 999999)),
+        'email_otp_expiry' => now()->addMinutes(10),
+        'phone_otp_expiry' => now()->addMinutes(10),
+    ]);
+
+    // COMMENT OUT EMAIL SENDING FOR NOW
+    // SendOtpEmailJob::dispatch($user, $otp);
+
+    // Create token using Sanctum
+    $token = $user->createToken('auth_token')->plainTextToken;
+
+    return response()->json([
+        'token' => $token,
+        'user' => $user,
+        'message' => 'Registration successful. You can now proceed to onboarding.' // ← UPDATED MESSAGE
+    ]);
+}
     // Email OTP validation
     public function validateEmailOtp(Request $request)
 {
