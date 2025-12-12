@@ -40,18 +40,22 @@ export default function Topbar() {
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className="w-40">
+            <Link to={`/${user?.app_role}/profile`}>
+              <DropdownMenuItem asChild>
+                <Button variant="ghost" className="w-full justify-start h-10">
+                  Profile
+                </Button>
+              </DropdownMenuItem>
+            </Link>{" "}
             <DropdownMenuItem asChild>
               <Button
                 onClick={hanndleLogout}
                 variant="ghost"
-                className="w-full justify-start"
+                className="w-full justify-start h-10  "
               >
                 Logout
               </Button>
             </DropdownMenuItem>
-            <Link to={`/${user?.app_role}/profile`}>
-              <DropdownMenuItem>Profile</DropdownMenuItem>
-            </Link>
           </DropdownMenuContent>
         </DropdownMenu>
       </div>

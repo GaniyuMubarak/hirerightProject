@@ -17,6 +17,7 @@ export default function Dashboard() {
     queryFn: () => CandidateServices.dashboard(),
   });
 
+  
   return (
     <div>
       <ApplyDialog />

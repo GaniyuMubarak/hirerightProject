@@ -15,6 +15,7 @@ import { Checkbox } from "../ui/checkbox";
 import { Input } from "../ui/input";
 
 export function SignInForm({
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   className,
   ...props
 }: React.ComponentPropsWithoutRef<"form">) {

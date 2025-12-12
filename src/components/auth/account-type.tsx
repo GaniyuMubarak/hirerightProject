@@ -94,6 +94,23 @@ export function AccountTypeForm({
                         </FormControl>
                       </FormLabel>
                     </FormItem>
+                    
+                    {/* <FormItem className="space-y-0 border-2  rounded-[8px] ">
+                      <FormLabel className="font-normal space-y-1 w-full p-4 cursor-pointer flex items-center justify-between space-x-3">
+                        <div className="space-y-1">
+                          <h3 className="text-[#020C10] text-lg font-medium">
+                            Admin
+                          </h3>
+                          <p className="text-[#667074] text-base">
+                            Admin account
+                          </p>
+                        </div>
+                        <FormControl>
+                          <RadioGroupItem value="admin" />
+                        </FormControl>
+                      </FormLabel>
+                    </FormItem> */}
+                    
                   </RadioGroup>
                 </FormControl>
                 <FormMessage />

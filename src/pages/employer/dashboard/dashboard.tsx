@@ -4,11 +4,15 @@ import { buttonVariants } from "@/components/ui/button";
 import Icons from "@/components/ui/icons";
 import { cn } from "@/lib/utils";
 import CompanyServices from "@/services/company-services";
+
 import JobServices from "@/services/job-services";
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "react-router";
+import { useCurrentUser } from "@/hooks/use-current-user";
 
 export default function EmployerDashboard() {
+  const user = useCurrentUser();
+
   const { data, isLoading, isError } = useQuery({
     queryKey: ["employer-dashboard"],
     queryFn: () => CompanyServices.dashboard(),
@@ -24,7 +28,9 @@ export default function EmployerDashboard() {
       <div className="max-w-7xl mx-auto px-4 pt-8 space-y-8 ">
         <header className="lg:border-b lg:pb-5 flex max-lg:flex-col justify-between lg:items-center ">
           <div className="space-y-1 lg:space-y-3  max-lg:border-b pb-2 mb-4">
-            <h1 className="text-2xl lg:text-3xl font-medium">Welcome back,</h1>
+            <h1 className="text-2xl lg:text-3xl font-medium">
+              Welcome, {user?.first_name}
+            </h1>
             <p className="text-[#475467] text-sm">
               Your current summary and activity.
             </p>
@@ -34,8 +40,7 @@ export default function EmployerDashboard() {
             className={cn(
               buttonVariants(),
               "rounded-[6px] max-lg:w-fit max-lg:self-end"
-            )}
-          >
+            )}>
             Post a Job
           </Link>
         </header>

@@ -49,6 +49,9 @@ const CandidateServices = {
   applications: async () => {
     return requests.get(`/candidates/applications`);
   },
+  getProfile: async () => {
+    return requests.get(`/candidates/profile`);
+  },
 };
 
 export default CandidateServices;
