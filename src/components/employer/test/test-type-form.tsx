@@ -645,7 +645,8 @@ export default function TestTypeForm({
 
       // Move to next step
       setTimeout(() => {
-        setStep(step + 1);
+        // setStep(step + 1);
+        window.location.href = `/employer/tests`;
       }, 1000);
 
     } catch (error: any) {

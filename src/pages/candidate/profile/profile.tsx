@@ -14,10 +14,25 @@ export default function Profile() {
   });
 
   // Handle loading state
+  // if (isLoading) {
+  //   return (
+  //     <div className="max-w-7xl mx-auto px-4 pt-8">
+  //       <p>Loading profile...</p>
+  //     </div>
+  //   );
+  // }
+
   if (isLoading) {
     return (
       <div className="max-w-7xl mx-auto px-4 pt-8">
-        <p>Loading profile...</p>
+        <div className="text-center py-12 flex flex-col items-center gap-4">
+          {/* Spinner */}
+          <div className="relative">
+            <div className="h-12 w-12 rounded-full border-4 border-gray-200"></div>
+            <div className="h-12 w-12 rounded-full border-4 border-blue-600 border-t-transparent absolute top-0 left-0 animate-spin"></div>
+          </div>
+          <p className="text-gray-600">Loading Profile...</p>
+        </div>
       </div>
     );
   }

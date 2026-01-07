@@ -200,7 +200,7 @@ class TestService {
     }
   }
 
-  // Upload file for test
+  // // Upload file for test
   static async uploadFile(testId: number, file: File): Promise<any> {
     try {
       const formData = new FormData();
@@ -284,53 +284,52 @@ class TestService {
   }
 
   // List tests with pagination
-//   static async listTests(params?: {
-//     page?: number;
-//     limit?: number;
-//     status?: string;
-//     search?: string;
-//   }): Promise<any> {
-//     try {
-//       const response = await requests.get("/employers/tests", params);
+  //   static async listTests(params?: {
+  //     page?: number;
+  //     limit?: number;
+  //     status?: string;
+  //     search?: string;
+  //   }): Promise<any> {
+  //     try {
+  //       const response = await requests.get("/employers/tests", params);
 
-//       if (response.status === "success") {
-//         return response.data;
-//       } else {
-//         throw new Error(response.message || "Failed to list tests");
-//       }
-//     } catch (error: any) {
-//       console.error("Error listing tests:", error);
-//       throw error;
-//     }
-    //   }
-    
+  //       if (response.status === "success") {
+  //         return response.data;
+  //       } else {
+  //         throw new Error(response.message || "Failed to list tests");
+  //       }
+  //     } catch (error: any) {
+  //       console.error("Error listing tests:", error);
+  //       throw error;
+  //     }
+  //   }
 
-static async listTests(params?: {
-  page?: number;
-  limit?: number;
-  status?: string;
-  search?: string;
-}): Promise<any> {
-  try {
-    console.log("[TestService] Fetching tests with params:", params);
-    
-    const response = await requests.get("/employers/tests", params);
-    
-    console.log("[TestService] List tests response:", response);
-    console.log("[TestService] Tests data:", response.data);
-    console.log("[TestService] Tests array:", response.data?.data);
-    
-    if (response.status === "success") {
-      // Return the pagination object which contains the data array
-      return response.data;
-    } else {
-      throw new Error(response.message || "Failed to list tests");
+  static async listTests(params?: {
+    page?: number;
+    limit?: number;
+    status?: string;
+    search?: string;
+  }): Promise<any> {
+    try {
+      console.log("[TestService] Fetching tests with params:", params);
+
+      const response = await requests.get("/employers/tests", params);
+
+      console.log("[TestService] List tests response:", response);
+      console.log("[TestService] Tests data:", response.data);
+      console.log("[TestService] Tests array:", response.data?.data);
+
+      if (response.status === "success") {
+        // Return the pagination object which contains the data array
+        return response.data;
+      } else {
+        throw new Error(response.message || "Failed to list tests");
+      }
+    } catch (error: any) {
+      console.error("[TestService] Error listing tests:", error);
+      throw error;
     }
-  } catch (error: any) {
-    console.error("[TestService] Error listing tests:", error);
-    throw error;
   }
-}
 
   // Get questions for a test
   static async getQuestions(testId: number): Promise<any> {
