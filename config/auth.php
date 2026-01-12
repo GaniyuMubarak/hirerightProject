@@ -42,10 +42,17 @@ return [
         ],
 
         'api' => [
+<<<<<<< HEAD
             'driver' => 'sanctum',
             'provider' => 'users',
             ],
         ],
+=======
+    'driver' => 'sanctum',
+    'provider' => 'users',
+            ],
+    ],  
+>>>>>>> 5853b763aeab113a5e8d4cb7bd2f7b6f1ab84315
 
 
     /*
