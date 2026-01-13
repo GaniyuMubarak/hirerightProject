@@ -47,9 +47,9 @@ return [
     'url' => env('DATABASE_URL'), // ← use Railway variable
     'host' => env('DB_HOST', '127.0.0.1'),
     'port' => env('DB_PORT', '3306'),
-    'database' => env('DB_DATABASE', 'laravel'),
-    'username' => env('DB_USERNAME', 'root'),
-    'password' => env('DB_PASSWORD', ''),
+    'database' => env('DB_DATABASE', 'u569300992_hireright'),
+    'username' => env('DB_USERNAME', 'u569300992_hireright'),
+    'password' => env('DB_PASSWORD', '#!reri@App1234'),
     'unix_socket' => env('DB_SOCKET', ''),
     'charset' => 'utf8mb4',
     'collation' => 'utf8mb4_unicode_ci',
