@@ -249,9 +249,12 @@ class CompanyController extends Controller
             //
             $company = Company::where('id', $user->company_id)->first();
             if (!$company) {
-                return null;
-            }
-            // Check if user is associated with the company
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'No company profile found',
+                    'data' => null
+                ], 404);
+            }            // Check if user is associated with the company
             $userCompanyStaff = CompanyStaff::where('company_id', $company->id)
                 ->where('user_id', $user->id)
                 ->where('status', 'active')
