@@ -166,6 +166,9 @@
         Route::put('jobs/{job}/status', [CompanyJobController::class, 'updateStatus']);
         //
         Route::post('company/staffs', [CompanyStaffController::class, 'invite']);
+
+        Route::get('applications/{id}', [JobApplicationController::class, 'show']);
+        Route::put('applications/{id}/status', [JobApplicationController::class, 'updateStatus']);
         //
         Route::get('jobs/{jobId}/applications', [JobApplicationController::class, 'getApplicationsForJob']);
         Route::get('jobs/{jobId}/candidates', [JobApplicationController::class, 'getCandidatesForJob']);

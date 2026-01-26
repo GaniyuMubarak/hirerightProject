@@ -107,6 +107,7 @@ class CompanyJobController extends Controller
                 'benefits' => 'nullable|string',
                 'employment_type' => ['required', Rule::in(JobListing::EMPLOYMENT_TYPES)],
                 'work_mode' => ['required', Rule::in(JobListing::WORK_MODES)],
+                 'type' => 'nullable|string',
                 'positions_available' => 'required|integer|min:1',
                 'experience_level' => 'required|string',
                 'min_years_experience' => 'required|integer|min:0',
