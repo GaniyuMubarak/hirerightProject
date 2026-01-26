@@ -302,6 +302,67 @@ class CompanyJobController extends Controller
     }
 
     /**
+ * Assign a test to a job listing.
+ *
+ * @param  \Illuminate\Http\Request  $request
+ * @param  int  $jobId
+ * @return \Illuminate\Http\JsonResponse
+ */
+public function assignTest(Request $request, $jobId)
+{
+    try {
+        $userId = Auth::id();
+        $user = User::findOrFail($userId);
+        
+        if (!$user->company_id) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Please add a company to your account.',
+            ], 412);
+        }
+
+        // Find the job
+        $job = JobListing::where('company_id', $user->company_id)
+            ->findOrFail($jobId);
+
+        // Validate request
+        $validator = Validator::make($request->all(), [
+            'test_id' => 'required|integer|exists:tests,id',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Validation failed',
+                'errors' => $validator->errors()
+            ], 422);
+        }
+
+        // Assign the test
+        $job->test_id = $request->input('test_id');
+        $job->save();
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Test assigned to job successfully',
+            'data' => $job
+        ], 200);
+
+    } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+        return response()->json([
+            'status' => 'error',
+            'message' => 'Job listing not found'
+        ], 404);
+    } catch (\Exception $e) {
+        return response()->json([
+            'status' => 'error',
+            'message' => 'Failed to assign test',
+            'error' => config('app.debug') ? $e->getMessage() : 'Internal server error'
+        ], 500);
+    }
+}
+
+    /**
      * Remove the specified job listing.
      *
      * @param  int  $id

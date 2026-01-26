@@ -48,7 +48,8 @@ class JobListing extends Model
         'reference_code',
         'status',
         'company_id',
-        'created_by'
+        'created_by',
+        'test_id'
     ];
 
     /**
