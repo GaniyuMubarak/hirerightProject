@@ -1,5 +1,5 @@
     <?php
-
+    use Illuminate\Support\Facades\DB;
     use App\Http\Controllers\Admin\AdminTestController;
     use App\Http\Controllers\Company\CompanyController;
     use App\Http\Controllers\Admin\CompanyController as AdminCompanyController;
@@ -164,6 +164,8 @@
         // Job Management
         Route::apiResource('jobs', CompanyJobController::class);
         Route::put('jobs/{job}/status', [CompanyJobController::class, 'updateStatus']);
+        Route::put('jobs/{jobId}/tests/assign-multiple', [CompanyJobController::class, 'assignMultipleTests']);
+
         //
         Route::post('company/staffs', [CompanyStaffController::class, 'invite']);
 

@@ -403,7 +403,113 @@ public function assignTest(Request $request, $jobId)
             ], 500);
         }
     }
+    /**
+ * Assign multiple tests to a job listing via recruitment stages.
+ *
+ * @param  \Illuminate\Http\Request  $request
+ * @param  int  $jobId
+ * @return \Illuminate\Http\JsonResponse
+ */
+public function assignMultipleTests(Request $request, $jobId)
+{
+    try {
+        $userId = Auth::id();
+        $user = User::findOrFail($userId);
+        
+        if (!$user->company_id) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Please add a company to your account.',
+            ], 412);
+        }
 
+        // Find the job
+        $job = JobListing::where('company_id', $user->company_id)
+            ->findOrFail($jobId);
+
+        // Validate request
+        $validator = Validator::make($request->all(), [
+            'stages' => 'required|array',
+            'stages.*.name' => 'required|string|max:255',
+            'stages.*.description' => 'nullable|string',
+            'stages.*.order' => 'required|integer|min:1',
+            'stages.*.tests' => 'required|array',
+            'stages.*.tests.*' => 'required|integer|exists:tests,id',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Validation failed',
+                'errors' => $validator->errors()
+            ], 422);
+        }
+
+        $stages = $request->input('stages');
+        $results = [];
+        
+        DB::beginTransaction();
+        
+        try {
+            foreach ($stages as $stageData) {
+                // Create recruitment stage
+                $stage = DB::table('recruitment_stages')->insertGetId([
+                    'job_id' => $jobId,
+                    'name' => $stageData['name'],
+                    'description' => $stageData['description'] ?? null,
+                    'order' => $stageData['order'],
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ]);
+
+                // Assign tests to this stage
+                foreach ($stageData['tests'] as $testId) {
+                    DB::table('stage_test_mappings')->insert([
+                        'stage_id' => $stage,
+                        'test_id' => $testId,
+                        'is_required' => true,
+                        'created_at' => now(),
+                        'updated_at' => now(),
+                    ]);
+                }
+
+                $results[] = [
+                    'stage_id' => $stage,
+                    'stage_name' => $stageData['name'],
+                    'tests_assigned' => count($stageData['tests']),
+                    'success' => true
+                ];
+            }
+            
+            DB::commit();
+
+            return response()->json([
+                'status' => 'success',
+                'message' => count($stages) . ' stage(s) created with tests assigned',
+                'data' => [
+                    'job_id' => $jobId,
+                    'stages' => $results
+                ]
+            ], 200);
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            throw $e;
+        }
+
+    } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+        return response()->json([
+            'status' => 'error',
+            'message' => 'Job listing not found'
+        ], 404);
+    } catch (\Exception $e) {
+        return response()->json([
+            'status' => 'error',
+            'message' => 'Failed to assign tests',
+            'error' => config('app.debug') ? $e->getMessage() : 'Internal server error'
+        ], 500);
+    }
+}
     /**
      * Update the status of a job listing.
      *
