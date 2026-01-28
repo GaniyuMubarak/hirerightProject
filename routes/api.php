@@ -419,7 +419,7 @@ Route::middleware(['auth:sanctum', 'can:employer'])->prefix('employers')->group(
     Route::put('staff/{staffId}/permissions', [CompanyStaffController::class, 'updatePermissions']);
     
     // Job Management - CUSTOM ROUTES FIRST, THEN apiResource
-    Route::post('jobs/{jobId}/tests/assign-multiple', [CompanyJobController::class, 'assignMultipleTests']);
+    Route::put('jobs/{jobId}/tests/assign-multiple', [CompanyJobController::class, 'assignMultipleTests']);
     Route::put('jobs/{jobId}/test', [CompanyJobController::class, 'assignTest']);
     Route::delete('jobs/{jobId}/test', [CompanyJobController::class, 'removeTest']);
     Route::put('jobs/{job}/status', [CompanyJobController::class, 'updateStatus']);
