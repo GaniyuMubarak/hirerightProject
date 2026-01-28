@@ -160,11 +160,11 @@
         // Staff Management
         Route::get('company/staffs', [CompanyStaffController::class, 'index']);
         Route::put('staff/{staffId}/permissions', [CompanyStaffController::class, 'updatePermissions']);
-        
+        Route::put('jobs/{jobId}/tests/assign-multiple', [CompanyJobController::class, 'assignMultipleTests']);
+
         // Job Management
         Route::apiResource('jobs', CompanyJobController::class);
         Route::put('jobs/{job}/status', [CompanyJobController::class, 'updateStatus']);
-        Route::put('jobs/{jobId}/tests/assign-multiple', [CompanyJobController::class, 'assignMultipleTests']);
 
         //
         Route::post('company/staffs', [CompanyStaffController::class, 'invite']);
