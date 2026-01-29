@@ -290,6 +290,15 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 
+// TEST ROUTE - REMOVE AFTER TESTING
+Route::put('/test/jobs/{jobId}/assign', function($jobId) {
+    return response()->json([
+        'message' => 'Route works!',
+        'job_id' => $jobId,
+        'data_received' => request()->all()
+    ]);
+});
+
 // Health check
 Route::get('/health', [HealthController::class, 'check']);
 
