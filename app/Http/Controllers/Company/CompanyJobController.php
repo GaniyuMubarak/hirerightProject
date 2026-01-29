@@ -150,13 +150,29 @@ class CompanyJobController extends Controller
                 'message' => 'Job listing created successfully',
                 'data' => $job
             ], 201);
+        // } catch (\Exception $e) {
+        //     return response()->json([
+        //         'status' => 'error',
+        //         'message' => 'Failed to create job listing',
+        //         'error' => config('app.debug') ? $e->getMessage() : 'Internal server error'
+        //     ], 500);
+        // }
         } catch (\Exception $e) {
-            return response()->json([
-                'status' => 'error',
-                'message' => 'Failed to create job listing',
-                'error' => config('app.debug') ? $e->getMessage() : 'Internal server error'
-            ], 500);
-        }
+    // ✅ ADD DETAILED LOGGING
+    \Log::error('Job Creation Failed:', [
+        'error' => $e->getMessage(),
+        'trace' => $e->getTraceAsString(),
+        'user_id' => Auth::id(),
+        'data' => $request->all()
+    ]);
+    
+    return response()->json([
+        'status' => 'error',
+        'message' => 'Failed to create job listing',
+        'error' => config('app.debug') ? $e->getMessage() : 'Internal server error',
+        'debug_hint' => 'Check storage/logs/laravel.log' // ✅ Hint for debugging
+    ], 500);
+}
     }
 
     /**
