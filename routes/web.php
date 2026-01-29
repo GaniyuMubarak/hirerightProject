@@ -9,6 +9,13 @@ Route::get('/', function () {
     return view('welcome');
 });
 
+// Route::get('/', function () {
+//  return response()->json([
+//  'success' => true,
+//  'message' => 'API root working',
+//  ]);
+// });
+
 // Static pages
 Route::get('/privacy', function () {
     return view('privacy');
