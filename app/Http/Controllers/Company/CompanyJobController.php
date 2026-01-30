@@ -523,13 +523,21 @@ class CompanyJobController extends Controller
                 ->findOrFail($jobId);
 
             // Validate request
+            // $validator = Validator::make($request->all(), [
+            //     'stages' => 'required|array',
+            //     'stages.*.name' => 'required|string|max:255',
+            //     'stages.*.description' => 'nullable|string',
+            //     'stages.*.order' => 'required|integer|min:1',
+            //     'stages.*.tests' => 'required|array',
+            //     'stages.*.tests.*' => 'required|integer|exists:tests,id',
+            // ]);
             $validator = Validator::make($request->all(), [
                 'stages' => 'required|array',
                 'stages.*.name' => 'required|string|max:255',
                 'stages.*.description' => 'nullable|string',
                 'stages.*.order' => 'required|integer|min:1',
-                'stages.*.tests' => 'required|array',
-                'stages.*.tests.*' => 'required|integer|exists:tests,id',
+                'stages.*.tests' => 'required|array',  // Can be empty
+                'stages.*.tests.*' => 'integer|exists:tests,id',  // Removed 'required'
             ]);
 
             if ($validator->fails()) {
