@@ -13,6 +13,85 @@ use Illuminate\Validation\Rule;
 class JobApplicationController extends Controller
 {
 
+    /**
+ * Get all applications for employer's company
+ */
+public function getAllApplications(Request $request)
+{
+    try {
+        $user = $request->user();
+        
+        // Get user's company
+        $company = $user->company;
+        
+        if (!$company) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Company profile not found'
+            ], 404);
+        }
+        
+        // Get all job IDs for this company
+        $jobIds = JobListing::where('company_id', $company->id)->pluck('id');
+        
+        // Get all applications for these jobs
+        $applications = JobApplication::whereIn('job_id', $jobIds)
+            ->with([
+                'user:id,first_name,last_name,email,phone',
+                'job:id,title,experience_level,location',
+                'test.submissions' => function($query) {
+                    $query->latest()->first();
+                }
+            ])
+            ->orderBy('created_at', 'desc')
+            ->paginate($request->input('per_page', 15));
+        
+        // Transform data for frontend
+        $applications->getCollection()->transform(function($application) {
+            $testStatus = null;
+            $testScore = null;
+            
+            if ($application->test && $application->test->submissions->isNotEmpty()) {
+                $submission = $application->test->submissions->first();
+                $testStatus = $submission->status;
+                $testScore = $submission->score;
+            }
+            
+            return [
+                'id' => $application->id,
+                'candidate' => [
+                    'id' => $application->user->id,
+                    'name' => $application->user->first_name . ' ' . $application->user->last_name,
+                    'email' => $application->user->email,
+                    'phone' => $application->user->phone,
+                ],
+                'job' => [
+                    'id' => $application->job->id,
+                    'title' => $application->job->title,
+                    'experience_level' => $application->job->experience_level,
+                    'location' => $application->job->location,
+                ],
+                'status' => $application->status,
+                'applied_at' => $application->created_at->format('Y-m-d H:i:s'),
+                'test_status' => $testStatus,
+                'test_score' => $testScore,
+            ];
+        });
+        
+        return response()->json([
+            'status' => 'success',
+            'data' => $applications
+        ], 200);
+        
+    } catch (\Exception $e) {
+        return response()->json([
+            'status' => 'error',
+            'message' => 'Failed to fetch applications',
+            'error' => config('app.debug') ? $e->getMessage() : 'Internal server error'
+        ], 500);
+    }
+}
+
     public function getApplicationsForJob(Request $request)
     {
         try {

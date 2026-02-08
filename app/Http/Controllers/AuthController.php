@@ -572,6 +572,15 @@ class AuthController extends Controller
             return response()->json(['message' => 'Invalid email or password.'], 401);
         }
         
+
+        //ADD THIS CHECK - BEFORE updating login count
+        if (!$user->email_verified) {
+            return response()->json([
+                'message' => 'Please verify your email before logging in.',
+                'requires_verification' => true,
+                'email' => $user->email,
+            ], 403);
+        }
         // Update login count and last seen
         $user->update([
             'last_seen' => now(),
@@ -635,16 +644,17 @@ class AuthController extends Controller
         'signup_strategy' => 'form',
         'password' => Hash::make($request->password),
         'app_role' => $request->app_role,
-        'email_verified' => true,  // ← AUTO-VERIFY
-        'email_verified_at' => now(),  // ← SET VERIFIED DATE
+        'email_verified' => false,  // ← AUTO-VERIFY
+        'email_verified_at' => null,  //now(),  // ← SET VERIFIED DATE
         'email_otp' => Hash::make($otp),
         'phone_otp' => Hash::make(rand(100000, 999999)),
         'email_otp_expiry' => now()->addMinutes(10),
         'phone_otp_expiry' => now()->addMinutes(10),
     ]);
 
-    // COMMENT OUT EMAIL SENDING FOR NOW
-    // SendOtpEmailJob::dispatch($user, $otp);
+    
+    // SEND VERIFICATION EMAIL
+    SendOtpEmailJob::dispatch($user, $otp); 
 
     // Create token using Sanctum
     $token = $user->createToken('auth_token')->plainTextToken;
@@ -658,12 +668,13 @@ class AuthController extends Controller
             'email' => $user->email,
             'phone' => $user->phone,
             'app_role' => $user->app_role,
-            'email_verified' => (bool) $user->email_verified_at,
-            'email_verified_at' => $user->email_verified_at,
+            'email_verified' => false, //(bool) $user->email_verified_at,
+            'email_verified_at' => null, //$user->email_verified_at,
             // ✅ No company yet for new registrations
             'company' => null,
         ],
-        'message' => 'Registration successful. You can now proceed to onboarding.'
+        'message' => 'Registration successful. please verify your email for verification code to complete onboarding.',
+        'requires_verification' => true, // ← NEW FLAG TO INDICATE VERIFICATION REQUIRED
     ]);
 }
 

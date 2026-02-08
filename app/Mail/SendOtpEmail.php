@@ -21,11 +21,14 @@ class SendOtpEmail extends Mailable
 
     public function build()
     {
-        return $this->view('emails.send-otp')
+        return $this->view('emails.otp')
             ->with([
-                'firstName' => $this->user->first_name,
-                'otp' => $this->otp,
-            ])
-            ->subject('Your OTP Code');
+                // 'firstName' => $this->user->first_name,
+                // 'otp' => $this->otp,
+            'userName' => $this->user->first_name,  //  Correct variable
+            'otp' => $this->otp,
+            'user' => $this->user,  // Also pass user object
+            ]);
+            // ->subject('Your OTP Code');
     }
 }

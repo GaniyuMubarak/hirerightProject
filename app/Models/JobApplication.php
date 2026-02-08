@@ -150,6 +150,30 @@ class JobApplication extends Model
         return $this->belongsTo(User::class);
     }
 
+
+    /**
+ * Alias for easier access - same as jobListing()
+ */
+public function job(): BelongsTo
+{
+    return $this->belongsTo(JobListing::class, 'job_id');
+}
+
+/**
+ * Get the company
+ */
+public function company(): BelongsTo
+{
+    return $this->belongsTo(Company::class);
+}
+
+/**
+ * Get test submissions for this application
+ */
+public function testSubmissions()
+{
+    return $this->hasMany(TestSubmission::class, 'job_application_id');
+}
     /**
      * Get the user who reviewed the application.
      */
