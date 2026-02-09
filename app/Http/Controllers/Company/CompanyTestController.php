@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Company;
 
+use App\Notifications\TestInvitationNotification;
 use App\Http\Controllers\Controller;
 use App\Models\Company;
 use App\Models\Test;
@@ -512,5 +513,39 @@ public function removeQuestion($testId, $questionId)
             'error' => config('app.debug') ? $e->getMessage() : 'Internal server error'
         ], 500);
     }
+}
+
+use App\Notifications\TestInvitationNotification;
+
+public function assignTestToCandidate(Request $request, $testId)
+{
+    $validator = Validator::make($request->all(), [
+        'job_application_id' => 'required|exists:job_applications,id',
+    ]);
+
+    if ($validator->fails()) {
+        return response()->json([
+            'status' => 'error',
+            'errors' => $validator->errors()
+        ], 422);
+    }
+
+    $test = Test::findOrFail($testId);
+    $application = JobApplication::with(['user', 'jobListing.company'])->findOrFail($request->job_application_id);
+    
+    // Assign test to application
+    $application->update(['test_id' => $testId]);
+    
+    // Send invitation email
+    $application->user->notify(new TestInvitationNotification(
+        $test,
+        $application->jobListing,
+        $application->jobListing->company
+    ));
+    
+    return response()->json([
+        'status' => 'success',
+        'message' => 'Test assigned and invitation sent successfully'
+    ]);
 }
 }

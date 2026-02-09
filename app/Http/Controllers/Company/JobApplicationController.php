@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Company;
 use App\Http\Controllers\Controller;
 use App\Models\JobApplication;
 use App\Models\User;
+use App\Notifications\ApplicationStatusNotification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
@@ -399,6 +400,11 @@ public function getAllApplications(Request $request)
 
             $application->update($data);
 
+        // Send email notification
+            $application->user->notify(new ApplicationStatusNotification(
+                $application->fresh(['jobListing.company']),
+                $request->status
+            ));
             return response()->json([
                 'status' => 'success',
                 'message' => 'Application status updated successfully',

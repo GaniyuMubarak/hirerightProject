@@ -548,6 +548,7 @@ class AuthController extends Controller
 
 namespace App\Http\Controllers;
 
+use App\Notifications\WelcomeNotification;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -712,7 +713,13 @@ SendOtpEmailJob::dispatch($user, $otp);
         'email_otp_expiry' => null,
     ]);
 
-    // ✅ Load company if employer
+   
+    
+    // Send welcome email
+    $user->notify(new WelcomeNotification($user));
+    
+
+    // Load company if employer
     if ($user->app_role === 'employer') {
         $user->load('company');
     }

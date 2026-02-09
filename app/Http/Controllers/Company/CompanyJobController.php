@@ -385,6 +385,22 @@ class CompanyJobController extends Controller
                 'is_published' => $request->input('status') === 'published'
             ]);
 
+                        $application = JobApplication::findOrFail($id);
+                $oldStatus = $application->status;
+                
+                $application->update([
+                    'status' => $request->status,
+                    'rejection_reason' => $request->rejection_reason,
+                    'reviewed_at' => now(),
+                    'reviewed_by' => $request->user()->id,
+                ]);
+                
+                // Send email notification
+                $application->user->notify(new ApplicationStatusNotification(
+                    $application->fresh(['jobListing.company']),
+                    $request->status
+                ));
+
             return response()->json([
                 'status' => 'success',
                 'message' => 'Job status updated successfully',

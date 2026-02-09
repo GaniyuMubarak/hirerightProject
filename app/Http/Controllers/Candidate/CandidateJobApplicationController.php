@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\Candidate;
 
+
+use App\Notifications\ApplicationReceivedNotification;
 use App\Http\Controllers\Controller;
 use App\Models\JobApplication;
 use App\Models\JobListing;
@@ -212,20 +214,29 @@ class CandidateJobApplicationController extends Controller
                 ], 422);
             }
 
-            $application = JobApplication::create([
-                'job_id' => $jobId,
-                'company_id' => $job->company_id,
-                'user_id' => Auth::id(),
-                'cover_letter' => $request->cover_letter,
-                'answers' => $request->answers,
-                'status' => 'applied'
-            ]);
+                    $application = JobApplication::create([
+            'job_id' => $jobId,
+            'company_id' => $job->company_id,
+            'user_id' => Auth::id(),
+            'cover_letter' => $request->cover_letter,
+            'answers' => $request->answers,
+            'status' => 'applied'
+        ]);
 
-            return response()->json([
-                'status' => 'success',
-                'message' => 'Application submitted successfully',
-                'data' => $application
-            ], 201);
+        // Send confirmation email
+        $user = Auth::user();
+        $user->notify(new ApplicationReceivedNotification(
+            $application,
+            $job,
+            $job->company
+        ));
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Application submitted successfully',
+            'data' => $application
+        ], 201);
+        
         } catch (\Exception $e) {
             Log::info($e);
             return response()->json([

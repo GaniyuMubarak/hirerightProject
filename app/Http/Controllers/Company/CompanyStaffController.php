@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\Company;
 
+use App\Notifications\StaffInvitationNotification;
+
 use App\Http\Controllers\Controller;
 use App\Models\CompanyStaff;
 use App\Models\User;
@@ -84,9 +86,9 @@ class CompanyStaffController extends Controller
     }
 
     /**
-     * Invite a new staff member.
-     */
-    public function invite(Request $request)
+    * Invite a new staff member.
+    
+    *public function invite(Request $request)
     {
         try {
             $userId = Auth::id();
@@ -164,6 +166,100 @@ class CompanyStaffController extends Controller
             ], 500);
         }
     }
+ **/
+
+
+public function invite(Request $request)
+{
+    try {
+        $userId = Auth::id();
+        $user = User::findOrFail($userId);
+        
+        $validator = Validator::make($request->all(), [
+            'email' => 'required|email',
+            'first_name' => 'required|string|max:255',  // ← ADD THIS
+            'last_name' => 'required|string|max:255',   // ← ADD THIS
+            'job_title' => 'required|string|max:255',
+            'department' => 'nullable|string|max:255',
+            'is_admin' => 'boolean',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Validation failed',
+                'errors' => $validator->errors()
+            ], 422);
+        }
+
+        // Generate invitation token
+        $invitationToken = Str::random(64);
+        
+        // Check if user already exists
+        $invitedUser = User::where('email', $request->email)->first();
+
+        if (!$invitedUser) {
+            // Create new user
+            $tempPassword = Str::random(12);
+            $invitedUser = User::create([
+                'email' => $request->email,
+                'password' => Hash::make($tempPassword),
+                'first_name' => $request->first_name,
+                'last_name' => $request->last_name,
+                'app_role' => 'employer',
+                'invitation_token' => $invitationToken,
+            ]);
+        } else {
+            // Update existing user with invitation token
+            $invitedUser->update([
+                'invitation_token' => $invitationToken,
+            ]);
+        }
+
+        // Check if user is already a staff member
+        $existingStaff = CompanyStaff::where('company_id', $user->company_id)
+            ->where('user_id', $invitedUser->id)
+            ->first();
+
+        if ($existingStaff) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'User is already a staff member'
+            ], 422);
+        }
+
+        // Create staff record
+        $staff = CompanyStaff::create([
+            'company_id' => $user->company_id,
+            'user_id' => $invitedUser->id,
+            'job_title' => $request->job_title,
+            'department' => $request->department,
+            'is_admin' => $request->input('is_admin', false),
+            'permissions' => $request->input('is_admin', false) ? self::ADMIN_PERMISSIONS : self::DEFAULT_PERMISSIONS,
+            'status' => 'active'
+        ]);
+
+        // ✅ Send invitation email
+        $invitedUser->notify(new StaffInvitationNotification(
+            $user->company,
+            $request->job_title,
+            $invitationToken,
+            $user->first_name . ' ' . $user->last_name
+        ));
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Staff invitation sent successfully',
+            'data' => $staff
+        ], 201);
+    } catch (\Exception $e) {
+        return response()->json([
+            'status' => 'error',
+            'message' => 'Failed to send invitation',
+            'error' => config('app.debug') ? $e->getMessage() : 'Internal server error'
+        ], 500);
+    }
+}
 
     public function update(Request $request, $id)
     {
