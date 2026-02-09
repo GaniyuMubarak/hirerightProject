@@ -654,7 +654,9 @@ class AuthController extends Controller
 
     
     // SEND VERIFICATION EMAIL
-    SendOtpEmailJob::dispatch($user, $otp); 
+    \Log::info('BEFORE dispatching email', ['email' => $user->email, 'otp' => $otp]);
+SendOtpEmailJob::dispatch($user, $otp);
+\Log::info('AFTER dispatching email', ['email' => $user->email]);
 
     // Create token using Sanctum
     $token = $user->createToken('auth_token')->plainTextToken;

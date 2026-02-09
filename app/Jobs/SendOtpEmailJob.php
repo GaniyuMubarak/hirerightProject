@@ -2,12 +2,13 @@
 
 namespace App\Jobs;
 
+use App\Mail\SendOtpEmail;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
-use SendGrid\Mail\Mail as SendGridMail;
+use Illuminate\Support\Facades\Mail;
 
 class SendOtpEmailJob implements ShouldQueue
 {
@@ -27,25 +28,16 @@ class SendOtpEmailJob implements ShouldQueue
 
     public function handle()
     {
-        $email = new SendGridMail();
-        $email->setFrom(config('mail.from.address'), config('mail.from.name'));
-        $email->setSubject('Your HireRight OTP Code');
-        $email->addTo($this->user->email, $this->user->first_name . ' ' . $this->user->last_name);
-        $email->addContent(
-            "text/html",
-view('emails.otp', ['otp' => $this->otp, 'user' => $this->user])->render()     );
-
-        $sendgrid = new \SendGrid(env('SENDGRID_API_KEY'));
-        
         try {
-            $response = $sendgrid->send($email);
+            // Use Laravel Mail facade (SMTP from .env)
+            Mail::to($this->user->email)->send(new SendOtpEmail($this->user, $this->otp));
+            
             \Log::info('OTP Email sent successfully', [
-                'status' => $response->statusCode(),
                 'email' => $this->user->email,
                 'user_id' => $this->user->id
             ]);
         } catch (\Exception $e) {
-            \Log::error('SendGrid API error', [
+            \Log::error('Email sending failed', [
                 'error' => $e->getMessage(),
                 'email' => $this->user->email
             ]);
