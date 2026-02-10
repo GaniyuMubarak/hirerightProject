@@ -18,6 +18,8 @@ import { Input } from "../../ui/input";
 const workModes = [
   { label: "Remote", value: "remote" },
   { label: "Hybrid", value: "hybrid" },
+  // { label: "Onsite", value: "onsite" },
+  // { label: "Intern", value: "intern" },
   { label: "Onsite", value: "onsite" },
 ];
 
@@ -57,9 +59,10 @@ export default function JobTitleForm() {
                 <FormItem>
                   <FormLabel>Work Mode</FormLabel>
                   <Select
-                    onValueChange={field.onChange}
-                    defaultValue={field.value}
-                  >
+                    // onValueChange={field.onChange}
+                    // defaultValue={field.value}
+                    value={field.value}
+                    onValueChange={field.onChange}>
                     <FormControl>
                       <SelectTrigger>
                         <SelectValue placeholder="Select work mode" />

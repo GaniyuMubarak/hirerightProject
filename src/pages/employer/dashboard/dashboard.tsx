@@ -22,6 +22,7 @@ export default function EmployerDashboard() {
     queryKey: ["job-listing"],
     queryFn: () => JobServices.getAllJobs(),
   });
+  
 
   return (
     <div>
@@ -30,6 +31,7 @@ export default function EmployerDashboard() {
           <div className="space-y-1 lg:space-y-3  max-lg:border-b pb-2 mb-4">
             <h1 className="text-2xl lg:text-3xl font-medium">
               Welcome, {user?.first_name}
+              {/* Welcome, {user?.firstName} from {companyName}! */}
             </h1>
             <p className="text-[#475467] text-sm">
               Your current summary and activity.
@@ -39,7 +41,7 @@ export default function EmployerDashboard() {
             to={"/employer/jobs/post"}
             className={cn(
               buttonVariants(),
-              "rounded-[6px] max-lg:w-fit max-lg:self-end"
+              "rounded-[6px] max-lg:w-fit max-lg:self-end",
             )}>
             Post a Job
           </Link>

@@ -23,6 +23,9 @@ import EmployerOnboarding from "./pages/employer/onboarding/onboarding";
 import StaffList from "./pages/employer/staff/staff-list";
 import EmployerCreatText from "./pages/employer/test/create";
 import EmployerTests from "./pages/employer/test/test";
+import EmployerProfilePage from "./pages/employer/profile/profile";
+// import EmployerProfileEditP from "./pages/employer/profile/edit";
+import EmployerProfileEditPage from "./pages/employer/profile/edit";
 
 export const routes = [
   {
@@ -161,6 +164,23 @@ export const routes = [
               {
                 path: "create",
                 element: EmployerCreatText,
+              },
+            ],
+          },
+          {
+            path: "profile",
+            children: [
+              {
+                path: "",
+                element: EmployerProfilePage,
+              },
+              // {
+              //   path: "create",
+              //   element: EmployerCreatText,
+              // },
+              {
+                path: "edit", 
+                element: EmployerProfileEditPage,
               },
             ],
           },

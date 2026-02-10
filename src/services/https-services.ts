@@ -1,6 +1,11 @@
 import axios, { InternalAxiosRequestConfig } from "axios";
 import Cookies from "js-cookie";
 import { toast } from "sonner";
+import { useNavigate } from "react-router-dom";
+
+
+
+// const navigate = useNavigate();
 
 type ResponseData = any;
 
@@ -50,11 +55,13 @@ instance.interceptors.response.use(
       Cookies.remove("adminInfo");
       if (window.location.pathname !== "/sign-in") {
         window.location.href = "/sign-in";
+        // navigate("/sign-in");
       }
 
       return Promise.reject(error);
     } else if (error?.response?.status === 403) {
       window.location.href = "/unauthorized";
+      // navigate("/unauthorized");
       return Promise.reject(error);
     } else {
       return Promise.reject(error);

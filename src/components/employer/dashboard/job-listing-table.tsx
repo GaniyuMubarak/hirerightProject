@@ -19,7 +19,7 @@ export default function EmployerJobListingTable({ jobs }: { jobs: any }) {
       <header className="flex justify-between items-center gap-4 border-b pb-2.5">
         <div className="space-y-1">
           <h1 className="text-lg lg:text-2xl font-medium text-[#020C10]">
-            Job Postings
+            Job Posted
           </h1>
         </div>
 
@@ -46,7 +46,10 @@ export default function EmployerJobListingTable({ jobs }: { jobs: any }) {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {jobs?.data?.data?.map((job: any) => (
+            {/* {jobs?.data?.data?.map((job: any) => ( */}
+            {/* used this to limit the number of jobs displayed to 5 on dashboard */}
+            {jobs?.data?.data?.slice(0, 5).map((job: any) => (
+
               <TableRow key={job.id}>
                 <TableCell>
                   <div className="flex flex-col justify-between h-full space-y-2">

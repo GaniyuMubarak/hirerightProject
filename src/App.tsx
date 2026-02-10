@@ -29,7 +29,8 @@ import EmployerCreatText from "./pages/employer/test/create";
 import EmployerTests from "./pages/employer/test/test";
 import ProtectedRoute from "./providers/protected-route";
 import { UserProvider } from "./providers/user-context";
-
+import EmployerProfilePage from "./pages/employer/profile/profile";
+import EmployerProfileEditPage from "./pages/employer/profile/edit";
 export default function App() {
   const queryClient = new QueryClient();
 
@@ -93,6 +94,11 @@ export default function App() {
                   <Route index element={<StaffList />} />
                   <Route path="create" element={<EmployerCreatText />} />
                 </Route>
+                <Route path="profile" element={<EmployerProfilePage />} />
+                <Route
+                  path="profile/edit"
+                  element={<EmployerProfileEditPage />}
+                />
               </Route>
             </Route>
           </Routes>

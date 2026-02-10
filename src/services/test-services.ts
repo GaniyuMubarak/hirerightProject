@@ -316,7 +316,7 @@ class TestService {
       const response = await requests.get("/employers/tests", params);
 
       console.log("[TestService] List tests response:", response);
-      console.log("[TestService] Tests data:", response.data);
+      // console.log("[TestService] Tests data:", response.data);
       console.log("[TestService] Tests array:", response.data?.data);
 
       if (response.status === "success") {

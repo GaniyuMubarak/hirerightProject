@@ -1,4 +1,3 @@
-import React from "react";
 import { OnboardingFormData } from "@/types/profile";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
@@ -6,7 +5,7 @@ import { useNavigate } from "react-router";
 import { toast } from "sonner";
 import { useCurrentUser } from "../use-current-user";
 
-const useOnboardingForm = () => {
+const useOnboardingForm = ({ onSuccess }: { onSuccess?: () => void } = {}) => {
   const [loading, setLoading] = useState(false);
   const navigator = useNavigate();
   const user = useCurrentUser();
@@ -222,7 +221,12 @@ const useOnboardingForm = () => {
       console.log('Success:', result);
 
       toast.success('Profile updated successfully');
-      navigator('/candidate/dashboard');
+      
+      if (onSuccess) {
+        onSuccess();
+      } else {
+        navigator('/candidate/dashboard');
+      }
 
     } catch (err: any) {
       console.error('Onboarding error:', err);

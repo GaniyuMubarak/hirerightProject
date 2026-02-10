@@ -20,8 +20,8 @@ const employmentTypes = [
   { label: "Part Time", value: "part_time" },
   { label: "Contract", value: "contract" },
   { label: "Internship", value: "internship" },
-  { label: "Freelance", value: "freelance" },
-  { label: "Self Employed", value: "self_employed" },
+  // { label: "Freelance", value: "freelance" },
+  // { label: "Self Employed", value: "self_employed" },
 ];
 
 const experienceLevels = [

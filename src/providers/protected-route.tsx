@@ -5,7 +5,8 @@ import { Navigate, Outlet } from "react-router";
 export default function ProtectedRoute() {
   const user = useCurrentUser();
   if (!user?.app_role) {
-    return <Navigate to={`/${user?.app_role}/dashboard`} />;
+    // return <Navigate to={`/${user?.app_role}/dashboard`} />;
+    return <Navigate to={`/auth/login`} />;
   }
   return (
     <React.Fragment>

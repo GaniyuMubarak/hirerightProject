@@ -21,8 +21,8 @@ export default function EmployerTests() {
       setLoading(true);
       const response = await TestService.listTests();
 
-      console.log("API Response:", response);
-      console.log("Tests Data:", response.data);
+      // console.log("API Response:", response);
+      // console.log("Tests Data:", response.data);
 
       // Transform API data to component format
       const transformedTests = (response.data || []).map((test: any) => ({
@@ -35,7 +35,7 @@ export default function EmployerTests() {
         createdAt: new Date(test.created_at),
       }));
 
-      console.log("Transformed Tests:", transformedTests);
+      // console.log("Transformed Tests:", transformedTests);
 
       setTests(transformedTests);
     } catch (error) {
@@ -48,7 +48,7 @@ export default function EmployerTests() {
 
   // Handler functions
   const handleEdit = (test: any) => {
-    console.log("Edit test:", test);
+    // console.log("Edit test:", test);
     // Temporarily comment out until route exists
     // navigate(`/employer/tests/edit/${test.id}`);
     toast.info(`Editing "${test.title}" - Feature coming soon!`);
@@ -100,7 +100,7 @@ export default function EmployerTests() {
         </div>
       ),
       {
-        duration: Infinity, // Don't auto-dismiss
+        duration: Infinity, 
         position: "top-center",
       }
     );
@@ -175,7 +175,7 @@ export default function EmployerTests() {
         onDelete={handleDelete}
         onViewResults={handleViewResults}
         onExport={handleExport}
-        onPreview={handlePreview} // ADD THIS LINE - REQUIRED
+        onPreview={handlePreview}
       />
     </div>
   );

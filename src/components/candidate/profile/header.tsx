@@ -22,10 +22,10 @@ export default function Header({ profile }: { profile: any }) {
           <div className="flex justify-between items-center w-full pt-4 lg:pt-8">
             <header className="space-y-1">
               <h1 className="lg:text-3xl font-semibold text-[#101828]">
-                {profile?.user?.first_name} {profile?.user?.last_name}
+                {profile?.first_name} {profile?.last_name}
               </h1>
               <p className="text-[#475467] text-xs lg:text-sm">
-                {profile?.user?.title}
+                {profile?.title}
               </p>
             </header>
             <div className="flex gap-2 lg:gap-4">
