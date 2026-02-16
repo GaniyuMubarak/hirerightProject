@@ -22,25 +22,25 @@
     <div class="container">
         <div class="header {{ $status }}">
             @if($status == 'shortlisted')
-                <h1>🎉 Congratulations!</h1>
+                <h1>Congratulations!</h1>
             @elseif($status == 'interview_scheduled')
                 <h1>📅 Interview Scheduled</h1>
             @elseif($status == 'offered')
                 <h1>🎊 Job Offer!</h1>
             @elseif($status == 'hired')
-                <h1>🎉 You're Hired!</h1>
+                <h1> You're Hired!</h1>
             @else
                 <h1>Application Update</h1>
             @endif
         </div>
         
         <div class="content">
-            <h2>Hello {{ $candidateName }},</h2>
+            <h2>Dear {{ $candidateName }},</h2>
             
             @if($status == 'shortlisted')
                 <p>Great news! Your application for <strong>{{ $jobTitle }}</strong> at <strong>{{ $companyName }}</strong> has been shortlisted.</p>
                 <div class="status-box">
-                    <h3 style="margin-top: 0; color: #4CAF50;">✅ You've Been Shortlisted!</h3>
+                    <h3 style="margin-top: 0; color: #4CAF50;">You've Been Shortlisted!</h3>
                     <p>You're one step closer to landing your dream job. The hiring team will contact you soon with the next steps.</p>
                 </div>
                 

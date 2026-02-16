@@ -190,6 +190,7 @@ Route::middleware(['auth:sanctum', 'can:employer'])->prefix('employers')->group(
         'update' => 'company.tests.update',
         'destroy' => 'company.tests.destroy',
     ]);
+    
     Route::post('tests/{test}/questions', [CompanyTestController::class, 'addQuestion']);
     Route::put('tests/{test}/questions/{question}', [CompanyTestController::class, 'updateQuestion']);
     Route::delete('tests/{test}/questions/{question}', [CompanyTestController::class, 'removeQuestion']);
@@ -201,6 +202,8 @@ Route::middleware(['auth:sanctum', 'can:employer'])->prefix('employers')->group(
     Route::get('tests/{test}/submissions/{submission}', [CompanyTestController::class, 'viewSubmission']);
     Route::post('tests/{test}/submissions/{submission}/grade', [CompanyTestController::class, 'gradeSubmission']);
     Route::get('tests/{test}/jobs', [CompanyTestController::class, 'assignedJobs']);
+    Route::post('tests/{testId}/assign', [CompanyTestController::class, 'assignTestToCandidate']);
+
 });
 
 // Admin Routes

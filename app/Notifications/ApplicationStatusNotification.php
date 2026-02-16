@@ -55,13 +55,13 @@ class ApplicationStatusNotification extends Notification
     {
         switch ($this->newStatus) {
             case 'shortlisted':
-                return '🎉 You\'ve been shortlisted!';
+                return ' You\'ve been shortlisted!';
             case 'interview_scheduled':
                 return '📅 Interview Scheduled - ' . $this->application->jobListing->title;
             case 'offered':
                 return '🎊 Job Offer - ' . $this->application->jobListing->title;
             case 'hired':
-                return '🎉 Congratulations! You\'ve been hired!';
+                return ' Congratulations! You\'ve been hired!';
             case 'rejected':
                 return 'Application Update - ' . $this->application->jobListing->title;
             default:

@@ -2,6 +2,9 @@
 
 namespace App\Http\Controllers\Company;
 
+
+use App\Models\JobApplication;
+use Illuminate\Support\Facades\Log;
 use App\Notifications\TestInvitationNotification;
 use App\Http\Controllers\Controller;
 use App\Models\Company;
@@ -515,7 +518,7 @@ public function removeQuestion($testId, $questionId)
     }
 }
 
-use App\Notifications\TestInvitationNotification;
+
 
 public function assignTestToCandidate(Request $request, $testId)
 {

@@ -78,7 +78,7 @@
 <body>
     <div class="container">
         <div class="header">
-            <h1>🎉 Welcome to HireRight!</h1>
+            <h1> Welcome to HireRight!</h1>
         </div>
         
         <div class="content">

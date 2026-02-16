@@ -17,11 +17,11 @@
 <body>
     <div class="container">
         <div class="header">
-            <h1>📝 Test Invitation</h1>
+            <h1>Test Invitation</h1>
         </div>
         
         <div class="content">
-            <h2>Hello {{ $candidateName }}!</h2>
+            <h2>Dear {{ $candidateName }}!</h2>
             
             <p>Great news! You have been invited to take a test for the position of <strong>{{ $jobTitle }}</strong> at <strong>{{ $companyName }}</strong>.</p>
             
