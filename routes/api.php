@@ -1,5 +1,6 @@
 <?php
 
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Admin\AdminTestController;
 use App\Http\Controllers\Company\CompanyController;
@@ -81,7 +82,17 @@ Route::get('/debug-users-table', function() {
         ], 500);
     }
 });
-
+Route::get('/test-mail', function () {
+    try {
+        Mail::raw('Hi! This is a test mail from HirerightApp.', function ($message) {
+            $message->to('ganiyumubarak12@gmail.com')
+                    ->subject('Server SMTP Test');
+        });
+        return "Email sent successfully!";
+    } catch (\Exception $e) {
+        return "Error: " . $e->getMessage();
+    }
+});
 Route::get('/clear-failed-jobs', function() {
     DB::statement('SET FOREIGN_KEY_CHECKS=0;');
     DB::table('failed_jobs')->truncate();
