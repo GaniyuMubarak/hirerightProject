@@ -1,5 +1,6 @@
 <?php
 
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Admin\AdminTestController;
 use App\Http\Controllers\Company\CompanyController;
@@ -81,6 +82,21 @@ Route::get('/debug-users-table', function() {
         ], 500);
     }
 });
+
+// testing mailler ++++++++++++++++++++++++++++++++++++++++++++++++++++++
+Route::get('/test-mail', function () {
+    try {
+        Mail::raw('Hi! This is a test mail from HirerightApp Second.', function ($message) {
+            $message->to('ganiyumubarak12@gmail.com')
+                    ->subject('Server SMTP Test');
+        });
+        return "Email sent successfully!";
+    } catch (\Exception $e) {
+        return "Error: " . $e->getMessage();
+    }
+});
+
+// testing mailler ++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 Route::get('/clear-failed-jobs', function() {
     DB::statement('SET FOREIGN_KEY_CHECKS=0;');
@@ -190,7 +206,7 @@ Route::middleware(['auth:sanctum', 'can:employer'])->prefix('employers')->group(
         'update' => 'company.tests.update',
         'destroy' => 'company.tests.destroy',
     ]);
-    
+
     Route::post('tests/{test}/questions', [CompanyTestController::class, 'addQuestion']);
     Route::put('tests/{test}/questions/{question}', [CompanyTestController::class, 'updateQuestion']);
     Route::delete('tests/{test}/questions/{question}', [CompanyTestController::class, 'removeQuestion']);

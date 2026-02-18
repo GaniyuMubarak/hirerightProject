@@ -121,8 +121,6 @@ class AuthController extends Controller
         Log::error('FAILED: OTP not sent', ['error' => $e->getMessage()]);
     }
 
-    // Log::info('AFTER dispatching email', ['email' => $user->email]);
-
     // Create token using Sanctum
     $token = $user->createToken('auth_token')->plainTextToken;
 
