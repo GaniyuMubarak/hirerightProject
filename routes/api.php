@@ -118,6 +118,7 @@ Route::prefix('auth')->group(function () {
     Route::post('reset-password', [AuthController::class, 'resetPassword']);
 });
 
+
 // Candidate Routes
 Route::middleware(['auth:sanctum', 'can:candidate'])->prefix('candidates')->group(function () {
     // Company Dashboard
@@ -178,6 +179,12 @@ Route::middleware(['auth:sanctum', 'can:employer'])->prefix('employers')->group(
     Route::put('company', [CompanyController::class, 'update']);
     Route::get('company', [CompanyController::class, 'show']);
 
+    // ✅ Candidate Management Routes - FIXED (removed duplicate prefix)
+    Route::get('candidates', [CandidateController::class, 'index']);
+    Route::get('candidates/{id}', [CandidateController::class, 'show']);
+    Route::get('candidates/{id}/resume', [CandidateController::class, 'getResume']);
+    Route::get('candidates/{id}/applications', [CandidateController::class, 'getApplications']);
+
     // Staff Management
     Route::get('company/staffs', [CompanyStaffController::class, 'index']);
     Route::post('company/staffs', [CompanyStaffController::class, 'invite']);
@@ -219,7 +226,6 @@ Route::middleware(['auth:sanctum', 'can:employer'])->prefix('employers')->group(
     Route::post('tests/{test}/submissions/{submission}/grade', [CompanyTestController::class, 'gradeSubmission']);
     Route::get('tests/{test}/jobs', [CompanyTestController::class, 'assignedJobs']);
     Route::post('tests/{testId}/assign', [CompanyTestController::class, 'assignTestToCandidate']);
-
 });
 
 // Admin Routes
