@@ -16,7 +16,7 @@ export default function SignUpPage() {
         </div>
 
         <div className="mt-8 text-sm text-[#475467] flex justify-end items-center gap-2">
-          <Icons.mail className="size-4" /> <span>help@untitledui.com</span>
+          <Icons.mail className="size-4" /> <span>hireright@support.com</span>
         </div>
       </div>
       <div className="relative hidden bg-gradient-to-b from-[#435E93] to-[#151D2D] lg:block">

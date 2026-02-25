@@ -15,10 +15,9 @@ const useAuthForm = (page: "sign-up" | "login") => {
   const { dispatch } = useUser();
   const navigate = useNavigate();
   const { queryParams } = useQueryParams();
-
   const isSignUp = page === "sign-up";
 
-  const form = useForm<SignupSchemaType | LoginSchemaType>({
+  const form = useForm({
     resolver: zodResolver(isSignUp ? signupSchema : loginSchema),
     defaultValues: isSignUp
       ? {
@@ -39,14 +38,10 @@ const useAuthForm = (page: "sign-up" | "login") => {
 
   const onSubmit = async (data: SignupSchemaType | LoginSchemaType) => {
     try {
-      // Prepare payload - remove fields not needed by backend
       let payload: any = { ...data };
 
       if (isSignUp) {
-        // Remove acceptTerms from API payload (frontend validation only)
         const { acceptTerms, ...signupData } = data as SignupSchemaType;
-
-        // Create a clean payload with only required fields
         payload = {
           first_name: signupData.first_name,
           last_name: signupData.last_name,
@@ -55,21 +50,16 @@ const useAuthForm = (page: "sign-up" | "login") => {
           password_confirmation: signupData.password_confirmation,
           app_role: signupData.app_role,
         };
-
-        // Debug: Log the payload being sent
         console.log("📦 Signup payload:", payload);
       } else {
-        // For login, add app_role from query params if available
         payload = {
           ...data,
           app_role: queryParams?.app_role || "candidate",
         };
-
-        // Debug: Log the payload being sent
         console.log("📦 Login payload:", payload);
       }
 
-      // Step 1: Authentication (signup or login)
+      // Step 1: Auth request
       const res = isSignUp
         ? await AuthServices.register(payload)
         : await AuthServices.login(payload);
@@ -79,101 +69,73 @@ const useAuthForm = (page: "sign-up" | "login") => {
       }
 
       // Step 2: Store auth data
-      const cookieExpiry = (data as LoginSchemaType).rememberMe ? 30 : 0.5; // 30 days or 12 hours
-
-      // ✅ SAVE TOKEN TO LOCALSTORAGE
-      localStorage.setItem('token', res.token);
-      console.log('✅ Token saved to localStorage:', res.token);
-
+      const cookieExpiry = (data as LoginSchemaType).rememberMe ? 30 : 0.5;
+      localStorage.setItem("token", res.token);
       dispatch({ type: "USER_LOGIN", payload: res });
       Cookies.set("HRuserInfo", JSON.stringify(res), { expires: cookieExpiry });
 
-      // Step 3: Success notification
-      toast.success(
-        isSignUp ? "Registration successful!" : "Login successful!"
-      );
-
-      // Step 4: Handle post-auth navigation
+      // Step 3: Handle navigation based on action type
       if (isSignUp) {
-        // Check if email is already verified (auto-verified by backend)
-        if (res.user?.email_verified || res.user?.email_verified_at) {
-          // Email already verified - go directly to onboarding
-          console.log("✅ Email auto-verified, redirecting to onboarding");
-          toast.success("Please complete your profile to continue.");
-          
-          const role = res.user.app_role;
-          
-          if (role === 'candidate') {
-            navigate('/candidate/onboarding');
-          } else if (role === 'employer') {
-            navigate('/employer/onboarding');
-          } else {
-            navigate('/dashboard');
-          }
-          return;
-        } else {
-          // Email not verified - go to verification page
-          console.log("⏳ Email needs verification");
-          navigate("/email-verification");
-          return;
-        }
-      }
+        const signupEmail = (data as SignupSchemaType).email;
 
-      // Login flow - navigate based on role
-      const role = res.user.app_role;
+        // SIGNUP FLOW: Always go to email verification
+        console.log("📧 Redirecting to email verification for:", signupEmail);
+        toast.success(
+          "Registration successful! Please check your email for the verification code.",
+        );
 
-      if (role === "employer") {
-        const company = await CompanyServices.getCompany();
+        // Backend automatically sends the OTP on registration
+        // Wait a moment to ensure the email is sent
+        await new Promise((resolve) => setTimeout(resolve, 1000));
 
-        if (!company?.data) {
-          navigate("/employer/onboarding");
-          return;
-        }
-
-        navigate("/employer/dashboard");
+        // ✅ Navigate to email verification with email in state
+        navigate("/auth/email-verification", {
+          state: { email: signupEmail },
+          replace: true,
+        });
         return;
       }
 
-      // For candidates, check resume in background (non-blocking)
+      // LOGIN FLOW: Success notification
+      toast.success("Login successful!");
+
+      // Step 4: Login flow - navigate based on role
+      const role = res.user.app_role;
+
+      if (role === "employer") {
+        try {
+          const company = await CompanyServices.getCompany();
+          if (!company?.data) {
+            navigate("/employer/onboarding");
+          } else {
+            navigate("/employer/dashboard");
+          }
+        } catch (error) {
+          // If company fetch fails, assume no company and go to onboarding
+          console.log("No company found, redirecting to onboarding");
+          navigate("/employer/onboarding");
+        }
+        return;
+      }
+
+      // Candidate flow
       FileServices.getEntityFile("CandidateResume", res.user.id).catch(() => {
-        // Silently handle - don't block navigation
+        // Silently handle - resume check is non-blocking
       });
-
-      navigate(`/${role}/dashboard`);
+      navigate(`/candidate/dashboard`);
     } catch (err: any) {
-      // Debug: Log the full error
-      console.error("❌ Full error object:", err);
-      console.error("❌ Error response:", err.response);
-      console.error("❌ Error data:", err.response?.data);
+      console.error("❌ Auth error:", err);
 
-      // Handle different error types
       const status = err.response?.status;
       const errorData = err.response?.data;
 
       if (status === 422) {
-        // Log validation errors for debugging
-        console.error("🔍 Validation errors (errors key):", errorData?.errors);
-        console.error("🔍 Validation errors (direct):", errorData);
-
-        // Log the actual error messages
-        if (errorData?.email) {
-          console.error("📧 Email error:", errorData.email);
-        }
-
-        // Backend might return errors in different formats
         const errors = errorData?.errors || errorData;
-
-        // Validation errors from backend
         if (errors && typeof errors === "object") {
           Object.entries(errors).forEach(([field, messages]) => {
-            const errorMessage = Array.isArray(messages)
-              ? messages[0]
-              : String(messages);
-            console.log(`Setting error for ${field}:`, errorMessage);
-
             form.setError(field as any, {
               type: "server",
-              message: errorMessage,
+              message: Array.isArray(messages) ? messages[0] : String(messages),
             });
           });
           toast.error("Please check the form for errors");
@@ -185,16 +147,27 @@ const useAuthForm = (page: "sign-up" | "login") => {
       } else if (status === 409) {
         toast.error("This email is already registered");
       } else if (status === 403) {
+        // Check if this is an unverified email error
+        if (
+          errorData?.message?.toLowerCase().includes("verify") ||
+          errorData?.requires_verification
+        ) {
+          toast.error("Please verify your email before logging in.");
+
+          // ✅ Redirect to verification page with email
+          navigate("/auth/email-verification", {
+            state: { email: (data as LoginSchemaType).email },
+          });
+          return;
+        }
         toast.error("Your account has been suspended. Please contact support.");
       } else if (err.code === "ECONNABORTED") {
-        toast.error(
-          "Request timed out. The server is taking too long to respond. Please try again."
-        );
+        toast.error("Request timed out. Please try again.");
       } else if (err.code === "ERR_NETWORK") {
         toast.error("Network error. Please check your connection.");
       } else {
         toast.error(
-          errorData?.message || "An error occurred. Please try again."
+          errorData?.message || "An error occurred. Please try again.",
         );
       }
     }

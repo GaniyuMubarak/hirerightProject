@@ -1,6 +1,7 @@
 import { useState, useRef } from "react";
 import { useForm } from "react-hook-form";
 import { Button } from "@/components/ui/button";
+import { useNavigate } from "react-router";
 import {
   Form,
   FormControl,
@@ -20,17 +21,26 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "../../ui/input";
 import { toast } from "sonner";
-import TestService, { 
-  type CreateTestData, 
+import TestService, {
+  type CreateTestData,
   type QuestionData as ServiceQuestionData,
-  type OptionData as ServiceOptionData 
+  type OptionData as ServiceOptionData,
 } from "@/services/test-services";
 
 // Icons
 const Icons = {
   cloudUpload: () => (
-    <svg className="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+    <svg
+      className="w-6 h-6 text-gray-400"
+      fill="none"
+      stroke="currentColor"
+      viewBox="0 0 24 24">
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth="2"
+        d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"
+      />
     </svg>
   ),
 };
@@ -133,7 +143,7 @@ const validateFile = (file: File): { isValid: boolean; error?: string } => {
 
 const getFileIcon = (file: File | null) => {
   if (!file) return <Icons.cloudUpload />;
-  
+
   if (file.type.startsWith("image/")) {
     return <div className="text-green-600">📷</div>;
   } else if (file.type === "application/pdf") {
@@ -161,37 +171,41 @@ const TabButton = ({
       active
         ? "border-primary text-primary"
         : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
-    }`}
-  >
+    }`}>
     {children}
   </button>
 );
 
 // Convert local question to API format
-const convertQuestionToApiFormat = (question: LocalQuestionData, order: number): ServiceQuestionData => {
+const convertQuestionToApiFormat = (
+  question: LocalQuestionData,
+  order: number,
+): ServiceQuestionData => {
   const baseQuestion: any = {
     question_text: question.text,
     question_type: question.type,
     order: order,
   };
-  
+
   // Add points only if defined
   if (question.points !== undefined && question.points !== null) {
     baseQuestion.points = Number(question.points);
   }
-  
+
   // Add settings if needed
   baseQuestion.settings = null;
-  
+
   return baseQuestion;
 };
 
 // Convert local options to API format
-const convertOptionsToApiFormat = (options: LocalQuestionData['options']): ServiceOptionData[] => {
+const convertOptionsToApiFormat = (
+  options: LocalQuestionData["options"],
+): ServiceOptionData[] => {
   if (!options) return [];
-  
+
   return options
-    .filter(opt => opt.text.trim() !== "")
+    .filter((opt) => opt.text.trim() !== "")
     .map((opt, idx) => {
       // Based on common Laravel API patterns
       const optionObj: any = {
@@ -199,12 +213,12 @@ const convertOptionsToApiFormat = (options: LocalQuestionData['options']): Servi
         is_correct: Boolean(opt.is_correct),
         order: idx + 1, // Usually order starts from 1
       };
-      
+
       // Only add points if it's defined and not null
       if (opt.points !== undefined && opt.points !== null) {
         optionObj.points = Number(opt.points);
       }
-      
+
       return optionObj;
     });
 };
@@ -247,11 +261,11 @@ export default function TestTypeForm({
   const [isLoading, setIsLoading] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const navigate = useNavigate();
 
   // Title based on test type
-  const title = testType === "multiple" 
-    ? "Multiple Question Test" 
-    : "Single Question Test";
+  const title =
+    testType === "multiple" ? "Multiple Question Test" : "Single Question Test";
 
   // File Handlers
   const handleFileSelect = (file: File) => {
@@ -319,17 +333,23 @@ export default function TestTypeForm({
     setQuestions(newQuestions);
   };
 
-  const updateQuestionType = (index: number, type: LocalQuestionData["type"]) => {
+  const updateQuestionType = (
+    index: number,
+    type: LocalQuestionData["type"],
+  ) => {
     const newQuestions = [...questions];
-    newQuestions[index] = { 
-      ...newQuestions[index], 
+    newQuestions[index] = {
+      ...newQuestions[index],
       type,
-      options: (type === "single_choice" || type === "multiple_choice") ? [
-        { id: generateId(), text: "", is_correct: true, points: 5 },
-        { id: generateId(), text: "", is_correct: false, points: 0 },
-        { id: generateId(), text: "", is_correct: false, points: 0 },
-        { id: generateId(), text: "", is_correct: false, points: 0 },
-      ] : undefined
+      options:
+        type === "single_choice" || type === "multiple_choice"
+          ? [
+              { id: generateId(), text: "", is_correct: true, points: 5 },
+              { id: generateId(), text: "", is_correct: false, points: 0 },
+              { id: generateId(), text: "", is_correct: false, points: 0 },
+              { id: generateId(), text: "", is_correct: false, points: 0 },
+            ]
+          : undefined,
     };
     setQuestions(newQuestions);
   };
@@ -343,7 +363,7 @@ export default function TestTypeForm({
   const updateQuestionOption = (
     questionIndex: number,
     optionIndex: number,
-    text: string
+    text: string,
   ) => {
     const newQuestions = [...questions];
     if (newQuestions[questionIndex].options) {
@@ -355,7 +375,7 @@ export default function TestTypeForm({
   const updateOptionPoints = (
     questionIndex: number,
     optionIndex: number,
-    points: number
+    points: number,
   ) => {
     const newQuestions = [...questions];
     if (newQuestions[questionIndex].options) {
@@ -375,7 +395,7 @@ export default function TestTypeForm({
         });
       } else {
         // For multiple choice, toggle the selected one
-        newQuestions[questionIndex].options![optionIndex].is_correct = 
+        newQuestions[questionIndex].options![optionIndex].is_correct =
           !newQuestions[questionIndex].options![optionIndex].is_correct;
       }
       setQuestions(newQuestions);
@@ -383,26 +403,26 @@ export default function TestTypeForm({
   };
 
   // Clear all questions
-  const clearAllQuestions = () => {
-    setQuestions([
-      {
-        text: "",
-        type: "single_choice",
-        points: 5,
-        options: [
-          { id: generateId(), text: "", is_correct: true, points: 5 },
-          { id: generateId(), text: "", is_correct: false, points: 0 },
-          { id: generateId(), text: "", is_correct: false, points: 0 },
-          { id: generateId(), text: "", is_correct: false, points: 0 },
-        ],
-      },
-    ]);
-    toast.info("All questions cleared");
-  };
+  // const clearAllQuestions = () => {
+  //   setQuestions([
+  //     {
+  //       text: "",
+  //       type: "single_choice",
+  //       points: 5,
+  //       options: [
+  //         { id: generateId(), text: "", is_correct: true, points: 5 },
+  //         { id: generateId(), text: "", is_correct: false, points: 0 },
+  //         { id: generateId(), text: "", is_correct: false, points: 0 },
+  //         { id: generateId(), text: "", is_correct: false, points: 0 },
+  //       ],
+  //     },
+  //   ]);
+  //   toast.info("All questions cleared");
+  // };
 
   // Remove empty questions
   const removeEmptyQuestions = () => {
-    const filteredQuestions = questions.filter(q => q.text.trim() !== "");
+    const filteredQuestions = questions.filter((q) => q.text.trim() !== "");
     if (filteredQuestions.length === 0) {
       filteredQuestions.push({
         text: "",
@@ -484,15 +504,21 @@ export default function TestTypeForm({
     // Validate questions
     for (const [index, question] of questions.entries()) {
       if (question.text.trim() === "") continue;
-      
-      if ((question.type === "single_choice" || question.type === "multiple_choice") && question.options) {
+
+      if (
+        (question.type === "single_choice" ||
+          question.type === "multiple_choice") &&
+        question.options
+      ) {
         const hasCorrectOption = question.options.some((opt) => opt.is_correct);
         if (!hasCorrectOption) {
           return `Question ${index + 1} needs at least one correct option`;
         }
-        
+
         // Check for empty options
-        const emptyOptions = question.options.filter(opt => opt.text.trim() === "");
+        const emptyOptions = question.options.filter(
+          (opt) => opt.text.trim() === "",
+        );
         if (emptyOptions.length > 0) {
           return `Question ${index + 1} has empty options`;
         }
@@ -539,11 +565,11 @@ export default function TestTypeForm({
       // Step 1: Create the test using TestService
       const testData = prepareTestData();
       setUploadProgress(20);
-      
+
       console.log("[Form] Creating test with data:", testData);
-      
+
       const createdTest = await TestService.createTest(testData);
-      
+
       const testId = createdTest.id;
       if (!testId) {
         throw new Error("Test ID not returned from server");
@@ -567,94 +593,139 @@ export default function TestTypeForm({
       // Step 3: Handle manual questions
       if (creationMethod !== "upload") {
         const validQuestions = questions.filter((q) => q.text.trim() !== "");
-        
-        console.log(`[Form] Processing ${validQuestions.length} valid questions`);
-        
+
+        console.log(
+          `[Form] Processing ${validQuestions.length} valid questions`,
+        );
+
         if (validQuestions.length > 0) {
           for (let i = 0; i < validQuestions.length; i++) {
             const question = validQuestions[i];
-            
+
             console.log(`[Form] Question ${i + 1} data:`, question);
-            
+
             try {
               // Prepare question data for service
               const questionData = convertQuestionToApiFormat(question, i + 1);
               console.log(`[Form] Converted question data:`, questionData);
-              
+
               // Add question using TestService
-              const createdQuestion = await TestService.addQuestion(testId, questionData);
+              const createdQuestion = await TestService.addQuestion(
+                testId,
+                questionData,
+              );
               console.log(`[Form] Created question response:`, createdQuestion);
-              
+
               const questionId = createdQuestion.id;
               console.log(`[Form] Question created with ID: ${questionId}`);
 
               // Add options for choice questions
               if (
                 questionId &&
-                (question.type === "single_choice" || question.type === "multiple_choice") &&
+                (question.type === "single_choice" ||
+                  question.type === "multiple_choice") &&
                 question.options &&
-                question.options.some(opt => opt.text.trim() !== "")
+                question.options.some((opt) => opt.text.trim() !== "")
               ) {
-                const validOptions = convertOptionsToApiFormat(question.options);
-                console.log(`[Form] Converted options for question ${questionId}:`, validOptions);
-                
+                const validOptions = convertOptionsToApiFormat(
+                  question.options,
+                );
+                console.log(
+                  `[Form] Converted options for question ${questionId}:`,
+                  validOptions,
+                );
+
                 if (validOptions.length > 0) {
                   try {
-                    const optionsResult = await TestService.addOptions(testId, questionId, validOptions);
-                    console.log(`[Form] Options added successfully for question ${questionId}:`, optionsResult);
+                    const optionsResult = await TestService.addOptions(
+                      testId,
+                      questionId,
+                      validOptions,
+                    );
+                    console.log(
+                      `[Form] Options added successfully for question ${questionId}:`,
+                      optionsResult,
+                    );
                   } catch (optionsError: any) {
-                    console.error(`[Form] Failed to add options to question ${questionId}:`, optionsError);
-                    
+                    console.error(
+                      `[Form] Failed to add options to question ${questionId}:`,
+                      optionsError,
+                    );
+
                     // Log the exact error details
                     if (optionsError.response) {
-                      console.error(`[Form] Error response:`, optionsError.response.data);
-                      console.error(`[Form] Error status:`, optionsError.response.status);
+                      console.error(
+                        `[Form] Error response:`,
+                        optionsError.response.data,
+                      );
+                      console.error(
+                        `[Form] Error status:`,
+                        optionsError.response.status,
+                      );
                     }
-                    
+
                     // Continue without options - at least the question is created
-                    toast.warning(`Options failed for question ${i + 1}, but question was saved`);
+                    toast.warning(
+                      `Options failed for question ${i + 1}, but question was saved`,
+                    );
                   }
                 } else {
-                  console.log(`[Form] No valid options for question ${questionId}`);
+                  console.log(
+                    `[Form] No valid options for question ${questionId}`,
+                  );
                 }
               }
 
               // Update progress
-              setUploadProgress(70 + Math.round((i / validQuestions.length) * 25));
-              
+              setUploadProgress(
+                70 + Math.round((i / validQuestions.length) * 25),
+              );
             } catch (questionError: any) {
-              console.error(`[Form] Failed to create question ${i + 1}:`, questionError);
-              
+              console.error(
+                `[Form] Failed to create question ${i + 1}:`,
+                questionError,
+              );
+
               if (questionError.response) {
-                console.error(`[Form] Error response:`, questionError.response.data);
-                console.error(`[Form] Error status:`, questionError.response.status);
+                console.error(
+                  `[Form] Error response:`,
+                  questionError.response.data,
+                );
+                console.error(
+                  `[Form] Error status:`,
+                  questionError.response.status,
+                );
               }
-              
-              toast.warning(`Failed to create question ${i + 1}, continuing with others`);
+
+              toast.warning(
+                `Failed to create question ${i + 1}, continuing with others`,
+              );
               // Continue with other questions
             }
           }
         } else {
-          console.log('[Form] No valid questions to process');
+          console.log("[Form] No valid questions to process");
         }
       }
 
       setUploadProgress(100);
 
       toast.success("Test created successfully!");
+        navigate(`/employer/tests`);
+
 
       // Move to next step
-      setTimeout(() => {
-        // setStep(step + 1);
-        window.location.href = `/employer/tests`;
-      }, 1000);
-
+      // setTimeout(() => {
+      //   // setStep(step + 1);
+      //   // window.location.href = `/employer/tests`;
+      //   navigate(`/employer/tests`);
+      // }, 1000);
     } catch (error: any) {
       console.error("[Form] Error creating test:", error);
-      
+
       // Extract error message from response
       let errorMessage = "Failed to create test. Please try again.";
-      
+
       if (error.response?.data?.errors) {
         const errors = error.response.data.errors;
         const errorMessages = Object.values(errors).flat().join(", ");
@@ -664,7 +735,7 @@ export default function TestTypeForm({
       } else if (error.message) {
         errorMessage = error.message;
       }
-      
+
       toast.error(errorMessage);
     } finally {
       setIsLoading(false);
@@ -699,7 +770,7 @@ export default function TestTypeForm({
       },
     ]);
     setUploadedFile(null);
-    
+
     toast.info("Form cleared");
   };
 
@@ -721,8 +792,7 @@ export default function TestTypeForm({
         onClick={() => fileInputRef.current?.click()}
         onDragOver={handleDragOver}
         onDragLeave={handleDragLeave}
-        onDrop={handleDrop}
-      >
+        onDrop={handleDrop}>
         {uploadedFile ? (
           <>
             <div className="h-10 w-10 flex justify-center items-center border rounded-[8px] shadow-[0px_1px_2px_0px_#1018280D] bg-green-50 border-green-200">
@@ -743,8 +813,7 @@ export default function TestTypeForm({
                     if (uploadedFile) {
                       window.open(URL.createObjectURL(uploadedFile), "_blank");
                     }
-                  }}
-                >
+                  }}>
                   Preview
                 </Button>
                 <Button
@@ -754,8 +823,7 @@ export default function TestTypeForm({
                   onClick={(e) => {
                     e.stopPropagation();
                     setUploadedFile(null);
-                  }}
-                >
+                  }}>
                   Remove
                 </Button>
               </div>
@@ -801,22 +869,20 @@ export default function TestTypeForm({
       <div className="flex justify-between items-center">
         <Label className="text-[#475467]">Create Questions Manually</Label>
         <div className="flex space-x-2">
-          <Button 
-            type="button" 
-            variant="outline" 
-            size="sm" 
-            onClick={addQuestion}
-          >
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            onClick={addQuestion}>
             <span className="mr-2">+</span>
             Add Question
           </Button>
           {questions.length > 1 && (
-            <Button 
-              type="button" 
-              variant="outline" 
-              size="sm" 
-              onClick={removeEmptyQuestions}
-            >
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={removeEmptyQuestions}>
               Clear Empty
             </Button>
           )}
@@ -827,8 +893,7 @@ export default function TestTypeForm({
           {questions.map((question, index) => (
             <div
               key={question.id || index}
-              className="space-y-2 border-b pb-4 last:border-b-0"
-            >
+              className="space-y-2 border-b pb-4 last:border-b-0">
               <div className="flex justify-between items-center">
                 <Label htmlFor={`question-${index}`}>
                   Question {index + 1}
@@ -839,8 +904,7 @@ export default function TestTypeForm({
                     variant="ghost"
                     size="sm"
                     onClick={() => removeQuestion(index)}
-                    className="h-8 w-8 p-0 text-red-600 hover:text-red-700 hover:bg-red-50"
-                  >
+                    className="h-8 w-8 p-0 text-red-600 hover:text-red-700 hover:bg-red-50">
                     <span>🗑️</span>
                   </Button>
                 )}
@@ -853,7 +917,7 @@ export default function TestTypeForm({
                 rows={2}
                 className="resize-none"
               />
-              
+
               {/* Question Points */}
               <div className="mt-2">
                 <Label className="text-sm font-normal text-gray-600 mb-1 block">
@@ -863,30 +927,29 @@ export default function TestTypeForm({
                   type="number"
                   placeholder="Points for this question"
                   value={question.points || 5}
-                  onChange={(e) => updateQuestionPoints(index, parseInt(e.target.value) || 5)}
+                  onChange={(e) =>
+                    updateQuestionPoints(index, parseInt(e.target.value) || 5)
+                  }
                   className="h-8"
                   min="1"
                   max="100"
                 />
               </div>
-              
+
               <div className="mt-2">
                 <Label className="text-sm font-normal text-gray-600 mb-1 block">
                   Question Type
                 </Label>
                 <Select
                   value={question.type}
-                  onValueChange={(value: LocalQuestionData["type"]) => 
+                  onValueChange={(value: LocalQuestionData["type"]) =>
                     updateQuestionType(index, value)
-                  }
-                >
+                  }>
                   <SelectTrigger className="h-8">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="single_choice">
-                      Single Choice
-                    </SelectItem>
+                    <SelectItem value="single_choice">Single Choice</SelectItem>
                     <SelectItem value="multiple_choice">
                       Multiple Choice
                     </SelectItem>
@@ -895,52 +958,75 @@ export default function TestTypeForm({
                   </SelectContent>
                 </Select>
               </div>
-              {(question.type === "single_choice" || question.type === "multiple_choice") && question.options && (
-                <div className="space-y-2 mt-3 pl-4">
-                  <Label className="text-sm font-normal text-gray-600">
-                    Options {question.type === "single_choice" ? "(select one correct answer)" : "(select all correct answers)"}
-                  </Label>
-                  {question.options.map((option, optionIndex) => (
-                    <div key={option.id || optionIndex} className="flex items-center space-x-2">
-                      <div className="flex-1 flex space-x-2">
-                        <Input
-                          placeholder={`Option ${String.fromCharCode(65 + optionIndex)}`}
-                          className="h-8 text-sm flex-1"
-                          value={option.text}
-                          onChange={(e) =>
-                            updateQuestionOption(index, optionIndex, e.target.value)
+              {(question.type === "single_choice" ||
+                question.type === "multiple_choice") &&
+                question.options && (
+                  <div className="space-y-2 mt-3 pl-4">
+                    <Label className="text-sm font-normal text-gray-600">
+                      Options{" "}
+                      {question.type === "single_choice"
+                        ? "(select one correct answer)"
+                        : "(select all correct answers)"}
+                    </Label>
+                    {question.options.map((option, optionIndex) => (
+                      <div
+                        key={option.id || optionIndex}
+                        className="flex items-center space-x-2">
+                        <div className="flex-1 flex space-x-2">
+                          <Input
+                            placeholder={`Option ${String.fromCharCode(65 + optionIndex)}`}
+                            className="h-8 text-sm flex-1"
+                            value={option.text}
+                            onChange={(e) =>
+                              updateQuestionOption(
+                                index,
+                                optionIndex,
+                                e.target.value,
+                              )
+                            }
+                          />
+                          <Input
+                            type="number"
+                            placeholder="Points"
+                            className="h-8 text-sm w-20"
+                            value={option.points || 0}
+                            onChange={(e) =>
+                              updateOptionPoints(
+                                index,
+                                optionIndex,
+                                parseInt(e.target.value) || 0,
+                              )
+                            }
+                            min="0"
+                            max="100"
+                          />
+                        </div>
+                        <input
+                          type={
+                            question.type === "single_choice"
+                              ? "radio"
+                              : "checkbox"
+                          }
+                          name={`correct-answer-${index}`}
+                          value={optionIndex}
+                          className="h-4 w-4"
+                          checked={option.is_correct}
+                          onChange={() =>
+                            toggleCorrectOption(index, optionIndex)
                           }
                         />
-                        <Input
-                          type="number"
-                          placeholder="Points"
-                          className="h-8 text-sm w-20"
-                          value={option.points || 0}
-                          onChange={(e) =>
-                            updateOptionPoints(index, optionIndex, parseInt(e.target.value) || 0)
-                          }
-                          min="0"
-                          max="100"
-                        />
+                        <Label className="text-xs whitespace-nowrap">
+                          Correct
+                        </Label>
                       </div>
-                      <input
-                        type={question.type === "single_choice" ? "radio" : "checkbox"}
-                        name={`correct-answer-${index}`}
-                        value={optionIndex}
-                        className="h-4 w-4"
-                        checked={option.is_correct}
-                        onChange={() => toggleCorrectOption(index, optionIndex)}
-                      />
-                      <Label className="text-xs whitespace-nowrap">Correct</Label>
-                    </div>
-                  ))}
-                </div>
-              )}
+                    ))}
+                  </div>
+                )}
             </div>
           ))}
         </div>
       </div>
-      {questions.filter(q => q.text.trim() !== "").length === 0 && (
+      {questions.filter((q) => q.text.trim() !== "").length === 0 && (
         <div className="text-center py-8 border rounded-lg">
           <div className="text-3xl mb-2">📄</div>
           <p className="text-gray-500">No questions added yet</p>
@@ -955,15 +1041,14 @@ export default function TestTypeForm({
   return (
     <div className="space-y-8">
       <h1 className="text-[28px] font-semibold text-[#1B1B1C]">{title}</h1>
-      
+
       <div className="flex justify-end">
         <Button
           type="button"
           variant="ghost"
           size="sm"
           onClick={clearForm}
-          className="text-gray-500 hover:text-gray-700"
-        >
+          className="text-gray-500 hover:text-gray-700">
           Clear Form
         </Button>
       </div>
@@ -975,10 +1060,10 @@ export default function TestTypeForm({
             <FormField
               control={form.control}
               name="testName"
-              rules={{ 
+              rules={{
                 required: "Test name is required",
                 minLength: { value: 3, message: "Minimum 3 characters" },
-                maxLength: { value: 100, message: "Maximum 100 characters" }
+                maxLength: { value: 100, message: "Maximum 100 characters" },
               }}
               render={({ field }) => (
                 <FormItem className="col-span-2">
@@ -987,9 +1072,9 @@ export default function TestTypeForm({
                   </FormLabel>
                   <FormControl>
                     <div className="relative">
-                      <Input 
-                        placeholder="Enter test name" 
-                        {...field} 
+                      <Input
+                        placeholder="Enter test name"
+                        {...field}
                         className="pr-10"
                       />
                       {field.value && (
@@ -1037,7 +1122,8 @@ export default function TestTypeForm({
               render={({ field }) => (
                 <FormItem>
                   <FormLabel className="flex items-center">
-                    Experience Level <span className="text-red-500 ml-1">*</span>
+                    Experience Level{" "}
+                    <span className="text-red-500 ml-1">*</span>
                   </FormLabel>
                   <Select onValueChange={field.onChange} value={field.value}>
                     <SelectTrigger>
@@ -1185,15 +1271,11 @@ export default function TestTypeForm({
                     }`}
                     onClick={() =>
                       setCreationMethod(method.value as CreationMethod)
-                    }
-                  >
+                    }>
                     <div className="flex flex-col items-center text-center">
                       <div
-                        className={`h-10 w-10 flex items-center justify-center rounded-full ${method.bgColor} mb-2`}
-                      >
-                        <span className={method.textColor}>
-                          {method.icon}
-                        </span>
+                        className={`h-10 w-10 flex items-center justify-center rounded-full ${method.bgColor} mb-2`}>
+                        <span className={method.textColor}>{method.icon}</span>
                       </div>
                       <span className="font-medium">{method.label}</span>
                       <p className="text-xs text-gray-500 mt-1">
@@ -1213,14 +1295,12 @@ export default function TestTypeForm({
                 <div className="flex border-b">
                   <TabButton
                     active={activeTab === "upload"}
-                    onClick={() => setActiveTab("upload")}
-                  >
+                    onClick={() => setActiveTab("upload")}>
                     Upload Document
                   </TabButton>
                   <TabButton
                     active={activeTab === "manual"}
-                    onClick={() => setActiveTab("manual")}
-                  >
+                    onClick={() => setActiveTab("manual")}>
                     Create Questions
                   </TabButton>
                 </div>
@@ -1237,9 +1317,9 @@ export default function TestTypeForm({
                 <FormField
                   control={form.control}
                   name="questionCount"
-                  rules={{ 
+                  rules={{
                     min: { value: 1, message: "Minimum 1 question" },
-                    max: { value: 100, message: "Maximum 100 questions" }
+                    max: { value: 100, message: "Maximum 100 questions" },
                   }}
                   render={({ field }) => (
                     <FormItem>
@@ -1263,9 +1343,9 @@ export default function TestTypeForm({
                 <FormField
                   control={form.control}
                   name="passingScore"
-                  rules={{ 
+                  rules={{
                     min: { value: 0, message: "Minimum 0%" },
-                    max: { value: 100, message: "Maximum 100%" }
+                    max: { value: 100, message: "Maximum 100%" },
                   }}
                   render={({ field }) => (
                     <FormItem>
@@ -1286,7 +1366,7 @@ export default function TestTypeForm({
                     </FormItem>
                   )}
                 />
-                <FormField
+                {/* <FormField
                   control={form.control}
                   name="questionType"
                   render={({ field }) => (
@@ -1294,28 +1374,33 @@ export default function TestTypeForm({
                       <FormLabel>Default Question Type</FormLabel>
                       <Select
                         onValueChange={field.onChange}
-                        value={field.value}
-                      >
+                        value={field.value}>
                         <SelectTrigger>
                           <SelectValue placeholder="Select question type" />
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="single_choice">Single Choice</SelectItem>
-                          <SelectItem value="multiple_choice">Multiple Choice</SelectItem>
+                          <SelectItem value="single_choice">
+                            Single Choice
+                          </SelectItem>
+                          <SelectItem value="multiple_choice">
+                            Multiple Choice
+                          </SelectItem>
                           <SelectItem value="true_false">True/False</SelectItem>
-                          <SelectItem value="short_answer">Short Answer</SelectItem>
+                          <SelectItem value="short_answer">
+                            Short Answer
+                          </SelectItem>
                         </SelectContent>
                       </Select>
                       <FormMessage />
                     </FormItem>
                   )}
-                />
+                /> */}
               </>
             )}
           </div>
         </Form>
       </div>
-      
+
       <div className="flex justify-between pt-6 border-t">
         <div className="space-x-2">
           <Button
@@ -1323,8 +1408,7 @@ export default function TestTypeForm({
             variant="outline"
             onClick={() => setStep(step - 1)}
             className="rounded-[6px]"
-            disabled={isLoading}
-          >
+            disabled={isLoading}>
             Back
           </Button>
           <Button
@@ -1332,16 +1416,14 @@ export default function TestTypeForm({
             variant="outline"
             onClick={clearForm}
             className="rounded-[6px] text-gray-600"
-            disabled={isLoading}
-          >
+            disabled={isLoading}>
             Clear All
           </Button>
         </div>
         <Button
           className="rounded-[6px] px-8"
           onClick={handleProceed}
-          disabled={isLoading}
-        >
+          disabled={isLoading}>
           {isLoading ? (
             <div className="flex items-center space-x-2">
               <div className="h-4 w-4 border-2 border-t-transparent border-white rounded-full animate-spin" />

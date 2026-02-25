@@ -13,14 +13,14 @@ export default function EmployerCreatText() {
         <SelectTestTypeForm 
           step={step} 
           setStep={setStep} 
-          setTestType={setTestType} // Add this
+          setTestType={setTestType} 
         />
       )}
       {step === 1 && (
         <TestTypeForm 
           step={step} 
           setStep={setStep} 
-          testType={testType} // Pass the testType
+          testType={testType} 
         />
       )}
     </div>

@@ -93,7 +93,7 @@ export function ProfileSettings() {
                 </FormItem>
               )}
             />
-            <Separator className="my-3" />
+            {/* <Separator className="my-3" />
             <FormField
               control={form.control}
               name="security_emails"
@@ -115,7 +115,7 @@ export function ProfileSettings() {
                   </FormControl>
                 </FormItem>
               )}
-            />
+            /> */}
           </div>
         </div>
         {/* <Button type="submit">Submit</Button> */}

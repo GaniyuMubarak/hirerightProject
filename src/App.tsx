@@ -43,7 +43,7 @@ export default function App() {
             <Route path="/sign-up" element={<SignUpPage />} />
             <Route path="/sign-in" element={<SignInPage />} />
             <Route path="/account-type" element={<AccountTypePage />} />
-            <Route path="/email-verification" element={<EmailVerification />} />
+            <Route path="/auth/email-verification" element={<EmailVerification />} />
             <Route path="/forgot-password" element={<ForgotPassword />} />
 
             <Route element={<ProtectedRoute />}>

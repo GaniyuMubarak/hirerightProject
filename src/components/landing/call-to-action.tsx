@@ -15,8 +15,9 @@ export default function CallToAction() {
             <div className=" bg-[#14151A40]  text-white w-7/12 space-y-4">
               <h3 className="text-2xl font-medium pt-1">Become a Job Seeker</h3>
               <p className="text-sm opacity-80">
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras
-                cursus a dolor convallis efficitur.
+                Create your profile once and get discovered by recruiters
+                looking for your exact skills. No endless applications. Just the
+                right opportunities, delivered to you.
               </p>
             </div>
 
@@ -32,8 +33,8 @@ export default function CallToAction() {
                 Become an Employer
               </h3>
               <p className="text-sm text-[#1B1B1CB2] opacity-80">
-                Cras in massa pellentesque, mollis ligula non, luctus dui. Morbi
-                sed efficitur dolor. Pelque augue risus, aliqu.
+                Tell us what you need and get smart candidate recommendations.
+                Skip the flood of unqualified applicants. Find your perfect hire faster and easier than ever before.
               </p>
             </div>
 

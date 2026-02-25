@@ -100,7 +100,7 @@ export default function EmployerJobListingTable({ jobs }: { jobs: any }) {
                       variant={"ghost"}
                       className=" lg:border-b rounded-none"
                     >
-                      <Icons.more className="min-h-6 min-w-6" />
+                      {/* <Icons.more className="min-h-6 min-w-6" /> */}
                     </Button>
                   </div>
                 </TableCell>

@@ -42,12 +42,18 @@ export default function EmployerOnboarding() {
 
           <div className="sticky bottom-0">
             {/* Pass totalSteps - 1 if NextStep expects the last step index */}
-            <NextStep
+            {/* <NextStep
               step={step}
               setStep={setStep}
               totalSteps={totalSteps - 1}
               // If NextStep has a prop for custom button text:
               buttonText={step === totalSteps - 2 ? "Proceed" : undefined}
+            /> */}
+
+            <NextStep
+              step={step}
+              setStep={setStep}
+              totalSteps={totalSteps - 1}
             />
           </div>
         </form>

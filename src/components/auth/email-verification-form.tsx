@@ -24,6 +24,10 @@ export function EmailVerificationForm({
   const [resending, setResending] = useState(false);
   const [countdown, setCountdown] = useState(0);
 
+
+
+  
+
   // Handle resend with countdown timer
   const handleResend = async () => {
     if (countdown > 0 || !email) return;
@@ -56,13 +60,17 @@ export function EmailVerificationForm({
   }, [countdown]);
 
   // Auto-submit when OTP is 6 digits
+  // }, [form.watch("otp"), loading]);
+
+  const otp = form.watch("otp");
+
   useEffect(() => {
-    const otp = form.watch("otp");
-    if (otp.length === 6 && !loading) {
+    if (otp?.length === 6 && !loading) {
       form.handleSubmit(onSubmit)();
     }
-  }, [form.watch("otp"), loading]);
+  }, [otp, loading]); // ✅ Watch otp value, not the function
 
+  
 
   const formatOtp = (value: string) => {
     const numbers = value.replace(/\D/g, "");
@@ -115,7 +123,7 @@ export function EmailVerificationForm({
                         placeholder="• • • • • •"
                         disabled={loading}
                       />
-                      <div className="flex justify-center gap-2 mt-2">
+                      {/* <div className="flex justify-center gap-2 mt-2">
                         {[0, 1, 2, 3, 4, 5].map((i) => (
                           <div
                             key={i}
@@ -126,7 +134,7 @@ export function EmailVerificationForm({
                             }`}
                           />
                         ))}
-                      </div>
+                      </div> */}
                     </div>
                   </FormControl>
                   <FormDescription className="text-center">

@@ -45,6 +45,7 @@ const NextStep = memo(function NextStep({
       </Button>
 
       <Button
+        type="submit"
         className={cn("h-10 px-4 rounded-[8px] text-sm", {
           hidden: step !== totalSteps,
         })}

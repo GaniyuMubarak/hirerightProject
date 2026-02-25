@@ -52,6 +52,9 @@ const CandidateServices = {
   getProfile: async () => {
     return requests.get(`/candidates/profile`);
   },
+  getCandidateById: async (id: string) => {
+    return requests.get(`/candidates/${id}`); // Adjust endpoint as needed
+  },
 };
 
 export default CandidateServices;

@@ -16,7 +16,7 @@ export default function EmailVerification() {
           className="flex items-center gap-2 text-[#AFAEAD] text-[22px] font-semibold"
         >
           <img src="/logo.svg" alt="Logo" className="size-8" />
-          Logo
+          {/* HireRight */}
         </Link>
       </div>
       <div className="flex-1 flex  flex-col items-center justify-center gap-6 bg-background p-6 md:p-10">

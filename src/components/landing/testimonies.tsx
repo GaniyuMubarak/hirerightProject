@@ -15,33 +15,33 @@ export default function Testimonies() {
         </h1>
       </div>
       <div className="grid lg:grid-cols-3 gap-6 py-20">
-        <TestimoniesCard />
-        <TestimoniesCard />
-        <TestimoniesCard />
+        {/* <TestimoniesCard /> */}
+        {/* <TestimoniesCard /> */}
+        {/* <TestimoniesCard /> */}
       </div>
     </div>
   );
 }
 
-export function TestimoniesCard() {
-  return (
-    <div className="bg-[#F8F8FD] border border-[#0A0F2914] rounded-[24px] p-10 space-y-10">
-      <p className="text-2xl tracking-[-0.04em]">
-        I have been using them for a year now. Everything is detailed and well
-        organized and, of course, damn beautiful.
-      </p>
+// export function TestimoniesCard() {
+//   return (
+//     <div className="bg-[#F8F8FD] border border-[#0A0F2914] rounded-[24px] p-10 space-y-10">
+//       <p className="text-2xl tracking-[-0.04em]">
+//         I have been using them for a year now. Everything is detailed and well
+//         organized and, of course, damn beautiful.
+//       </p>
 
-      <div className="space-y-4">
-        <img
-          src="/images/testimonies/avatar.png"
-          alt=""
-          className="w-16 aspect-square"
-        />
-        <div>
-          <h4 className="text-[#14151A] font-medium">Samson Bond</h4>
-          <span className="text-[#0F132499]">Recruiter at Google</span>
-        </div>
-      </div>
-    </div>
-  );
-}
+//       <div className="space-y-4">
+//         <img
+//           src="/images/testimonies/avatar.png"
+//           alt=""
+//           className="w-16 aspect-square"
+//         />
+//         <div>
+//           <h4 className="text-[#14151A] font-medium">Samson Bond</h4>
+//           <span className="text-[#0F132499]">Recruiter at Google</span>
+//         </div>
+//       </div>
+//     </div>
+//   );
+// }

@@ -9,7 +9,11 @@ export default {
         md: "calc(var(--radius) - 2px)",
         sm: "calc(var(--radius) - 4px)",
       },
+      // colors: {
+      //   brandOrange: "#EE7B36",
+      // },
       colors: {
+        brandOrange: "#EE7B36",
         background: "hsla(var(--background))",
         foreground: "hsla(var(--foreground))",
         card: {

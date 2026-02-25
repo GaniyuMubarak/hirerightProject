@@ -1,6 +1,95 @@
+// import { zodResolver } from "@hookform/resolvers/zod";
+// import { useForm } from "react-hook-form";
+// import { z } from "zod";
+
+// import { Button } from "@/components/ui/button";
+// import {
+//   Form,
+//   FormControl,
+//   FormField,
+//   FormItem,
+//   FormMessage,
+// } from "@/components/ui/form";
+// import { Input } from "@/components/ui/input";
+// import { toast } from "sonner";
+
+// const FormSchema = z.object({
+//   username: z.string().min(2, {
+//     message: "Username must be at least 2 characters.",
+//   }),
+// });
+
+// export default function NewsLetters() {
+//   const form = useForm<z.infer<typeof FormSchema>>({
+//     resolver: zodResolver(FormSchema),
+//     defaultValues: {
+//       username: "",
+//     },
+//   });
+
+//   function onSubmit(data: z.infer<typeof FormSchema>) {
+//     toast("You submitted the following values:", {
+//       description: (
+//         <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
+//           <code className="text-white">{JSON.stringify(data, null, 2)}</code>
+//         </pre>
+//       ),
+//     });
+//   }
+
+//   return (
+//     <div className="py-10 px-4">
+//       <div className="bg-primary py-6 px-8 max-w-5xl mx-auto rounded-[12px] grid lg:grid-cols-2 items-center gap-6">
+//         <div className="text-white space-y-3">
+//           <h2 className="text-xl font-medium tracking-[-0.012em]">
+//             Subscribe to our newsletter
+//           </h2>
+//           <p className="text-[#EFEFEF] tracking-[-0.01em]">
+//             Get a summary of what we’ve shipped during the last month, behind
+//             the scenes updates, and team picks.
+//           </p>
+//         </div>
+//         <div>
+//           <Form {...form}>
+//             <form
+//               onSubmit={form.handleSubmit(onSubmit)}
+//               className="flex max-lg:flex-col gap-4 items-center"
+//             >
+//               <FormField
+//                 control={form.control}
+//                 name="username"
+//                 render={({ field }) => (
+//                   <FormItem className="w-full">
+//                     <FormControl>
+//                       <Input
+//                         placeholder="Enter your email"
+//                         {...field}
+//                         className="bg-white w-full h-12"
+//                       />
+//                     </FormControl>
+
+//                     <FormMessage />
+//                   </FormItem>
+//                 )}
+//               />
+//               <Button
+//                 type="submit"
+//                 className="px-6 text-white bg-[#EE7B36] rounded-[6px] max-lg:w-full"
+//               >
+//                 Subscribe
+//               </Button>
+//             </form>
+//           </Form>
+//         </div>
+//       </div>
+//     </div>
+//   );
+// }
+
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
+import { useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -11,76 +100,133 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { toast } from "sonner";
 
 const FormSchema = z.object({
-  username: z.string().min(2, {
-    message: "Username must be at least 2 characters.",
-  }),
+  email: z.string().email({ message: "Please enter a valid email address." }),
 });
 
-export default function NewsLetters() {
+// SuccessMessage Component
+const SuccessMessage = ({
+  title,
+  subtext,
+}: {
+  title: string;
+  subtext: string;
+}) => (
+  <div className="flex flex-col items-center text-center space-y-2">
+    <div className="w-12 h-12 flex items-center justify-center rounded-full bg-brandOrange/20 text-brandOrange border border-brandOrange/30">
+      <svg
+        width="18"
+        height="18"
+        viewBox="0 0 18 18"
+        fill="none"
+        className="stroke-current">
+        <path
+          d="M3 9.5L7 13.5L15 5"
+          strokeWidth="1.5"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+      </svg>
+    </div>
+    <p className="font-serif text-lg text-white">{title}</p>
+    <p className="text-sm text-gray-400">{subtext}</p>
+  </div>
+);
+
+// NewsletterForm Component
+const NewsletterForm = ({
+  onSubmit,
+  form,
+}: {
+  onSubmit: (data: z.infer<typeof FormSchema>) => void;
+  form: ReturnType<typeof useForm<z.infer<typeof FormSchema>>>;
+}) => (
+  <Form {...form}>
+    <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+      <FormField
+        control={form.control}
+        name="email"
+        render={({ field }) => (
+          <FormItem>
+            <FormControl>
+              <Input
+                {...field}
+                placeholder="you@example.com"
+                className="w-full bg-white/5 border border-gray-700 text-white placeholder-gray-500 focus:ring focus:ring-brandOrange focus:border-brandOrange rounded px-4 h-12"
+                id="email"
+              />
+            </FormControl>
+            <FormMessage className="text-xs text-brandOrange mt-1" />
+          </FormItem>
+        )}
+      />
+      <Button
+        type="submit"
+        className="w-full h-12 bg-brandOrange text-black hover:bg-brandOrange/90">
+        Subscribe
+      </Button>
+      <p className="text-xs text-gray-400 flex items-center gap-1 mt-2">
+        <svg
+          width="10"
+          height="12"
+          viewBox="0 0 10 12"
+          fill="none"
+          className="stroke-current opacity-50">
+          <rect x="1" y="5" width="8" height="7" rx="1" strokeWidth="1.2" />
+          <path
+            d="M3 5V3.5a2 2 0 014 0V5"
+            strokeWidth="1.2"
+            strokeLinecap="round"
+          />
+        </svg>
+        No spam. Unsubscribe anytime.
+      </p>
+    </form>
+  </Form>
+);
+
+// Main Newsletter Component
+export default function NewsletterCard() {
+  const [submitted, setSubmitted] = useState(false);
+
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
-    defaultValues: {
-      username: "",
-    },
+    defaultValues: { email: "" },
   });
 
-  function onSubmit(data: z.infer<typeof FormSchema>) {
-    toast("You submitted the following values:", {
-      description: (
-        <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
-          <code className="text-white">{JSON.stringify(data, null, 2)}</code>
-        </pre>
-      ),
-    });
-  }
+  const onSubmit = (data: z.infer<typeof FormSchema>) => {
+    setSubmitted(true);
+    // Optional: Add API call here
+  };
 
   return (
-    <div className="py-10 px-4">
-      <div className="bg-primary py-6 px-8 max-w-5xl mx-auto rounded-[12px] grid lg:grid-cols-2 items-center gap-6">
-        <div className="text-white space-y-3">
-          <h2 className="text-xl font-medium tracking-[-0.012em]">
-            Subscribe to our newsletter
-          </h2>
-          <p className="text-[#EFEFEF] tracking-[-0.01em]">
-            Get a summary of what we’ve shipped during the last month, behind
-            the scenes updates, and team picks.
-          </p>
-        </div>
-        <div>
-          <Form {...form}>
-            <form
-              onSubmit={form.handleSubmit(onSubmit)}
-              className="flex max-lg:flex-col gap-4 items-center"
-            >
-              <FormField
-                control={form.control}
-                name="username"
-                render={({ field }) => (
-                  <FormItem className="w-full">
-                    <FormControl>
-                      <Input
-                        placeholder="Enter your email"
-                        {...field}
-                        className="bg-white w-full h-12"
-                      />
-                    </FormControl>
+    <div className="max-w-4xl mx-auto my-12 bg-primary rounded shadow-lg overflow-hidden grid md:grid-cols-2">
+      {/* Left */}
+      <div className="p-8 border-r border-gray-700 md:border-r md:order-first order-last">
+        <p className="text-xs uppercase tracking-widest text-brandOrange mb-2 flex items-center gap-2">
+          Monthly Dispatch
+        </p>
+        <h2 className="font-serif text-2xl md:text-3xl text-white font-semibold mb-2">
+          Stories worth <em className="italic text-brandOrange">reading</em>,
+          delivered.
+        </h2>
+        <p className="text-sm text-gray-400">
+          A curated summary of what we've shipped, behind-the-scenes updates,
+          and hand-picked reads — once a month, no noise.
+        </p>
+      </div>
 
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <Button
-                type="submit"
-                className="px-6 text-white bg-[#EE7B36] rounded-[6px] max-lg:w-full"
-              >
-                Subscribe
-              </Button>
-            </form>
-          </Form>
-        </div>
+      {/* Right */}
+      <div className="p-8">
+        {submitted ? (
+          <SuccessMessage
+            title="You're subscribed."
+            subtext="First issue lands next month."
+          />
+        ) : (
+          <NewsletterForm onSubmit={onSubmit} form={form} />
+        )}
       </div>
     </div>
   );

@@ -44,6 +44,9 @@ const CompanyServices = {
   getJobApplications: async (jobId: string) => {
     return requests.get(`/employers/jobs/${jobId}/applications`);
   },
+  getCandidateById: async (id: string) => {
+    return requests.get(`/employers/candidates/${id}`);
+  },
 };
 
 export default CompanyServices;

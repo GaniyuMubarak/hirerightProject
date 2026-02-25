@@ -452,7 +452,7 @@ export default function EmployerCompanyForm() {
         </div> */}
 
         {/* Additional Notes */}
-        <div className="p-4 bg-blue-50 rounded-lg border border-blue-200">
+        {/* <div className="p-4 bg-blue-50 rounded-lg border border-blue-200">
           <h3 className="text-sm font-semibold text-blue-800 mb-2">
             Required Fields for Backend API
           </h3>
@@ -467,7 +467,7 @@ export default function EmployerCompanyForm() {
             <li>• <code>website</code>: Company website URL</li>
             <li>• <code>address</code>, <code>city</code>, <code>state</code>: Location details</li>
           </ul>
-        </div>
+        </div> */}
       </div>
     </div>
   );

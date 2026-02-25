@@ -38,11 +38,11 @@ export default function CandidatesList() {
 
             <div className="grid lg:grid-cols-4 gap-6">
               <CandidateCard aiRecommended />
+              {/* <CandidateCard aiRecommended />
               <CandidateCard aiRecommended />
               <CandidateCard aiRecommended />
-              <CandidateCard aiRecommended />
-              <CandidateCard aiRecommended />
-              <CandidateCard aiRecommended />
+              <CandidateCard aiRecommended /> */}
+              {/* <CandidateCard aiRecommended /> */}
             </div>
 
             {/* Applicants  */}
@@ -53,12 +53,12 @@ export default function CandidatesList() {
 
             <div className="grid lg:grid-cols-4 gap-6">
               <CandidateCard />
+              {/* <CandidateCard />
               <CandidateCard />
               <CandidateCard />
               <CandidateCard />
               <CandidateCard />
-              <CandidateCard />
-              <CandidateCard />
+              <CandidateCard /> */}
             </div>
 
             <JobPagination />

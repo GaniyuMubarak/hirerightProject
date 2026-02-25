@@ -16,7 +16,7 @@ export default function HiringProcess() {
           </span>
         </div>
         <Icons.arrow className="min-w-10 min-h-20" />
-        <div className="flex flex-col gap-4 lg:gap-6 items-center">
+        {/* <div className="flex flex-col gap-4 lg:gap-6 items-center">
           <img
             src="/images/hiring-process/interview.png"
             alt="Interview"
@@ -25,8 +25,8 @@ export default function HiringProcess() {
           <span className="whitespace-nowrap max-lg:text-[11px]">
             Interview
           </span>
-        </div>
-        <Icons.arrow className="min-w-10 min-h-20" />
+        </div> */}
+        {/* <Icons.arrow className="min-w-10 min-h-20" /> */}
 
         <div className="flex flex-col gap-4 lg:gap-6 items-center">
           <img
@@ -36,6 +36,18 @@ export default function HiringProcess() {
           />
           <span className="whitespace-nowrap max-lg:text-[11px]">
             Assessment
+          </span>
+        </div>
+        <Icons.arrow className="min-w-10 min-h-20" />
+
+        <div className="flex flex-col gap-4 lg:gap-6 items-center">
+          <img
+            src="/images/hiring-process/interview.png"
+            alt="Interview"
+            className="size-[50px] aspect-square object-cover "
+          />
+          <span className="whitespace-nowrap max-lg:text-[11px]">
+            Interview
           </span>
         </div>
         <Icons.arrow className="min-w-10 min-h-20" />

@@ -4,11 +4,13 @@ import Icons from "../ui/icons";
 const footetlinks = [
   {
     title: "Job Seeker",
-    href: "#",
+    // href: "../account-type",
+    href: "../sign-up?app_role=candidate",
   },
   {
     title: "Employer",
-    href: "#",
+    // href: "../account-type",
+    href: "../sign-up?app_role=employer",
   },
   {
     title: "Terms of Service",
@@ -35,20 +37,42 @@ export default function Footer() {
           {footetlinks.map((link) => (
             <li
               key={link.title}
-              className="text-sm text-[#0F132499] font-medium"
-            >
+              className="text-sm text-[#0F132499] font-medium">
               <Link to={link.href}>{link.title}</Link>
             </li>
           ))}
         </ul>
         <div className="flex gap-6 items-center justify-end lg:w-1/6">
-          <a href="#" target="_blank">
+          <a
+            href="#"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="Hire Right on Twitter"
+            className="hover:opacity-70 transition">
             <Icons.twitter />
           </a>
-          <a href="#" target="_blank">
+          <a
+            href="https://www.linkedin.com/company/hire-right-ng/"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="Hire Right on LinkedIn"
+            className="hover:opacity-70 transition">
+            <Icons.linkedin />
+          </a>
+          <a
+            href="https://www.instagram.com/hirerightng?igsh=MTQ5Mm1lbmt0eTR0ZA%3D%3D&utm_source=qr"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="Hire Right on Instagram"
+            className="hover:opacity-70 transition">
             <Icons.instagram />
           </a>
-          <a href="#" target="_blank">
+          <a
+            href="https://www.facebook.com/Hireright.ng?mibextid=LQQJ4d"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="Hire Right on Facebook"
+            className="hover:opacity-70 transition">
             <Icons.facebook />
           </a>
         </div>

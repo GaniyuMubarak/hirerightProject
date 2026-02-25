@@ -41,7 +41,7 @@ export const routes = [
     element: AccountTypePage,
   },
   {
-    path: "/email-verification",
+    path: "/auth/email-verification",
     element: EmailVerification,
   },
   {
