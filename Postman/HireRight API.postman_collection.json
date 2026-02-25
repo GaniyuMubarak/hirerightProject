@@ -1,0 +1,884 @@
+{
+  "info": {
+    "_postman_id": "1cdde95d-7396-49e0-9faa-2bf43be4cddb",
+    "name": "HireRight API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "43611106",
+    "_collection_link": "https://go.postman.co/collection/43611106-1cdde95d-7396-49e0-9faa-2bf43be4cddb?source=collection_link"
+  },
+  "item": [
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "Register",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "// Parse response\r",
+                  "const response = pm.response.json();\r",
+                  "\r",
+                  "// Save token to environment if registration successful\r",
+                  "if (response.token) {\r",
+                  "    pm.environment.set(\"token\", response.token);\r",
+                  "    console.log(\"✅ Token saved:\", response.token);\r",
+                  "    \r",
+                  "    // Also save user info for reference\r",
+                  "    if (response.user) {\r",
+                  "        pm.environment.set(\"user_id\", response.user.id);\r",
+                  "        pm.environment.set(\"user_email\", response.user.email);\r",
+                  "        pm.environment.set(\"user_role\", response.user.app_role);\r",
+                  "    }\r",
+                  "} else {\r",
+                  "    console.log(\"❌ No token in response\");\r",
+                  "}"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"first_name\": \"Ridone\",\n  \"last_name\": \"Lahi\",\n  \"email\": \"abimbolaalimat12@gmail.com\",\n  \"password\": \"Test@123\",\n  \"password_confirmation\": \"Test@123\",\n  \"app_role\": \"candidate\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/register",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "auth",
+                "register"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Register (employer)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "// Parse response\r",
+                  "const response = pm.response.json();\r",
+                  "\r",
+                  "// Save EMPLOYER token to different variable\r",
+                  "if (response.token) {\r",
+                  "    pm.environment.set(\"employer_token\", response.token);  // ← Different variable!\r",
+                  "    console.log(\"✅ Employer token saved:\", response.token);\r",
+                  "    \r",
+                  "    // Also save employer info\r",
+                  "    if (response.user) {\r",
+                  "        pm.environment.set(\"employer_id\", response.user.id);\r",
+                  "        pm.environment.set(\"employer_email\", response.user.email);\r",
+                  "        pm.environment.set(\"employer_role\", response.user.app_role);\r",
+                  "    }\r",
+                  "} else {\r",
+                  "    console.log(\"❌ No token in response\");\r",
+                  "}"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"first_name\": \"Employer\",\n  \"last_name\": \"Test\",\n  \"email\": \"ollytiana02@gmail.com\",\n  \"password\": \"Test@123\",\n  \"password_confirmation\": \"Test@123\",\n  \"app_role\": \"employer\" \n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/register",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "auth",
+                "register"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Login",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"abimbolaalimat12@gmail.com\",\n  \"password\": \"Test@123\",\n  \"app_role\": \"candidate\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/login",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "auth",
+                "login"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Login (employer)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const response = pm.response.json();\r",
+                  "\r",
+                  "if (response.token) {\r",
+                  "    pm.environment.set(\"employer_token\", response.token);  // ← employer_token\r",
+                  "    console.log(\"✅ Employer token saved:\", response.token);\r",
+                  "    \r",
+                  "    if (response.user) {\r",
+                  "        pm.environment.set(\"employer_id\", response.user.id);\r",
+                  "        pm.environment.set(\"employer_email\", response.user.email);\r",
+                  "    }\r",
+                  "}"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"ollytiana02@gmail.com\",\n  \"password\": \"Test@123\",\n  \"app_role\": \"employer\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/login",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "auth",
+                "login"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Login (admin)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const response = pm.response.json();\r",
+                  "\r",
+                  "if (response.token) {\r",
+                  "    pm.environment.set(\"admin_token\", response.token);  // ← admin_token\r",
+                  "    console.log(\"✅ admin_token saved:\", response.token);\r",
+                  "    \r",
+                  "    if (response.user) {\r",
+                  "        pm.environment.set(\"admin_id\", response.user.id);\r",
+                  "        pm.environment.set(\"admin_email\", response.user.email);\r",
+                  "    }\r",
+                  "}"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "38|48YPxaiJ1kugmPzDQnTJHQySMVlNLqcwddTKERVDbc9809d9",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"abimbolaalimat12@gmail.com\",\n  \"password\": \"Test@123\",\n  \"app_role\": \"admin\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/login",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "auth",
+                "login"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Verify Email OTP",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const response = pm.response.json();\r",
+                  "\r",
+                  "// Save new token after verification\r",
+                  "if (response.token) {\r",
+                  "    pm.environment.set(\"token\", response.token);\r",
+                  "    console.log(\"✅ Token updated after verification:\", response.token);\r",
+                  "    \r",
+                  "    if (response.user) {\r",
+                  "        pm.environment.set(\"user_id\", response.user.id);\r",
+                  "        pm.environment.set(\"user_email\", response.user.email);\r",
+                  "    }\r",
+                  "}"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"abimbolaalimat12@gmail.com\",\n  \"otp\": \"267919\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/validate/email-otp",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "auth",
+                "validate",
+                "email-otp"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Verify Email OTP(employer)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const response = pm.response.json();\r",
+                  "\r",
+                  "// Save new token after verification\r",
+                  "if (response.token) {\r",
+                  "    pm.environment.set(\"token\", response.token);\r",
+                  "    console.log(\"✅ Token updated after verification:\", response.token);\r",
+                  "    \r",
+                  "    if (response.user) {\r",
+                  "        pm.environment.set(\"user_id\", response.user.id);\r",
+                  "        pm.environment.set(\"user_email\", response.user.email);\r",
+                  "    }\r",
+                  "}"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"ollytiana02@gmail.com\",\n  \"otp\": \"925640\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/validate/email-otp",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "auth",
+                "validate",
+                "email-otp"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Resend OTP",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"type\": \"email\",\n  \"email\": \"abimbolaalimat12@gmail.com\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/resend-otp",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "auth",
+                "resend-otp"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Candidates",
+      "item": [
+        {
+          "name": "Apply to Job",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/candidates/jobs/1/apply",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "candidates",
+                "jobs",
+                "1",
+                "apply"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Applications",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/candidates/applications",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "candidates",
+                "applications"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Employers",
+      "item": [
+        {
+          "name": "Get All Candidates",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{employer_token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/employers/candidates",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "employers",
+                "candidates"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Candidate Profile",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{employer_token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/employers/candidates/5",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "employers",
+                "candidates",
+                "5"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Candidate Resume",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{employer_token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/employers/candidates/5/resume",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "employers",
+                "candidates",
+                "5",
+                "resume"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update Application Status",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{employer_token}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"shortlisted\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/employers/applications/3/status",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "employers",
+                "applications",
+                "3",
+                "status"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Assign Test to Candidate",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{employer_token}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"job_application_id\": 3\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/employers/tests/1/assign",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "employers",
+                "tests",
+                "1",
+                "assign"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Create Job",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "38|48YPxaiJ1kugmPzDQnTJHQySMVlNLqcwddTKERVDbc9809d9",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{employer_token}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"title\": \"Senior Backend Developer\",\r\n  \"description\": \"We are looking for an experienced Laravel developer to join our growing team. You will be responsible for building scalable APIs and managing our database infrastructure.\",\r\n  \"location\": \"Lagos, Nigeria\",\r\n  \"employment_type\": \"full_time\",\r\n  \"work_mode\": \"hybrid\",\r\n  \"positions_available\": 2,\r\n  \"experience_level\": \"senior-level\",\r\n  \"min_years_experience\": 5,\r\n  \"salary_min\": 400000,\r\n  \"salary_max\": 600000,\r\n  \"salary_currency\": \"NGN\",\r\n  \"requirements\": \"5+ years Laravel experience, MySQL/PostgreSQL, REST API design, Unit testing, Git version control\",\r\n  \"responsibilities\": \"Build and maintain APIs, Database optimization, Code reviews, Mentor junior developers, System architecture\",\r\n  \"benefits\": \"Health insurance, Remote work flexibility, Learning budget, Annual bonuses\",\r\n  \"status\": \"active\",\r\n  \"is_published\": \"true\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/employers/jobs",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "employers",
+                "jobs"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Create company",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "38|48YPxaiJ1kugmPzDQnTJHQySMVlNLqcwddTKERVDbc9809d9",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{employer_token}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"name\": \"Tech Solutions Ltd\",\r\n  \"email\": \"info@techsolutions.com\",\r\n  \"phone\": \"08012345678\",\r\n  \"website\": \"https://techsolutions.com\",\r\n  \"industry\": \"Technology\",\r\n  \"company_size\": \"50-100\",\r\n  \"address\": \"123 Herbert Macaulay Way\",\r\n  \"city\": \"Lagos\",\r\n  \"state\": \"Lagos\",\r\n  \"country\": \"Nigeria\",\r\n  \"description\": \"We are a leading technology company specializing in software development and IT solutions.\",\r\n  \"logo_url\": null\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/employers/company",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "employers",
+                "company"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Newsletter",
+      "item": [
+        {
+          "name": "Public",
+          "item": [
+            {
+              "name": "Subscribe to Newsletter",
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "39|IPzyo0wWXBlol9Wyr81vRyFiJAOeJBWigfaHryKS803291a0",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n  \"email\": \"aquad2017@gmail.com\",\r\n  \"name\": \"John Doe\"\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{base_url}}/newsletter/subscribe",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "newsletter",
+                    "subscribe"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Unsubscribe from Newsletter",
+              "protocolProfileBehavior": {
+                "disableBodyPruning": true
+              },
+              "request": {
+                "auth": {
+                  "type": "noauth"
+                },
+                "method": "GET",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{base_url}}/newsletter/unsubscribe/AZVkfo3xyex81GEb3N6SYNUQcIwrAFmqngcXQO2JFx4Le7DaO168e8e7eS6irctf",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "newsletter",
+                    "unsubscribe",
+                    "AZVkfo3xyex81GEb3N6SYNUQcIwrAFmqngcXQO2JFx4Le7DaO168e8e7eS6irctf"
+                  ]
+                }
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "Admin",
+          "item": [
+            {
+              "name": "Get All Subscribers",
+              "protocolProfileBehavior": {
+                "disableBodyPruning": true
+              },
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "39|IPzyo0wWXBlol9Wyr81vRyFiJAOeJBWigfaHryKS803291a0",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "{{admin_token}}",
+                    "type": "text"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{base_url}}/admin/newsletter/subscribers",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "admin",
+                    "newsletter",
+                    "subscribers"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Send Newsletter",
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "39|IPzyo0wWXBlol9Wyr81vRyFiJAOeJBWigfaHryKS803291a0",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n  \"subject\": \"New Jobs This Week!\",\r\n  \"content\": \"Hello!\\n\\nCheck out these amazing opportunities:\\n\\n1. Senior Backend Developer - Lagos\\n2. Frontend Engineer - Remote\\n\\nApply at HireRight today!\"\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{base_url}}/admin/newsletter/send",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "admin",
+                    "newsletter",
+                    "send"
+                  ]
+                }
+              },
+              "response": []
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://127.0.0.1:8000/api",
+      "type": "string"
+    },
+    {
+      "key": "token",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "employer_token",
+      "value": "",
+      "type": "string"
+    }
+  ]
+}

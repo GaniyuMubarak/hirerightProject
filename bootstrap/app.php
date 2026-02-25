@@ -18,9 +18,10 @@ return Application::configure(basePath: dirname(__DIR__))
             \Illuminate\Routing\Middleware\SubstituteBindings::class,
         ]);
         
-        // Register JWT middleware as an alias (not applied globally)
+        // Register middleware aliases
         $middleware->alias([
             'auth:api' => \Tymon\JWTAuth\Http\Middleware\Authenticate::class,
+            'role' => \App\Http\Middleware\CheckRole::class,  // ✅ ADD THIS LINE
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {

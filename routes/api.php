@@ -27,6 +27,8 @@ use App\Http\Controllers\FileStorageController;
 use App\Http\Controllers\HealthController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\UserProfileController;
+use App\Http\Controllers\NewsletterController;
+
 use Illuminate\Support\Facades\Log;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -116,6 +118,19 @@ Route::prefix('auth')->group(function () {
     Route::post('resend-otp', [AuthController::class, 'resendOtp']);
     Route::post('request-password-reset', [AuthController::class, 'requestPasswordReset']);
     Route::post('reset-password', [AuthController::class, 'resetPassword']);
+});
+
+
+// Newsletter Routes (Public - no authentication required)
+Route::prefix('newsletter')->group(function () {
+    Route::post('/subscribe', [NewsletterController::class, 'subscribe']);
+    Route::get('/unsubscribe/{token}', [NewsletterController::class, 'unsubscribe']);
+});
+
+// Admin Newsletter Routes
+Route::middleware(['auth:sanctum', 'role:admin'])->prefix('admin/newsletter')->group(function () {
+    Route::get('/subscribers', [NewsletterController::class, 'index']);
+    Route::post('/send', [NewsletterController::class, 'send']);
 });
 
 
@@ -233,6 +248,8 @@ Route::middleware(['auth:sanctum', 'role:admin'])->prefix('admin')->group(functi
     Route::apiResource('users', UserController::class);
     Route::put('users/{userId}/status', [UserController::class, 'updateStatus']);
     Route::get('users/{userId}/activity', [UserController::class, 'activityLog']);
+
+
 
     Route::apiResource('companies', AdminCompanyController::class);
     Route::put('companies/{company}/verify', [AdminCompanyController::class, 'verifyCompany']);
