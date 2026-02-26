@@ -11,7 +11,7 @@ export default function Testimonies() {
         <h1 className="text-[#1B1B1C] text-3xl lg:text-5xl font-abhaya font-extrabold tracking-tight">
           Hear from job seekers who found their perfect match and employers who
           hired the right talent, thanks to{" "}
-          <span className="text-primary">Hire Right!</span>
+          <span className="text-primary">HireRight!</span>
         </h1>
       </div>
       <div className="grid lg:grid-cols-3 gap-6 py-20">
@@ -39,9 +39,7 @@ export function TestimoniesCard() {
           className="w-16 aspect-square"
         />
         <div>
-          <h4 className="text-[#14151A] font-medium">
-            Aisha Bello,Talent Manager
-          </h4>
+          <h4 className="text-[#14151A] font-medium">Aisha,Talent Manager</h4>
           <span className="text-[#0F132499]">Recruiter at Google</span>
         </div>
       </div>
@@ -64,7 +62,7 @@ export function TestimoniesCard1() {
         />
         <div>
           <h4 className="text-[#14151A] font-medium">
-            Chioma Okafo People Operations Lead
+            Chioma, People Operations Lead
           </h4>
           <span className="text-[#0F132499]">People Operations</span>
         </div>
@@ -77,7 +75,8 @@ export function TestimoniesCard2() {
     <div className="bg-[#F8F8FD] border border-[#0A0F2914] rounded-[24px] p-10 space-y-10">
       <p className="text-2xl tracking-[-0.04em]">
         I like that the platform focuses on matching, not just mass
-        applications. It makes the whole job search feel more structured.”
+        applications. It makes the whole job search feel more structured and
+        well relible.”
       </p>
 
       <div className="space-y-4">
@@ -88,7 +87,7 @@ export function TestimoniesCard2() {
         />
         <div>
           <h4 className="text-[#14151A] font-medium">
-            Daniel Olatunji Frontend Developer,
+            Daniel, Frontend Developer,
           </h4>
           <span className="text-[#0F132499]">People Operations</span>
         </div>

@@ -32,13 +32,20 @@ export default function Footer() {
       <div className="max-w-7xl mx-auto px-4 py-6 flex max-lg:flex-col max-lg:gap-16 justify-between items-center">
         <div className="lg:w-1/6">
           {/* <img src="/logo.svg" alt="Logo" className="size-8 " /> */}
-          <img src="/public/App logo.png" alt="Logo" className="size-8 " />
+
+          <img
+            src="/logo_app.png"
+            alt="Logo"
+            className="h-12 w-auto object-contain"
+            // className="size-12"
+          />
         </div>
         <ul className="flex max-lg:flex-col  items-center justify-center gap-6 w-4/6">
           {footetlinks.map((link) => (
             <li
               key={link.title}
-              className="text-sm text-[#0F132499] font-medium">
+              className="text-sm text-[#0F132499] font-medium"
+            >
               <Link to={link.href}>{link.title}</Link>
             </li>
           ))}
@@ -57,7 +64,8 @@ export default function Footer() {
             target="_blank"
             rel="noopener noreferrer"
             aria-label="Hire Right on LinkedIn"
-            className="hover:opacity-70 transition">
+            className="hover:opacity-70 transition"
+          >
             <Icons.linkedin />
           </a>
           <a
@@ -65,7 +73,8 @@ export default function Footer() {
             target="_blank"
             rel="noopener noreferrer"
             aria-label="Hire Right on Instagram"
-            className="hover:opacity-70 transition">
+            className="hover:opacity-70 transition"
+          >
             <Icons.instagram />
           </a>
           <a
@@ -73,7 +82,8 @@ export default function Footer() {
             target="_blank"
             rel="noopener noreferrer"
             aria-label="Hire Right on Facebook"
-            className="hover:opacity-70 transition">
+            className="hover:opacity-70 transition"
+          >
             <Icons.facebook />
           </a>
         </div>

@@ -44,7 +44,7 @@ export function AccountTypeForm({
           <h1 className="text-xl lg:text-4xl font-medium text-[#020C10]">
             Welcome to{" "}
             <span className="text-primary font-abhaya font-extrabold">
-              Hire Right
+              HireRight
             </span>
           </h1>
           <p className="text-balance text-base text-[#475467] font-medium">

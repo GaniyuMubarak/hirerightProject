@@ -26,7 +26,8 @@ export default function () {
 
           <Link
             to={"/account-type"}
-            className={cn(buttonVariants(), "mt-8 rounded-[6px] px-6")}>
+            className={cn(buttonVariants(), "mt-8 rounded-[6px] px-6")}
+          >
             Explore More <Icons.arrowRight className="min-h-6 min-w-6" />
           </Link>
         </div>

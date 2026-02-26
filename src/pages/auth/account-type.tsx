@@ -11,8 +11,12 @@ export default function AccountTypePage() {
             to="/"
             className="flex items-center gap-2 text-[#AFAEAD] text-[22px] font-semibold"
           >
-            <img src="/app_logo.png" alt="Logo" className="size-8" />
-            
+            <img
+              src="/logo_app.png"
+              alt="Logo"
+              className="h-12 w-auto object-contain"
+              // className="size-12"
+            />
           </Link>
         </div>
         <div className="flex flex-1 lg:items-center justify-center mt-8 max-lg:mt-20">
