@@ -7,7 +7,7 @@ export default function SignInPage() {
     <div className="grid min-h-svh lg:grid-cols-2 ">
       <div className="flex flex-col gap-4 p-6 md:p-10">
         <div className="flex  gap-2 md:justify-start">
-          <Logo href="/" />
+          <Logo href="/app_logo.png" />
         </div>
         <div className="flex flex-1 lg:items-center justify-center max-lg:mt-20">
           <div className="w-full lg:max-w-[500px] lg:p-8 rounded-lg">
@@ -16,7 +16,7 @@ export default function SignInPage() {
         </div>
 
         <div className="mt-8 text-sm text-[#475467] flex justify-end items-center gap-2">
-          <Icons.mail className="size-4" /> <span>hireright@support.com</span>
+          <Icons.mail className="size-4" /> <span>hello@hirerightapp.com</span>
         </div>
       </div>
       <div className="relative hidden bg-gradient-to-b from-[#435E93] to-[#151D2D] lg:block">

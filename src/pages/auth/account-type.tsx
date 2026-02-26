@@ -11,8 +11,8 @@ export default function AccountTypePage() {
             to="/"
             className="flex items-center gap-2 text-[#AFAEAD] text-[22px] font-semibold"
           >
-            <img src="/logo.svg" alt="Logo" className="size-8" />
-            Logo
+            <img src="/app_logo.png" alt="Logo" className="size-8" />
+            
           </Link>
         </div>
         <div className="flex flex-1 lg:items-center justify-center mt-8 max-lg:mt-20">
@@ -22,7 +22,7 @@ export default function AccountTypePage() {
         </div>
 
         <div className="mt-8 text-sm text-[#475467] flex justify-end items-center gap-2">
-          <Icons.mail className="size-4" /> <span>help@untitledui.com</span>
+          <Icons.mail className="size-4" /> <span>hello@hirerightapp.com</span>
         </div>
       </div>
       <div className="relative hidden bg-gradient-to-b from-[#435E93] to-[#151D2D] lg:block">
