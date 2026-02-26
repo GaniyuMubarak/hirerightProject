@@ -5,7 +5,8 @@ export default function Logo({ href = "" }: { href?: string }) {
     <Link
       to={href}
       className="flex items-center gap-2 text-[#AFAEAD] text-[22px] font-semibold">
-      <img src="/logo2.png" alt="Logo" className="size-8" />
+      {/* <img src="/logo2.png" alt="Logo" className="size-8" /> */}
+      <img src="/app_logo.png" alt="Logo" className="size-12" />
     </Link>
   );
 }

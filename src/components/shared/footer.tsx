@@ -31,7 +31,8 @@ export default function Footer() {
     <div className="bg-[#F8F8FD] ">
       <div className="max-w-7xl mx-auto px-4 py-6 flex max-lg:flex-col max-lg:gap-16 justify-between items-center">
         <div className="lg:w-1/6">
-          <img src="/logo.svg" alt="Logo" className="size-8 " />
+          {/* <img src="/logo.svg" alt="Logo" className="size-8 " /> */}
+          <img src="/public/App logo.png" alt="Logo" className="size-8 " />
         </div>
         <ul className="flex max-lg:flex-col  items-center justify-center gap-6 w-4/6">
           {footetlinks.map((link) => (
@@ -43,14 +44,14 @@ export default function Footer() {
           ))}
         </ul>
         <div className="flex gap-6 items-center justify-end lg:w-1/6">
-          <a
+          {/* <a
             href="#"
             target="_blank"
             rel="noopener noreferrer"
             aria-label="Hire Right on Twitter"
             className="hover:opacity-70 transition">
             <Icons.twitter />
-          </a>
+          </a> */}
           <a
             href="https://www.linkedin.com/company/hire-right-ng/"
             target="_blank"

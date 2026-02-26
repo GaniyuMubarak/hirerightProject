@@ -31,8 +31,8 @@ export default function () {
           </Link>
         </div>
         <div>
-          {/* <img src="/images/landing/hero.png" alt="Happy people" /> */}
-          <img src="/images/landing/landing.png" alt="Happy people" />
+          <img src="/images/landing/hero.png" alt="Happy people" />
+          {/* <img src="/images/landing/landing.png" alt="Happy people" /> */}
         </div>
       </div>
     </div>

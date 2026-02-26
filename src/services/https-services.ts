@@ -288,6 +288,10 @@
 
 // export default requests;
 
+
+
+
+
 import axios, { InternalAxiosRequestConfig } from "axios";
 import Cookies from "js-cookie";
 import { toast } from "sonner";
@@ -371,9 +375,7 @@ instance.interceptors.request.use((config: InternalAxiosRequestConfig) => {
   return config;
 });
 
-// ---------------------------------------------------------------------------
-// Response interceptor — handle errors + refresh token rotation
-// ---------------------------------------------------------------------------
+
 
 instance.interceptors.response.use(
   (response) => response,
@@ -484,9 +486,7 @@ instance.interceptors.response.use(
   },
 );
 
-// ---------------------------------------------------------------------------
-// Public helpers
-// ---------------------------------------------------------------------------
+
 
 /**
  * Call once after a successful login to persist both tokens.
