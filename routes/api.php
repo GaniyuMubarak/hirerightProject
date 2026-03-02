@@ -202,10 +202,12 @@ Route::middleware(['auth:sanctum', 'can:employer'])->prefix('employers')->group(
 
 
     //Candidate Management Routes - FIXED (removed duplicate prefix)
-    Route::get('candidates', [CandidateController::class, 'index']);
-    Route::get('candidates/{id}', [CandidateController::class, 'show']);
-    Route::get('candidates/{id}/resume', [CandidateController::class, 'getResume']);
-    Route::get('candidates/{id}/applications', [CandidateController::class, 'getApplications']);
+    // Route::get('candidates', [CandidateController::class, 'index']);
+    // Route::get('candidates/{id}', [CandidateController::class, 'show']);
+    // Route::get('candidates/{id}/resume', [CandidateController::class, 'getResume']);
+    // Route::get('candidates/{id}/applications', [CandidateController::class, 'getApplications']);
+
+    
 
     // Staff Management
     Route::get('company/staffs', [CompanyStaffController::class, 'index']);
