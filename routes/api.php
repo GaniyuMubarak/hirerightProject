@@ -22,6 +22,7 @@ use App\Http\Controllers\Candidate\TestController;
 use App\Http\Controllers\Company\CompanyJobController;
 use App\Http\Controllers\Company\CompanyStaffController;
 use App\Http\Controllers\Company\CompanyTestController;
+use App\Http\Controllers\Employer\EmployerCandidateController;
 use App\Http\Controllers\Company\JobApplicationController;
 use App\Http\Controllers\FileStorageController;
 use App\Http\Controllers\HealthController;
@@ -194,7 +195,13 @@ Route::middleware(['auth:sanctum', 'can:employer'])->prefix('employers')->group(
     Route::put('company', [CompanyController::class, 'update']);
     Route::get('company', [CompanyController::class, 'show']);
 
-    // ✅ Candidate Management Routes - FIXED (removed duplicate prefix)
+ // Employer views candidates
+    Route::get('candidates', [EmployerCandidateController::class, 'index']);
+    Route::get('candidates/{id}', [EmployerCandidateController::class, 'show']);
+    Route::get('candidates/{id}/resume', [EmployerCandidateController::class, 'getResume']);
+
+
+    //Candidate Management Routes - FIXED (removed duplicate prefix)
     Route::get('candidates', [CandidateController::class, 'index']);
     Route::get('candidates/{id}', [CandidateController::class, 'show']);
     Route::get('candidates/{id}/resume', [CandidateController::class, 'getResume']);

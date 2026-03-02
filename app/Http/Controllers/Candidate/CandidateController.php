@@ -175,6 +175,11 @@ class CandidateController extends Controller
         // Store profile data (education, experience, certifications)
         $profileData = $this->candidateService->storeProfileData($request->all());
 
+         //  Send welcome email on first profile completion
+        if ($isFirstTimeSetup && ($request->bio || $request->title)) {
+            $user->notify(new \App\Notifications\WelcomeNotification($user));
+        }
+
         return response()->json([
             'status' => 'success',
             'message' => 'Profile data stored successfully',

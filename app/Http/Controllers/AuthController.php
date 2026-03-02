@@ -178,7 +178,8 @@ class AuthController extends Controller
 
 
     // Send welcome email
-    $user->notify(new WelcomeNotification($user));
+    // $user->notify(new WelcomeNotification($user));
+
 
 
     // Load company if employer
