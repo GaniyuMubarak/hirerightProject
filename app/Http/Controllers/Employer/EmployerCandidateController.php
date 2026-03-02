@@ -15,6 +15,8 @@ class EmployerCandidateController extends Controller
      */
     public function index(Request $request)
     {
+
+    
         try {
             $employer = $request->user();
             
