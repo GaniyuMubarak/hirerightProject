@@ -10,10 +10,15 @@ export default function ForgotPassword() {
       <div className="flex justify-center gap-2 md:justify-start">
         <Link
           to={"/"}
-          className="flex items-center gap-2 text-[#AFAEAD] text-[22px] font-semibold"
-        >
-          <img src="/logo.svg" alt="Logo" className="size-8" />
-          Logo
+          className="flex items-center gap-2 text-[#AFAEAD] text-[22px] font-semibold">
+          {/* <img src="/app_logo.png" alt="Logo" className="size-8" /> */}
+          <img
+            src="/logo_app.png"
+            alt="Logo"
+            className="h-12 w-auto object-contain"
+            // className="size-12"
+          />
+          {/* HireRight */}
         </Link>
       </div>
       <div className="flex-1 flex  flex-col items-center justify-center gap-6 bg-background p-6 md:p-10">
@@ -27,12 +32,11 @@ export default function ForgotPassword() {
           <ForgotPasswordForm />
 
           <Link
-            to="/sign-up"
+            to="/sign-in"
             className={cn(
               buttonVariants({ variant: "ghost" }),
-              "w-full text-[#475467] text-sm h-auto"
-            )}
-          >
+              "w-full text-[#475467] text-sm h-auto",
+            )}>
             <ArrowLeftIcon className="size-4" /> Back to log in
           </Link>
         </div>

@@ -3,7 +3,7 @@ import JobServices from "@/services/job-services";
 import { useQuery } from "@tanstack/react-query";
 
 export default function EmployerJobList() {
-  const { data } = useQuery({
+  const { data, refetch } = useQuery({
     queryKey: ["job-listing"],
     queryFn: () => JobServices.getAllJobs(),
   });
@@ -12,7 +12,7 @@ export default function EmployerJobList() {
 
   return (
     <div className="max-w-7xl mx-auto px-4 pt-8 space-y-8 ">
-      <EmployerJobListing job={data} />
+      <EmployerJobListing job={data} onJobUpdated={refetch}/>
     </div>
   );
 }

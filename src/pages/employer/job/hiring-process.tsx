@@ -98,6 +98,7 @@ export default function HiringProcess() {
         </div>
       </div>
 
+
       <header className="space-y-1 border-b pb-5">
         <h1 className="text-2xl font-semibold">
           Candidates ({applications.length})
@@ -129,6 +130,19 @@ export default function HiringProcess() {
           ))}
         </div>
       )}
+
+      {/* <header className="space-y-1 border-b pb-5">
+        <h1 className="text-2xl font-semibold">Candidates (15)</h1>
+        <p className="text-[#475467] text-sm">
+          Best AI matches from HIRE RIGHT
+        </p>
+      </header> */}
+      {/* <div className="flex flex-col gap-6">
+        {data?.data?.map((item: any) => (
+          <CandidateHiringCard candidate={item} key={item.id} />
+        ))}
+      </div> */}
+
     </div>
   );
 }

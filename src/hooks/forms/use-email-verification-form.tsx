@@ -135,7 +135,7 @@ const useEmailVerificationForm = () => {
       //   type: "manual",
       //   message: "Invalid OTP",
       // });
-      form.reset({ otp: "" }); // ← clear field after failure
+      form.reset({ otp: "" });
       form.setError("otp", {
         type: "manual",
         message: "Invalid OTP",
