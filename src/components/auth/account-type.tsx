@@ -38,8 +38,7 @@ export function AccountTypeForm({
       <form
         onSubmit={form.handleSubmit(onSubmit)}
         {...props}
-        className="space-y-8"
-      >
+        className="space-y-8">
         <div className="flex flex-col items-center lg:gap-2 text-center">
           <h1 className="text-xl lg:text-4xl font-medium text-[#020C10]">
             Welcome to{" "}
@@ -61,8 +60,7 @@ export function AccountTypeForm({
                   <RadioGroup
                     onValueChange={field.onChange}
                     defaultValue={field.value}
-                    className="flex flex-col space-y-5"
-                  >
+                    className="flex flex-col space-y-5">
                     <FormItem className=" space-y-0 border-2 rounded-[8px]">
                       <FormLabel className="font-normal space-y-1 w-full p-4 cursor-pointer flex items-center justify-between space-x-3">
                         <div className="space-y-1">
@@ -94,7 +92,7 @@ export function AccountTypeForm({
                         </FormControl>
                       </FormLabel>
                     </FormItem>
-                    
+
                     {/* <FormItem className="space-y-0 border-2  rounded-[8px] ">
                       <FormLabel className="font-normal space-y-1 w-full p-4 cursor-pointer flex items-center justify-between space-x-3">
                         <div className="space-y-1">
@@ -110,7 +108,6 @@ export function AccountTypeForm({
                         </FormControl>
                       </FormLabel>
                     </FormItem> */}
-                    
                   </RadioGroup>
                 </FormControl>
                 <FormMessage />
@@ -128,6 +125,11 @@ export function AccountTypeForm({
           <Link to="/sign-in" className="font-bold text-primary">
             Log in
           </Link>
+          {/* <Link
+            to={`/sign-in?app_role=${form.watch("app_role") || "candidate"}`}
+            className="font-bold text-primary">
+            Log in
+          </Link> */}
         </div>
       </form>
     </Form>

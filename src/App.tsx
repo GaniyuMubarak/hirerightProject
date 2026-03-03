@@ -43,7 +43,10 @@ export default function App() {
             <Route path="/sign-up" element={<SignUpPage />} />
             <Route path="/sign-in" element={<SignInPage />} />
             <Route path="/account-type" element={<AccountTypePage />} />
-            <Route path="/auth/email-verification" element={<EmailVerification />} />
+            <Route
+              path="/auth/email-verification"
+              element={<EmailVerification />}
+            />
             <Route path="/forgot-password" element={<ForgotPassword />} />
 
             <Route element={<ProtectedRoute />}>
@@ -77,6 +80,8 @@ export default function App() {
                 <Route path="jobs">
                   <Route index element={<EmployerJobList />} />
                   <Route path="post" element={<PostJob />} />
+                  {/* Add this line for all applications */}
+                  <Route path="applications" element={<HiringProcess />} />
                   <Route
                     path=":jobId/applications"
                     element={<HiringProcess />}

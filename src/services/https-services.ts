@@ -475,6 +475,14 @@ instance.interceptors.response.use(
       window.location.href = "/unauthorized";
       return Promise.reject(error);
     }
+    // if (status === 403) {
+    //   toast("Access denied. Please sign in with the correct account type.", {
+    //     duration: 4000,
+    //     position: "top-right",
+    //   });
+    //   window.location.href = "/account-type";
+    //   return Promise.reject(error);
+    // }
 
     // ── 404 Not Found ──────────────────────────────────────────────────────
     if (status === 404) {

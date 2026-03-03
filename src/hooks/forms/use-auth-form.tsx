@@ -26,7 +26,8 @@ const useAuthForm = (page: "sign-up" | "login") => {
           email: "",
           password: "",
           password_confirmation: "",
-          app_role: "candidate",
+        // app_role: "candidate",
+          app_role: queryParams?.app_role || "candidate",
           acceptTerms: false,
         }
       : {
@@ -51,13 +52,24 @@ const useAuthForm = (page: "sign-up" | "login") => {
           app_role: signupData.app_role,
         };
         console.log("📦 Signup payload:", payload);
-      } else {
+      }
+      else {
         payload = {
           ...data,
           app_role: queryParams?.app_role || "candidate",
         };
         console.log("📦 Login payload:", payload);
       }
+      // else {
+      //   const app_role = queryParams?.app_role;
+      //   if (!app_role) {
+      //     toast.error("Please select your account type before signing in.");
+      //     navigate("/account-type");
+      //     return;
+      //   }
+      //   payload = { ...data, app_role };
+      //   console.log("📦 Login payload:", payload);
+      // }
 
       // Step 1: Auth request
       const res = isSignUp

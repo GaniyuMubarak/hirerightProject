@@ -1,4 +1,5 @@
 import { Button } from "@/components/ui/button";
+import {  useSearchParams } from "react-router";
 import {
   Form,
   FormControl,
@@ -21,6 +22,8 @@ export function SignInForm({
 }: React.ComponentPropsWithoutRef<"form">) {
   const { form, onSubmit } = useAuthForm("login");
   const [showPassword, setShowPassword] = useState(false);
+  // const [searchParams] = useSearchParams();
+  // const roleFromUrl = searchParams.get("app_role");
   // const user = useCurrentUser();
   // if (user) {
   //   return <Navigate to={`/${user?.app_role}/dashboard`} />;
@@ -31,13 +34,31 @@ export function SignInForm({
       <form
         onSubmit={form.handleSubmit(onSubmit)}
         {...props}
-        className="space-y-8"
-      >
+        className="space-y-8">
         <div className="flex flex-col gap-2 text-left">
           <h1 className="text-3xl font-medium text-[#020C10]">Sign In</h1>
           <p className="text-balance text-base text-[#475467] ">
             Welcome to Hire Right! Please enter your details.
           </p>
+          {/* {roleFromUrl ? (
+            <p className="text-sm text-[#475467]">
+              Signing in as{" "}
+              <span className="font-semibold text-primary capitalize">
+                {roleFromUrl}
+              </span>
+              {" · "}
+              <Link to="/account-type" className="text-[#EE7B36] underline">
+                Change
+              </Link>
+            </p>
+          ) : (
+            <p className="text-sm text-destructive">
+              No account type selected.{" "}
+              <Link to="/account-type" className="underline font-medium">
+                Select here
+              </Link>
+            </p>
+          )} */}
         </div>
         <div className=" mt-8 pb-4 space-y-5">
           <FormField
@@ -70,8 +91,7 @@ export function SignInForm({
                     <button
                       type="button"
                       onClick={() => setShowPassword(!showPassword)}
-                      className="absolute right-3 top-1/2 -translate-y-1/2"
-                    >
+                      className="absolute right-3 top-1/2 -translate-y-1/2">
                       {showPassword ? (
                         <EyeOff className="h-4 w-4 text-gray-500" />
                       ) : (
@@ -106,8 +126,7 @@ export function SignInForm({
 
             <Link
               to="/forgot-password"
-              className="text-[#EE7B36] text-sm font-medium"
-            >
+              className="text-[#EE7B36] text-sm font-medium">
               Forgot password?
             </Link>
           </div>
@@ -116,6 +135,7 @@ export function SignInForm({
             type="submit"
             className="w-full"
             disabled={form.formState.isSubmitting}
+            // disabled={form.formState.isSubmitting || !roleFromUrl}
           >
             Sign in
             {form.formState.isSubmitting && (

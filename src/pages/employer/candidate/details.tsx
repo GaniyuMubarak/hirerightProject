@@ -58,8 +58,6 @@ export default function CandidateDetails({ data }) {
   );
 }
 
-
-
 //WAITING FOR API ENDPOINT TO GET CANDIDATE DETAILS
 
 // import AboutMe from "@/components/candidate/profile/about";
@@ -69,25 +67,18 @@ export default function CandidateDetails({ data }) {
 // import SocialLinks from "@/components/candidate/profile/social-links";
 // import { Button } from "@/components/ui/button";
 // import Icons from "@/components/ui/icons";
-// import CandidateServices from "@/services/candidate-services";
+// import CompanyServices from "@/services/company-services";
 // import { useQuery } from "@tanstack/react-query";
 // import { Link, useParams } from "react-router";
 // import { Loader2 } from "lucide-react";
 
-
-// // ── Query hook ───────────────────────────────────────────────────────────────
-
 // function useCandidateById(id: string) {
 //   return useQuery({
 //     queryKey: ["candidate", id],
-//     queryFn: () => CandidateServices.getCandidateById(id),
+//     queryFn: () => CompanyServices.getCandidateById(id),
 //     enabled: !!id,
 //   });
 // }
-
-
-
-// // ── Component ────────────────────────────────────────────────────────────────
 
 // export default function CandidateDetails() {
 //   const { id } = useParams<{ id: string }>();
@@ -96,8 +87,6 @@ export default function CandidateDetails({ data }) {
 //   if (isPending) {
 //     return (
 //       <div className="max-w-7xl mx-auto px-4 pt-8 flex items-center justify-center min-h-[400px]">
-//         {/* <Icons.spinner className="h-8 w-8 animate-spin text-muted-foreground" /> */}
-//         {/* <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent" /> */}
 //         <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
 //       </div>
 //     );
@@ -116,8 +105,11 @@ export default function CandidateDetails({ data }) {
 //     );
 //   }
 
-//   const avatarUrl =
-//     data?.user?.profile_image_url || "/images/default-avatar.png";
+//   const candidate = data?.candidate;
+//   const fullName =
+//     `${candidate?.first_name ?? ""} ${candidate?.last_name ?? ""}`.trim() ||
+//     "—";
+//   const avatarUrl = candidate?.profile_image || "/images/default-avatar.png";
 
 //   return (
 //     <div className="max-w-7xl mx-auto px-4 pt-8 space-y-5 lg:space-y-8">
@@ -128,16 +120,15 @@ export default function CandidateDetails({ data }) {
 //             <div className="h-12 lg:h-[100px] w-12 lg:w-[100px] rounded-[6px] overflow-hidden">
 //               <img
 //                 src={avatarUrl}
-//                 alt={`${data?.user?.full_name ?? "Candidate"} avatar`}
+//                 alt={`${fullName} avatar`}
 //                 className="object-cover w-full h-full"
 //               />
 //             </div>
-
 //             <div className="flex flex-col justify-between h-full space-y-2">
 //               <span className="text-[#14151A] text-xl font-medium leading-none">
-//                 {data?.user?.full_name || "—"}
+//                 {fullName}
 //               </span>
-//               <p className="text-[#0F132499]">{data?.user?.job_title || "—"}</p>
+//               <p className="text-[#0F132499]">{candidate?.title || "—"}</p>
 //             </div>
 //           </div>
 
@@ -145,7 +136,6 @@ export default function CandidateDetails({ data }) {
 //             <Button variant="outline">
 //               <Icons.bookmarkSm className="min-h-6 min-w-6" />
 //             </Button>
-
 //             <Link to="/employer/jobs/applications">
 //               <Button className="rounded-[6px]">
 //                 Hiring Stage <Icons.arrowRight className="min-h-6 min-w-6" />
@@ -156,11 +146,11 @@ export default function CandidateDetails({ data }) {
 
 //         {/* Profile sections */}
 //         <div className="border p-4 bg-white rounded-[8px] space-y-6">
-//           <AboutMe data={data} />
-//           <ProfileDocuments data={data} />
-//           <ContactInfo data={data} />
-//           <Resume data={data} />
-//           <SocialLinks data={data} />
+//           <AboutMe data={candidate} />
+//           <ProfileDocuments data={candidate} />
+//           <ContactInfo data={candidate} />
+//           <Resume data={candidate} />
+//           <SocialLinks data={candidate} />
 //         </div>
 //       </div>
 //     </div>
