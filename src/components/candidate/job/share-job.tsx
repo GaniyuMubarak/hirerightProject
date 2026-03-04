@@ -58,7 +58,7 @@ export default function ShareJob({ job }: { job: any }) {
       try {
         await navigator.share({
           title: job.title,
-          text: `Check out this job: ${job.title} at ${job.company}`,
+          text: `Check out this job: ${job.title} at ${job.company.name}`,
           url: jobUrl,
         });
         toast.success("Job shared successfully!");
