@@ -98,4 +98,12 @@ class User extends Authenticatable
     {
         return $this->hasMany(Certification::class);
     }
+
+            /**
+         * Get all job applications for this user
+         */
+        public function jobApplications()
+        {
+            return $this->hasMany(\App\Models\JobApplication::class, 'user_id');
+        }
 }

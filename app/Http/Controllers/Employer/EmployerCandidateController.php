@@ -15,8 +15,6 @@ class EmployerCandidateController extends Controller
      */
     public function index(Request $request)
     {
-
-    
         try {
             $employer = $request->user();
             
@@ -109,7 +107,7 @@ class EmployerCandidateController extends Controller
                 'jobApplications' => function($query) use ($companyId) {
                     $query->whereHas('job', function($jobQuery) use ($companyId) {
                         $jobQuery->where('company_id', $companyId);
-                    })->with(['job:id,title,company_id', 'testResults']);
+                    })->with(['job:id,title,company_id,location,employment_type', 'testResults']);
                 }
             ]);
 
@@ -126,6 +124,9 @@ class EmployerCandidateController extends Controller
                     'address' => $candidate->address,
                     'resume' => $candidate->resume,
                     'profile_image' => $candidate->profile_image,
+                    'cover_image' => $candidate->cover_image,
+                    'linkedin_url' => $candidate->linkedin_url,
+                    'twitter_url' => $candidate->twitter_url,
                     'applications' => $candidate->jobApplications
                 ]
             ], 200);
@@ -208,4 +209,4 @@ class EmployerCandidateController extends Controller
             ], 500);
         }
     }
-}
+}   

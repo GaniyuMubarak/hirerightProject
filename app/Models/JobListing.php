@@ -172,4 +172,9 @@ class JobListing extends Model
     {
         return $query->where('is_featured', true);
     }
+
+    public function applications()
+{
+    return $this->hasMany(\App\Models\JobApplication::class, 'job_id');
+}
 }

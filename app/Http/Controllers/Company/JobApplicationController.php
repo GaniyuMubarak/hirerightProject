@@ -4,159 +4,103 @@ namespace App\Http\Controllers\Company;
 
 use App\Http\Controllers\Controller;
 use App\Models\JobApplication;
+use App\Models\JobListing;
 use App\Models\User;
 use App\Notifications\ApplicationStatusNotification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\Rule;
 
 class JobApplicationController extends Controller
 {
-
     /**
- * Get all applications for employer's company
- */
-public function getAllApplications(Request $request)
-{
-    try {
-        $user = $request->user();
-        
-        // Get user's company
-        $company = $user->company;
-        
-        if (!$company) {
-            return response()->json([
-                'status' => 'error',
-                'message' => 'Company profile not found'
-            ], 404);
-        }
-        
-        // Get all job IDs for this company
-        $jobIds = JobListing::where('company_id', $company->id)->pluck('id');
-        
-        // Get all applications for these jobs
-        $applications = JobApplication::whereIn('job_id', $jobIds)
-            ->with([
-                'user:id,first_name,last_name,email,phone',
-                'job:id,title,experience_level,location',
-                'test.submissions' => function($query) {
-                    $query->latest()->first();
-                }
-            ])
-            ->orderBy('created_at', 'desc')
-            ->paginate($request->input('per_page', 15));
-        
-        // Transform data for frontend
-        $applications->getCollection()->transform(function($application) {
-            $testStatus = null;
-            $testScore = null;
-            
-            if ($application->test && $application->test->submissions->isNotEmpty()) {
-                $submission = $application->test->submissions->first();
-                $testStatus = $submission->status;
-                $testScore = $submission->score;
-            }
-            
-            return [
-                'id' => $application->id,
-                'candidate' => [
-                    'id' => $application->user->id,
-                    'name' => $application->user->first_name . ' ' . $application->user->last_name,
-                    'email' => $application->user->email,
-                    'phone' => $application->user->phone,
-                ],
-                'job' => [
-                    'id' => $application->job->id,
-                    'title' => $application->job->title,
-                    'experience_level' => $application->job->experience_level,
-                    'location' => $application->job->location,
-                ],
-                'status' => $application->status,
-                'applied_at' => $application->created_at->format('Y-m-d H:i:s'),
-                'test_status' => $testStatus,
-                'test_score' => $testScore,
-            ];
-        });
-        
-        return response()->json([
-            'status' => 'success',
-            'data' => $applications
-        ], 200);
-        
-    } catch (\Exception $e) {
-        return response()->json([
-            'status' => 'error',
-            'message' => 'Failed to fetch applications',
-            'error' => config('app.debug') ? $e->getMessage() : 'Internal server error'
-        ], 500);
-    }
-}
-
-    public function getApplicationsForJob(Request $request)
+     * Get all applications for employer's company
+     * Route name: igetAllApplications (from routes/api.php line 212)
+     */
+    public function igetAllApplications(Request $request)
     {
         try {
-            $userId = Auth::id();
-            $user = User::findOrFail($userId);
-            //
-            $validator = Validator::make($request->all(), [
-                'jobId' => 'nullable|exists:job_listings,id',
-                'status' => ['nullable', Rule::in([
-                    'applied',
-                    'under_review',
-                    'shortlisted',
-                    'interview_scheduled',
-                    'test_invited',
-                    'test_completed',
-                    'offered',
-                    'hired',
-                    'rejected',
-                    'withdrawn'
-                ])],
-                'sortBy' => 'nullable|in:latest,status',
-            ]);
-
-            if ($validator->fails()) {
+            $user = $request->user();
+            
+            // Check if user has company
+            if (!$user->company_id) {
                 return response()->json([
                     'status' => 'error',
-                    'message' => 'Invalid filters provided',
-                    'errors' => $validator->errors()
-                ], 422);
+                    'message' => 'Company profile not found. Please create a company first.'
+                ], 404);
+            }
+            
+            // Get all applications for this company's jobs
+            $applications = JobApplication::whereHas('job', function($query) use ($user) {
+                    $query->where('company_id', $user->company_id);
+                })
+                ->with([
+                    'user:id,first_name,last_name,email,phone,title,profile_image',
+                    'job:id,title,location,employment_type,experience_level'
+                ])
+                ->orderBy('created_at', 'desc')
+                ->paginate(20);
+            
+            return response()->json([
+                'status' => 'success',
+                'data' => $applications
+            ], 200);
+            
+        } catch (\Exception $e) {
+            Log::error('Error fetching applications: ' . $e->getMessage(), [
+                'user_id' => $request->user()->id,
+                'trace' => $e->getTraceAsString()
+            ]);
+            
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Failed to fetch applications',
+                'error' => config('app.debug') ? $e->getMessage() : 'Internal server error'
+            ], 500);
+        }
+    }
+
+    /**
+     * Get applications for specific job
+     */
+    public function getApplicationsForJob(Request $request, $jobId)
+    {
+        try {
+            $user = $request->user();
+            
+            // Verify job belongs to user's company
+            $job = JobListing::where('id', $jobId)
+                ->where('company_id', $user->company_id)
+                ->first();
+                
+            if (!$job) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'Job not found or access denied'
+                ], 404);
             }
 
-            $query = JobApplication::whereHas('jobListing', function ($q) use ($user) {
-                $q->where('company_id', $user->company_id);
-            })->with([
-                'jobListing:id,title',
-                'user:id,first_name,last_name,email',
-                'reviewedBy:id,first_name,last_name'
-            ])->when($request->filled('jobId'), function ($q) use ($request) {
-                $q->where('job_id', $request->jobId);
-            })->when($request->filled('status'), function ($q) use ($request) {
-                $q->where('status', $request->status);
-            });
-
-            $applications = $query->latest()->get()->map(function ($application) {
-                return [
-                    'id' => $application->id,
-                    'job_id' => $application->jobListing->id,
-                    'job_title' => $application->jobListing->title,
-                    'candidate_name' => $application->user->first_name . ' ' . $application->user->last_name,
-                    'candidate_email' => $application->user->email,
-                    'status' => $application->status,
-                    'applied_at' => $application->created_at->format('Y-m-d\TH:i:s\Z'),
-                    'reviewed_at' => $application->reviewed_at?->format('Y-m-d\TH:i:s\Z'),
-                    'reviewed_by' => $application->reviewedBy ?
-                        $application->reviewedBy->first_name . ' ' . $application->reviewedBy->last_name :
-                        null,
-                ];
-            });
+            $applications = JobApplication::where('job_id', $jobId)
+                ->with([
+                    'user:id,first_name,last_name,email,phone',
+                    'job:id,title'
+                ])
+                ->when($request->filled('status'), function($query) use ($request) {
+                    $query->where('status', $request->status);
+                })
+                ->orderBy('created_at', 'desc')
+                ->paginate(20);
 
             return response()->json([
                 'status' => 'success',
                 'data' => $applications
             ]);
+            
         } catch (\Exception $e) {
+            Log::error('Error fetching job applications: ' . $e->getMessage());
+            
             return response()->json([
                 'status' => 'error',
                 'message' => 'Failed to retrieve applications'
@@ -164,66 +108,43 @@ public function getAllApplications(Request $request)
         }
     }
 
+    /**
+     * Get candidates for specific job
+     */
     public function getCandidatesForJob(Request $request, $jobId)
     {
         try {
-            // Ensure the user is authenticated
-            $userId = Auth::id();
-            $user = User::findOrFail($userId);
+            $user = $request->user();
 
-            // Validate the job ID
-            $validator = Validator::make(['jobId' => $jobId], [
-                'jobId' => 'required|exists:job_listings,id',
-            ]);
-
-            if ($validator->fails()) {
+            // Verify job belongs to user's company
+            $job = JobListing::where('id', $jobId)
+                ->where('company_id', $user->company_id)
+                ->first();
+                
+            if (!$job) {
                 return response()->json([
                     'status' => 'error',
-                    'message' => 'Invalid job ID provided',
-                    'errors' => $validator->errors()
-                ], 422);
+                    'message' => 'Job not found or access denied'
+                ], 404);
             }
 
-            // Base query: Get candidates who applied to the specified job
-            $query = JobApplication::where('job_id', $jobId)
-                ->whereHas('jobListing', function ($q) use ($user) {
-                    $q->where('company_id', $user->company_id); // Ensure the job belongs to the user's company
+            $applications = JobApplication::where('job_id', $jobId)
+                ->with(['user:id,first_name,last_name,email,phone,title'])
+                ->when($request->filled('status'), function($query) use ($request) {
+                    $query->where('status', $request->status);
                 })
-                ->with([
-                    'user:id,first_name,last_name,email', // Include candidate details
-                    'reviewedBy:id,first_name,last_name' // Include reviewer details
-                ]);
+                ->orderBy('created_at', 'desc')
+                ->paginate(20);
 
-            // Apply filters (if any)
-            if ($request->filled('status')) {
-                $query->where('status', $request->status); // Filter by application status
-            }
-
-            // Apply sorting (if any)
-            if ($request->filled('sortBy')) {
-                $sortBy = $request->sortBy;
-                if ($sortBy === 'latest') {
-                    $query->latest(); // Sort by latest applications first
-                } elseif ($sortBy === 'oldest') {
-                    $query->oldest(); // Sort by oldest applications first
-                }
-            }
-
-            // Paginate the results (optional)
-            $applications = $query->paginate(10); // Adjust the number of items per page as needed
-
-            // Format the response to focus on candidates
             $candidates = $applications->map(function ($application) {
                 return [
-                    'id' => $application->user->id, // Candidate ID
+                    'id' => $application->user->id,
                     'name' => $application->user->first_name . ' ' . $application->user->last_name,
                     'email' => $application->user->email,
-                    'status' => $application->status, // Application status
-                    'applied_at' => $application->created_at->format('Y-m-d\TH:i:s\Z'),
-                    'reviewed_at' => $application->reviewed_at?->format('Y-m-d\TH:i:s\Z'),
-                    'reviewed_by' => $application->reviewedBy ?
-                        $application->reviewedBy->first_name . ' ' . $application->reviewedBy->last_name :
-                        null,
+                    'phone' => $application->user->phone,
+                    'title' => $application->user->title,
+                    'application_status' => $application->status,
+                    'applied_at' => $application->created_at->format('Y-m-d H:i:s'),
                 ];
             });
 
@@ -239,184 +160,210 @@ public function getAllApplications(Request $request)
                     ]
                 ]
             ]);
+            
         } catch (\Exception $e) {
+            Log::error('Error fetching candidates for job: ' . $e->getMessage());
+            
             return response()->json([
                 'status' => 'error',
                 'message' => 'Failed to retrieve candidates for the job',
-                'error' => $e->getMessage() // Include the error message for debugging
-            ], 500);
-        }
-    }
-
-    public function getAllCandidatesForCompany(Request $request)
-    {
-        try {
-            // Ensure the user is authenticated
-            $userId = Auth::id();
-            $user = User::findOrFail($userId);
-            // Validate the request
-            $validator = Validator::make($request->all(), [
-                'status' => ['nullable', Rule::in([
-                    'applied',
-                    'under_review',
-                    'shortlisted',
-                    'interview_scheduled',
-                    'test_invited',
-                    'test_completed',
-                    'offered',
-                    'hired',
-                    'rejected',
-                    'withdrawn'
-                ])],
-                'sortBy' => 'nullable|in:latest,oldest', // Sort by application date
-                'page' => 'nullable|integer|min:1', // Pagination page
-                'size' => 'nullable|integer|min:1|max:100', // Pagination size
-            ]);
-
-            if ($validator->fails()) {
-                return response()->json([
-                    'status' => 'error',
-                    'message' => 'Invalid filters provided',
-                    'errors' => $validator->errors()
-                ], 422);
-            }
-            // Base query: Get all candidates who applied to jobs within the user's company
-            $query = JobApplication::whereHas('jobListing', function ($q) use ($user) {
-                $q->where('company_id', $user->company_id); // Ensure the job belongs to the user's company
-            })
-                ->with([
-                    'user:id,first_name,last_name,email', // Include candidate details
-                    'reviewedBy:id,first_name,last_name' // Include reviewer details
-                ])
-                ->select('user_id', 'status', 'created_at', 'reviewed_at')
-                ->groupBy('user_id', 'status', 'created_at', 'reviewed_at'); // Fix SQL error
-
-            // Apply filters
-            if ($request->filled('status')) {
-                $query->where('status', $request->status); // Filter by application status
-            }
-            // Apply sorting
-            if ($request->filled('sortBy')) {
-                $sortBy = $request->sortBy;
-                if ($sortBy === 'latest') {
-                    $query->latest(); // Sort by latest applications first
-                } elseif ($sortBy === 'oldest') {
-                    $query->oldest(); // Sort by oldest applications first
-                }
-            }
-            // Paginate the results
-            $page = $request->input('page', 1); // Default page is 1
-            $size = $request->input('size', 10); // Default size is 10
-            $applications = $query->paginate($size, ['*'], 'page', $page);
-            // Format the response to focus on candidates
-            $candidates = $applications->map(function ($application) {
-                return [
-                    'id' => $application->user->id, // Candidate ID
-                    'name' => $application->user->first_name . ' ' . $application->user->last_name,
-                    'email' => $application->user->email,
-                    'status' => $application->status, // Latest application status
-                    'applied_at' => $application->created_at->format('Y-m-d\TH:i:s\Z'), // Latest application date
-                    'reviewed_at' => $application->reviewed_at?->format('Y-m-d\TH:i:s\Z'),
-                    'reviewed_by' => $application->reviewedBy ?
-                        $application->reviewedBy->first_name . ' ' . $application->reviewedBy->last_name :
-                        null,
-                ];
-            });
-
-            return response()->json([
-                'status' => 'success',
-                'data' => [
-                    'candidates' => $candidates,
-                    'pagination' => [
-                        'total' => $applications->total(),
-                        'per_page' => $applications->perPage(),
-                        'current_page' => $applications->currentPage(),
-                        'last_page' => $applications->lastPage(),
-                    ]
-                ]
-            ]);
-        } catch (\Exception $e) {
-            return response()->json([
-                'status' => 'error',
-                'message' => 'Failed to retrieve candidates',
-                'error' => $e->getMessage() // Include the error message for debugging
+                'error' => config('app.debug') ? $e->getMessage() : 'Internal server error'
             ], 500);
         }
     }
 
     /**
-     * Update application status
+     * Get all candidates for company
      */
-    public function updateStatus(Request $request, $id)
+    public function getAllCandidatesForCompany(Request $request)
     {
         try {
-            $userId = Auth::id();
-            // Re-fetch the user using the User model
-            $user = User::findOrFail($userId);
-            //
-            $application = JobApplication::whereHas('jobListing', function ($q) {
-                $q->where('company_id', Auth::user()->company_id);
-            })->findOrFail($id);
-
-            $validator = Validator::make($request->all(), [
-                'status' => ['required', Rule::in([
-                    'under_review',
-                    'shortlisted',
-                    'interview_scheduled',
-                    'test_invited',
-                    'test_completed',
-                    'offered',
-                    'hired',
-                    'rejected'
-                ])],
-                'rejection_reason' => [
-                    Rule::requiredIf(function () use ($request) {
-                        return $request->status === 'rejected';
-                    }),
-                    'nullable',
-                    'string',
-                    'max:1000'
-                ],
-            ]);
-
-            if ($validator->fails()) {
+            $user = $request->user();
+            
+            if (!$user->company_id) {
                 return response()->json([
                     'status' => 'error',
-                    'message' => 'Validation failed',
-                    'errors' => $validator->errors()
-                ], 422);
+                    'message' => 'Company profile not found'
+                ], 404);
             }
 
-            $data = [
-                'status' => $request->status,
-                'rejection_reason' => $request->rejection_reason,
-            ];
+            // Get unique candidates who applied to company jobs
+            $candidates = User::where('app_role', 'candidate')
+                ->whereHas('jobApplications', function($query) use ($user) {
+                    $query->whereHas('job', function($jobQuery) use ($user) {
+                        $jobQuery->where('company_id', $user->company_id);
+                    });
+                })
+                ->with([
+                    'jobApplications' => function($query) use ($user) {
+                        $query->whereHas('job', function($jobQuery) use ($user) {
+                            $jobQuery->where('company_id', $user->company_id);
+                        })->with('job:id,title');
+                    }
+                ])
+                ->paginate(20);
 
-            // Set reviewed_at and reviewed_by if first time reviewing
-            if (!$application->reviewed_at && $request->status !== 'applied') {
-                $data['reviewed_at'] = now();
-                $data['reviewed_by'] = Auth::id();
-            }
-
-            $application->update($data);
-
-        // Send email notification
-            $application->user->notify(new ApplicationStatusNotification(
-                $application->fresh(['jobListing.company']),
-                $request->status
-            ));
             return response()->json([
                 'status' => 'success',
-                'message' => 'Application status updated successfully',
-                'data' => $application
+                'data' => [
+                    'candidates' => $candidates->items(),
+                    'pagination' => [
+                        'total' => $candidates->total(),
+                        'per_page' => $candidates->perPage(),
+                        'current_page' => $candidates->currentPage(),
+                        'last_page' => $candidates->lastPage(),
+                    ]
+                ]
             ]);
+            
         } catch (\Exception $e) {
+            Log::error('Error fetching company candidates: ' . $e->getMessage());
+            
             return response()->json([
                 'status' => 'error',
-                'message' => 'Failed to update application status'
+                'message' => 'Failed to retrieve candidates',
+                'error' => config('app.debug') ? $e->getMessage() : 'Internal server error'
             ], 500);
         }
     }
+
+    /**
+     * Update application status (shortlist, reject, etc.)
+     */
+    // public function updateStatus(Request $request, $id)
+    // {
+    //     try {
+    //         $user = $request->user();
+            
+    //         // Find application and verify access
+    //         $application = JobApplication::whereHas('job', function($query) use ($user) {
+    //                 $query->where('company_id', $user->company_id);
+    //             })
+    //             ->findOrFail($id);
+
+    //         $validator = Validator::make($request->all(), [
+    //             'status' => ['required', Rule::in([
+    //                 'pending',
+    //                 'shortlisted',
+    //                 'interview',
+    //                 'hired',
+    //                 'rejected'
+    //             ])],
+    //             'rejection_reason' => 'nullable|string|max:1000',
+    //             'notes' => 'nullable|string|max:1000'
+    //         ]);
+
+    //         if ($validator->fails()) {
+    //             return response()->json([
+    //                 'status' => 'error',
+    //                 'message' => 'Validation failed',
+    //                 'errors' => $validator->errors()
+    //             ], 422);
+    //         }
+
+    //         // Update application
+    //         $application->update([
+    //             'status' => $request->status,
+    //             'rejection_reason' => $request->rejection_reason,
+    //             'reviewed_at' => now(),
+    //             'reviewed_by' => $user->id
+    //         ]);
+
+    //         // Send notification to candidate
+    //         try {
+    //             $application->user->notify(
+    //                 new ApplicationStatusNotification($application->load('job'), $request->status)
+    //             );
+    //         } catch (\Exception $e) {
+    //             Log::error('Failed to send status notification: ' . $e->getMessage());
+    //             // Don't fail the request if email fails
+    //         }
+
+    //         return response()->json([
+    //             'status' => 'success',
+    //             'message' => 'Application status updated successfully',
+    //             'application' => $application->load(['user:id,first_name,last_name', 'job:id,title'])
+    //         ]);
+            
+    //     } catch (\Exception $e) {
+    //         Log::error('Error updating application status: ' . $e->getMessage());
+            
+    //         return response()->json([
+    //             'status' => 'error',
+    //             'message' => 'Failed to update application status',
+    //             'error' => config('app.debug') ? $e->getMessage() : 'Internal server error'
+    //         ], 500);
+    //     }
+    // }
+    public function updateStatus(Request $request, $id)
+{
+    try {
+        $user = $request->user();
+        
+        // Find application and verify access
+        $application = JobApplication::whereHas('job', function($query) use ($user) {
+                $query->where('company_id', $user->company_id);
+            })
+            ->findOrFail($id);
+
+        $validator = Validator::make($request->all(), [
+            'status' => ['required', Rule::in([
+                'applied',
+                'under_review',
+                'shortlisted',
+                'interview_scheduled',
+                'test_invited',
+                'test_completed',
+                'offered',
+                'hired',
+                'rejected',
+                'withdrawn'
+            ])],
+            'rejection_reason' => 'nullable|string|max:1000',
+            'notes' => 'nullable|string|max:1000'
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Validation failed',
+                'errors' => $validator->errors()
+            ], 422);
+        }
+
+        // Update application
+        $application->update([
+            'status' => $request->status,
+            'rejection_reason' => $request->rejection_reason,
+            'reviewed_at' => now(),
+            'reviewed_by' => $user->id
+        ]);
+
+        // Send notification to candidate
+        try {
+            $application->user->notify(
+                new ApplicationStatusNotification($application->load('job'), $request->status)
+            );
+        } catch (\Exception $e) {
+            Log::error('Failed to send status notification: ' . $e->getMessage());
+        }
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Application status updated successfully',
+            'application' => $application->load(['user:id,first_name,last_name,email', 'job:id,title'])
+        ]);
+        
+    } catch (\Exception $e) {
+        Log::error('Error updating application status: ' . $e->getMessage());
+        
+        return response()->json([
+            'status' => 'error',
+            'message' => 'Failed to update application status',
+            'error' => config('app.debug') ? $e->getMessage() : 'Internal server error'
+        ], 500);
+    }
+}
 
     /**
      * View application details
@@ -424,17 +371,14 @@ public function getAllApplications(Request $request)
     public function show($id)
     {
         try {
-            $userId = Auth::id();
-            // Re-fetch the user using the User model
-            $user = User::findOrFail($userId);
-            //
-            $application = JobApplication::whereHas('jobListing', function ($q) {
-                $q->where('company_id', Auth::user()->company_id);
-            })
+            $user = Auth::user();
+            
+            $application = JobApplication::whereHas('job', function($query) use ($user) {
+                    $query->where('company_id', $user->company_id);
+                })
                 ->with([
-                    'jobListing:id,title',
-                    'user:id,first_name,last_name,email',
-                    'reviewedBy:id,first_name,last_name'
+                    'job:id,title,location,employment_type',
+                    'user:id,first_name,last_name,email,phone,bio,title,resume'
                 ])
                 ->findOrFail($id);
 
@@ -442,26 +386,34 @@ public function getAllApplications(Request $request)
                 'status' => 'success',
                 'data' => [
                     'id' => $application->id,
-                    'job_title' => $application->jobListing->title,
+                    'job' => [
+                        'id' => $application->job->id,
+                        'title' => $application->job->title,
+                        'location' => $application->job->location,
+                    ],
                     'candidate' => [
+                        'id' => $application->user->id,
                         'name' => $application->user->first_name . ' ' . $application->user->last_name,
                         'email' => $application->user->email,
+                        'phone' => $application->user->phone,
+                        'bio' => $application->user->bio,
+                        'title' => $application->user->title,
+                        'resume' => $application->user->resume,
                     ],
-                    'cover_letter' => $application->cover_letter,
-                    'answers' => $application->answers,
                     'status' => $application->status,
-                    'applied_at' => $application->created_at->format('Y-m-d\TH:i:s\Z'),
-                    'reviewed_at' => $application->reviewed_at?->format('Y-m-d\TH:i:s\Z'),
-                    'reviewed_by' => $application->reviewedBy ?
-                        $application->reviewedBy->first_name . ' ' . $application->reviewedBy->last_name :
-                        null,
+                    'applied_at' => $application->created_at->format('Y-m-d H:i:s'),
+                    'reviewed_at' => $application->reviewed_at?->format('Y-m-d H:i:s'),
                     'rejection_reason' => $application->rejection_reason,
                 ]
             ]);
+            
         } catch (\Exception $e) {
+            Log::error('Error fetching application: ' . $e->getMessage());
+            
             return response()->json([
                 'status' => 'error',
-                'message' => 'Failed to retrieve application details'
+                'message' => 'Failed to retrieve application details',
+                'error' => config('app.debug') ? $e->getMessage() : 'Internal server error'
             ], 500);
         }
     }
