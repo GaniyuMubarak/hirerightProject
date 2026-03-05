@@ -6,6 +6,7 @@ use App\Notifications\ApplicationStatusNotification;
 use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
 use App\Models\JobListing;
+use App\Models\JobApplication;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -353,39 +354,23 @@ class CompanyJobController extends Controller
     /**
      * Update the status of a job listing.
      */
-   public function updateStatus(Request $request, $id)
+/**
+ * Update job status (close, pause, publish, draft)
+ */
+public function updateStatus(Request $request, $jobId)
 {
     try {
-        $userId = Auth::id();
-        $user = User::findOrFail($userId);
+        $user = $request->user();
         
-        // Get application
-        $application = JobApplication::whereHas('jobListing', function ($q) use ($user) {
-            $q->where('company_id', $user->company_id);
-        })->findOrFail($id);
-
-        // Validate request
+        // Find job and verify ownership
+        $job = JobListing::where('id', $jobId)
+            ->where('company_id', $user->company_id)
+            ->firstOrFail();
+        
         $validator = Validator::make($request->all(), [
-            'status' => ['required', Rule::in([
-                'under_review',
-                'shortlisted',
-                'interview_scheduled',
-                'test_invited',
-                'test_completed',
-                'offered',
-                'hired',
-                'rejected'
-            ])],
-            'rejection_reason' => [
-                Rule::requiredIf(function () use ($request) {
-                    return $request->status === 'rejected';
-                }),
-                'nullable',
-                'string',
-                'max:1000'
-            ],
+            'status' => ['required', Rule::in(['draft', 'published', 'closed', 'paused'])]
         ]);
-
+        
         if ($validator->fails()) {
             return response()->json([
                 'status' => 'error',
@@ -393,74 +378,39 @@ class CompanyJobController extends Controller
                 'errors' => $validator->errors()
             ], 422);
         }
-
-        $data = [
-            'status' => $request->status,
-            'rejection_reason' => $request->rejection_reason,
-        ];
-
-        // Set reviewed_at and reviewed_by if first time reviewing
-        if (!$application->reviewed_at && $request->status !== 'applied') {
-            $data['reviewed_at'] = now();
-            $data['reviewed_by'] = Auth::id();
-        }
-
-        // Update application
-        $application->update($data);
-
-        // ✅ Load relationships and send email notification
-        try {
-            // Load all needed relationships
-            $application->load([
-                'user',
-                'jobListing',
-                'jobListing.company'
-            ]);
-            
-            // Send notification
-            $application->user->notify(new ApplicationStatusNotification(
-                $application,
-                $request->status
-            ));
-            
-            Log::info('Status update email sent', [
-                'application_id' => $application->id,
-                'status' => $request->status,
-                'user_email' => $application->user->email
-            ]);
-            
-        } catch (\Exception $e) {
-            // Log email error but don't fail the update
-            Log::error('Failed to send status update email', [
-                'error' => $e->getMessage(),
-                'application_id' => $application->id,
-                'trace' => $e->getTraceAsString()
-            ]);
-        }
+        
+        $job->update([
+            'status' => $request->status
+        ]);
+        
+        Log::info('Job status updated', [
+            'job_id' => $job->id,
+            'new_status' => $request->status
+        ]);
         
         return response()->json([
             'status' => 'success',
-            'message' => 'Application status updated successfully',
-            'data' => $application
-        ]);
+            'message' => 'Job status updated successfully',
+            'job' => $job
+        ], 200);
         
     } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
         return response()->json([
             'status' => 'error',
-            'message' => 'Application not found'
+            'message' => 'Job not found or access denied'
         ], 404);
         
     } catch (\Exception $e) {
-        Log::error('Status update failed', [
+        Log::error('Error updating job status', [
             'error' => $e->getMessage(),
-            'trace' => $e->getTraceAsString(),
-            'application_id' => $id ?? null
+            'job_id' => $jobId,
+            'trace' => $e->getTraceAsString()
         ]);
         
         return response()->json([
             'status' => 'error',
-            'message' => 'Failed to update application status',
-            'error' => config('app.debug') ? $e->getMessage() : null
+            'message' => 'Failed to update job status',
+            'error' => config('app.debug') ? $e->getMessage() : 'Internal server error'
         ], 500);
     }
 }
