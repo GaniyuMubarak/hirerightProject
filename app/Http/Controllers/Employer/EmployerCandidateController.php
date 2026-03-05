@@ -18,7 +18,6 @@ class EmployerCandidateController extends Controller
         try {
             $employer = $request->user();
             
-            // Get employer's company
             if (!$employer->company_id) {
                 return response()->json([
                     'message' => 'Company profile not found. Please create a company first.'
@@ -27,7 +26,6 @@ class EmployerCandidateController extends Controller
 
             $companyId = $employer->company_id;
 
-            // Get all candidates who applied to this company's jobs
             $candidates = User::where('app_role', 'candidate')
                 ->whereHas('jobApplications', function($query) use ($companyId) {
                     $query->whereHas('job', function($jobQuery) use ($companyId) {
@@ -64,86 +62,182 @@ class EmployerCandidateController extends Controller
     /**
      * Get specific candidate profile
      */
-    public function show(Request $request, $id)
-    {
-        try {
-            $employer = $request->user();
+    // public function show(Request $request, $id)
+    // {
+    //     try {
+    //         Log::info('EmployerCandidateController@show called', [
+    //             'candidate_id' => $id,
+    //             'employer_id' => $request->user()->id,
+    //             'company_id' => $request->user()->company_id
+    //         ]);
+
+    //         $employer = $request->user();
             
-            // Get employer's company
-            if (!$employer->company_id) {
-                return response()->json([
-                    'message' => 'Company profile not found'
-                ], 404);
-            }
+    //         if (!$employer->company_id) {
+    //             return response()->json([
+    //                 'message' => 'Company profile not found'
+    //             ], 404);
+    //         }
 
-            $companyId = $employer->company_id;
+    //         $companyId = $employer->company_id;
 
-            // Find candidate
-            $candidate = User::where('id', $id)
-                ->where('app_role', 'candidate')
-                ->first();
+    //         // Find candidate
+    //         $candidate = User::where('id', $id)
+    //             ->where('app_role', 'candidate')
+    //             ->first();
 
-            if (!$candidate) {
-                return response()->json([
-                    'message' => 'Candidate not found'
-                ], 404);
-            }
+    //         if (!$candidate) {
+    //             Log::warning('Candidate not found', ['candidate_id' => $id]);
+    //             return response()->json([
+    //                 'message' => 'Candidate not found'
+    //             ], 404);
+    //         }
 
-            // Check if candidate applied to any of this company's jobs
-            $hasApplied = JobApplication::where('user_id', $id)
-                ->whereHas('job', function($query) use ($companyId) {
-                    $query->where('company_id', $companyId);
-                })
-                ->exists();
+    //         // Check if candidate applied to any of this company's jobs
+    //         $hasApplied = JobApplication::where('user_id', $id)
+    //             ->whereHas('job', function($query) use ($companyId) {
+    //                 $query->where('company_id', $companyId);
+    //             })
+    //             ->exists();
 
-            if (!$hasApplied) {
-                return response()->json([
-                    'message' => 'Access denied. This candidate has not applied to any of your jobs.'
-                ], 403);
-            }
+    //         if (!$hasApplied) {
+    //             Log::warning('Access denied - candidate has not applied', [
+    //                 'candidate_id' => $id,
+    //                 'company_id' => $companyId
+    //             ]);
+                
+    //             return response()->json([
+    //                 'message' => 'Access denied. This candidate has not applied to any of your jobs.'
+    //             ], 403);
+    //         }
 
-            // Load full candidate data
-            $candidate->load([
-                'jobApplications' => function($query) use ($companyId) {
-                    $query->whereHas('job', function($jobQuery) use ($companyId) {
-                        $jobQuery->where('company_id', $companyId);
-                    })->with(['job:id,title,company_id,location,employment_type', 'testResults']);
-                }
-            ]);
+    //         // Load candidate data
+    //         $candidate->load([
+    //             'jobApplications' => function($query) use ($companyId) {
+    //                 $query->whereHas('job', function($jobQuery) use ($companyId) {
+    //                     $jobQuery->where('company_id', $companyId);
+    //                 })->with('job:id,title,location,employment_type');
+    //             }
+    //         ]);
 
-            return response()->json([
-                'message' => 'Candidate profile retrieved successfully',
-                'candidate' => [
-                    'id' => $candidate->id,
-                    'first_name' => $candidate->first_name,
-                    'last_name' => $candidate->last_name,
-                    'email' => $candidate->email,
-                    'phone' => $candidate->phone,
-                    'bio' => $candidate->bio,
-                    'title' => $candidate->title,
-                    'address' => $candidate->address,
-                    'resume' => $candidate->resume,
-                    'profile_image' => $candidate->profile_image,
-                    'cover_image' => $candidate->cover_image,
-                    'linkedin_url' => $candidate->linkedin_url,
-                    'twitter_url' => $candidate->twitter_url,
-                    'applications' => $candidate->jobApplications
-                ]
-            ], 200);
+    //         return response()->json([
+    //             'message' => 'Candidate profile retrieved successfully',
+    //             'candidate' => [
+    //                 'id' => $candidate->id,
+    //                 'first_name' => $candidate->first_name,
+    //                 'last_name' => $candidate->last_name,
+    //                 'email' => $candidate->email,
+    //                 'phone' => $candidate->phone,
+    //                 'bio' => $candidate->bio,
+    //                 'title' => $candidate->title,
+    //                 'address' => $candidate->address,
+    //                 'resume' => $candidate->resume,
+    //                 'profile_image' => $candidate->profile_image,
+    //                 'cover_image' => $candidate->cover_image,
+    //                 'linkedin_url' => $candidate->linkedin_url,
+    //                 'twitter_url' => $candidate->twitter_url,
+    //                 'applications' => $candidate->jobApplications
+    //             ]
+    //         ], 200);
 
-        } catch (\Exception $e) {
-            Log::error('Error fetching candidate: ' . $e->getMessage(), [
-                'candidate_id' => $id,
-                'user_id' => $request->user()->id,
-                'trace' => $e->getTraceAsString()
-            ]);
+    //     } catch (\Exception $e) {
+    //         Log::error('Error fetching candidate', [
+    //             'candidate_id' => $id,
+    //             'employer_id' => $request->user()->id,
+    //             'error' => $e->getMessage(),
+    //             'trace' => $e->getTraceAsString()
+    //         ]);
             
+    //         return response()->json([
+    //             'message' => 'Failed to fetch candidate',
+    //             'error' => config('app.debug') ? $e->getMessage() : 'Internal server error'
+    //         ], 500);
+    //     }
+    // }
+
+    /**
+ * Get specific candidate profile
+ */
+public function show(Request $request, $id)
+{
+    try {
+        $employer = $request->user();
+        
+        if (!$employer->company_id) {
             return response()->json([
-                'message' => 'Failed to fetch candidate',
-                'error' => config('app.debug') ? $e->getMessage() : 'Internal server error'
-            ], 500);
+                'message' => 'Company profile not found'
+            ], 404);
         }
+
+        $companyId = $employer->company_id;
+
+        // Find candidate
+        $candidate = User::where('id', $id)
+            ->where('app_role', 'candidate')
+            ->first();
+
+        if (!$candidate) {
+            return response()->json([
+                'message' => 'Candidate not found'
+            ], 404);
+        }
+
+        // Check if candidate applied to any of this company's jobs
+        $hasApplied = JobApplication::where('user_id', $id)
+            ->whereHas('job', function($query) use ($companyId) {
+                $query->where('company_id', $companyId);
+            })
+            ->exists();
+
+        if (!$hasApplied) {
+            return response()->json([
+                'message' => 'Access denied. This candidate has not applied to any of your jobs.'
+            ], 403);
+        }
+
+        // Load candidate data WITHOUT testResults
+        $candidate->load([
+            'jobApplications' => function($query) use ($companyId) {
+                $query->whereHas('job', function($jobQuery) use ($companyId) {
+                    $jobQuery->where('company_id', $companyId);
+                })->with('job:id,title,location,employment_type');
+            }
+        ]);
+
+        return response()->json([
+            'message' => 'Candidate profile retrieved successfully',
+            'candidate' => [
+                'id' => $candidate->id,
+                'first_name' => $candidate->first_name,
+                'last_name' => $candidate->last_name,
+                'email' => $candidate->email,
+                'phone' => $candidate->phone,
+                'bio' => $candidate->bio,
+                'title' => $candidate->title,
+                'address' => $candidate->address,
+                'resume' => $candidate->resume,
+                'profile_image' => $candidate->profile_image,
+                'cover_image' => $candidate->cover_image,
+                'linkedin_url' => $candidate->linkedin_url,
+                'twitter_url' => $candidate->twitter_url,
+                'applications' => $candidate->jobApplications
+            ]
+        ], 200);
+
+    } catch (\Exception $e) {
+        Log::error('Error fetching candidate', [
+            'candidate_id' => $id,
+            'employer_id' => $request->user()->id,
+            'error' => $e->getMessage(),
+            'trace' => $e->getTraceAsString()
+        ]);
+        
+        return response()->json([
+            'message' => 'Failed to fetch candidate',
+            'error' => config('app.debug') ? $e->getMessage() : 'Internal server error'
+        ], 500);
     }
+}
 
     /**
      * Get candidate's resume
@@ -198,9 +292,9 @@ class EmployerCandidateController extends Controller
             ], 200);
 
         } catch (\Exception $e) {
-            Log::error('Error fetching resume: ' . $e->getMessage(), [
+            Log::error('Error fetching resume', [
                 'candidate_id' => $id,
-                'user_id' => $request->user()->id
+                'error' => $e->getMessage()
             ]);
             
             return response()->json([
@@ -209,4 +303,4 @@ class EmployerCandidateController extends Controller
             ], 500);
         }
     }
-}   
+}
