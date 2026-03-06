@@ -1,3 +1,6 @@
+import { useNavigate, useLocation } from "react-router"; // ✅ add
+import { useUser } from "@/providers/user-context"; // ✅ add
+
 import { useDialog } from "@/stores/dialog";
 import { Badge } from "../../ui/badge";
 import { Button } from "../../ui/button";
@@ -6,31 +9,22 @@ import CompanyLogo from "../../ui/companyLogo";
 
 export default function JobTitle({ job }: { job: any }) {
   const { open } = useDialog("apply-dialog");
+  const { state } = useUser(); // ✅ add
+  const navigate = useNavigate(); // ✅ add
+  const location = useLocation(); // ✅ add
 
-  // const companyName = job?.company?.name ?? "";
-  // const initial = companyName.charAt(0).toUpperCase();
+  // ✅ Replace onClick inline with this handler
+  const handleApply = () => {
+    if (!state.userInfo) {
+      navigate("/sign-up", { state: { from: location.pathname } });
+      return;
+    }
+    open("view", job);
+  };
 
   return (
     <div className="flex max-lg:flex-col lg:items-center justify-between gap-4">
       <div className="flex items-center gap-3">
-        {/* <div className="w-10 h-10 lg:h-[100px] lg:w-[100px] rounded-[6px] overflow-hidden shadow-[0px_3px_4px_-1px_#10182814] flex-shrink-0">
-          {job?.company?.logo_url ? (
-            <img
-              src={job.company.logo_url}
-              alt={companyName}
-              className="object-cover w-full h-full aspect-square"
-              onError={(e) => {
-                e.currentTarget.style.display = "none";
-                e.currentTarget.nextElementSibling?.removeAttribute("hidden");
-              }}
-            />
-          ) : null}
-          <div
-            hidden={!!job?.company?.logo_url}
-            className="w-full h-full flex items-center justify-center bg-[#A6C0FE] text-white text-2xl font-semibold">
-            {initial}
-          </div>
-        </div> */}
         <CompanyLogo
           logoUrl={job?.company?.logo_url}
           companyName={job?.company?.name}
@@ -51,9 +45,13 @@ export default function JobTitle({ job }: { job: any }) {
         <Button variant={"secondary"} className="rounded-[6px] text-[#1B1B1C]">
           <Icons.bookmarkSm className="min-w-6 min-h-6" />
         </Button>
-        <Button
+        {/* <Button
           className="rounded-[6px] px-6"
           onClick={() => open("view", job)}>
+          Apply Now
+        </Button> */}
+
+        <Button className="rounded-[6px] px-6" onClick={handleApply}>
           Apply Now
         </Button>
       </div>

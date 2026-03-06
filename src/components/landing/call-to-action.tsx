@@ -26,24 +26,27 @@ export default function CallToAction() {
             </Button>
           </div>
         </div>
-        <div className="p-[50px] w-full relative rounded-[12px] overflow-hidden bg-white ">
-          <div className="relative">
-            <div className="  text-white w-7/12 space-y-4">
+        {/* Image not ovelapping on mobile */}
+        <div className="p-[50px] w-full relative rounded-[12px] overflow-hidden bg-white min-h-[300px]">
+          <div className="relative z-10">
+            <div className="text-white md:w-7/12 space-y-4">
               <h3 className="text-2xl font-medium text-[#1B1B1C] pt-1">
                 Become an Employer
               </h3>
-              <p className="text-sm text-[#1B1B1CB2] opacity-80">
+              <p className="text-sm text-[#1B1B1CB2] opacity-80 max-w-[60%] md:max-w-none">
                 Tell us what you need and get smart candidate recommendations.
-                Skip the flood of unqualified applicants. Find your perfect hire faster and easier than ever before.
+                Skip the flood of unqualified applicants. Find your perfect hire
+                faster and easier than ever before.
               </p>
             </div>
 
             <Button className="mt-7 px-6 rounded-[6px]">Post a Job</Button>
           </div>
+
           <img
             src="/images/call-to-action/become-employer.png"
             alt=""
-            className="absolute -right-0 -bottom-0 w-[280px]"
+            className="absolute right-0 bottom-0 w-[280px] pointer-events-none"
           />
         </div>
       </div>

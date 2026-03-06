@@ -31,6 +31,9 @@ import ProtectedRoute from "./providers/protected-route";
 import { UserProvider } from "./providers/user-context";
 import EmployerProfilePage from "./pages/employer/profile/profile";
 import EmployerProfileEditPage from "./pages/employer/profile/edit";
+import TestsPage from "@/pages/candidate/tests/tests";
+import TakeTestPage from "@/pages/candidate/tests/take-test";
+import TestResultPage from "@/pages/candidate/tests/test-result";
 export default function App() {
   const queryClient = new QueryClient();
 
@@ -48,6 +51,7 @@ export default function App() {
               element={<EmailVerification />}
             />
             <Route path="/forgot-password" element={<ForgotPassword />} />
+            <Route path="/jobs/:id" element={<JobDetails />} />
 
             <Route element={<ProtectedRoute />}>
               {/* Candidate  */}
@@ -58,6 +62,14 @@ export default function App() {
                 <Route path="jobs">
                   <Route index element={<JobList />} />
                   <Route path=":id" element={<JobDetails />} />
+                </Route>
+                <Route path="tests">
+                  <Route index element={<TestsPage />} />
+                  <Route path=":assignmentId" element={<TakeTestPage />} />
+                  <Route
+                    path=":assignmentId/result"
+                    element={<TestResultPage />}
+                  />
                 </Route>
 
                 <Route path="my-jobs" element={<MyJobs />} />

@@ -24,8 +24,14 @@ import StaffList from "./pages/employer/staff/staff-list";
 import EmployerCreatText from "./pages/employer/test/create";
 import EmployerTests from "./pages/employer/test/test";
 import EmployerProfilePage from "./pages/employer/profile/profile";
-// import EmployerProfileEditP from "./pages/employer/profile/edit";
+
 import EmployerProfileEditPage from "./pages/employer/profile/edit";
+
+
+
+import TestsPage from "@/pages/candidate/tests/tests";    
+import TakeTestPage from "@/pages/candidate/tests/take-test";
+import TestResultPage from "@/pages/candidate/tests/test-result";
 
 export const routes = [
   {
@@ -52,6 +58,9 @@ export const routes = [
     path: "/onboarding",
     element: Onboarding,
   },
+  // ✅ NEW — public job detail page
+  { path: "/jobs/:id", element: JobDetails },
+
   {
     path: "candidate",
     element: DashboardLayout,
@@ -77,6 +86,16 @@ export const routes = [
         path: "my-jobs",
         element: MyJobs,
       },
+      // ─── Tests ───────────────────────────────────────────────────────────────
+      {
+        path: "tests",
+        children: [
+          { path: "", element: TestsPage }, 
+          { path: ":assignmentId", element: TakeTestPage },
+          { path: ":assignmentId/result", element: TestResultPage },
+        ],
+      },
+      // ─────────────────────────────────────────────────────────────────────────
       {
         path: "profile",
         children: [
@@ -179,7 +198,7 @@ export const routes = [
               //   element: EmployerCreatText,
               // },
               {
-                path: "edit", 
+                path: "edit",
                 element: EmployerProfileEditPage,
               },
             ],

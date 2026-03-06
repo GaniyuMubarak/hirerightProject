@@ -7,7 +7,9 @@ export default function ShareJob({ job }: { job: any }) {
   const [isCopied, setIsCopied] = useState(false);
 
   // Construct the job URL - adjust this based on your routing structure
+  // const jobUrl = `${window.location.origin}/jobs/${job.id}`;
   const jobUrl = `${window.location.origin}/jobs/${job.id}`;
+  
 
   const handleCopyLink = async () => {
     try {

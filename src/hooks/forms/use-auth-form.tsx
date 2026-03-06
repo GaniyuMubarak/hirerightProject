@@ -7,7 +7,7 @@ import FileServices from "@/services/file-services";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Cookies from "js-cookie";
 import { useForm } from "react-hook-form";
-import { useNavigate } from "react-router";
+import { useNavigate, useLocation } from "react-router";
 import { toast } from "sonner";
 import useQueryParams from "../use-query-params";
 
@@ -16,6 +16,7 @@ const useAuthForm = (page: "sign-up" | "login") => {
   const navigate = useNavigate();
   const { queryParams } = useQueryParams();
   const isSignUp = page === "sign-up";
+  const location = useLocation(); // ✅ add this
 
   const form = useForm({
     resolver: zodResolver(isSignUp ? signupSchema : loginSchema),
@@ -26,7 +27,7 @@ const useAuthForm = (page: "sign-up" | "login") => {
           email: "",
           password: "",
           password_confirmation: "",
-        // app_role: "candidate",
+          // app_role: "candidate",
           app_role: queryParams?.app_role || "candidate",
           acceptTerms: false,
         }
@@ -52,8 +53,7 @@ const useAuthForm = (page: "sign-up" | "login") => {
           app_role: signupData.app_role,
         };
         console.log("📦 Signup payload:", payload);
-      }
-      else {
+      } else {
         payload = {
           ...data,
           app_role: queryParams?.app_role || "candidate",
@@ -134,7 +134,9 @@ const useAuthForm = (page: "sign-up" | "login") => {
       FileServices.getEntityFile("CandidateResume", res.user.id).catch(() => {
         // Silently handle - resume check is non-blocking
       });
-      navigate(`/candidate/dashboard`);
+      // navigate(`/candidate/dashboard`);
+      const from = location.state?.from;
+      navigate(from || "/candidate/dashboard", { replace: true });
     } catch (err: any) {
       console.error("❌ Auth error:", err);
 

@@ -18,32 +18,44 @@ type ApplicationStatus =
   | "hired"
   | "rejected";
 
+// Documented shape: GET /employers/jobs/{id}/applications returns `candidate`
 interface ApplicationCandidate {
   id?: number;
   first_name?: string;
   last_name?: string;
-  title?: string;
   email?: string;
   phone?: string;
+  title?: string;
   profile_image?: string;
   resume?: string;
 }
 
+// Actual API returns `user` instead of `candidate` (backend inconsistency)
+interface ApplicationUser {
+  id?: number;
+  first_name?: string;
+  last_name?: string;
+  email?: string;
+  phone?: string;
+  title?: string;
+  profile_image_url?: string;
+  resume_url?: string;
+}
+
 interface TestResult {
   score?: number;
+  passed?: boolean;
 }
 
 export interface Application {
   id: number | string;
   status?: ApplicationStatus | string;
-  applied_at?: string;
+  applied_at?: string; // documented field
+  created_at?: string; // actual API field
   candidate?: ApplicationCandidate;
-  job?: { title?: string };
+  user?: ApplicationUser; // actual API returns this
+  job?: { id?: number; title?: string };
   test_results?: TestResult;
-  // Flat-shape fallbacks
-  candidate_name?: string;
-  job_title?: string;
-  candidate_email?: string;
 }
 
 interface CandidateHiringCardProps {
@@ -105,34 +117,44 @@ export default function CandidateHiringCard({
 }: CandidateHiringCardProps) {
   const queryClient = useQueryClient();
 
-  const candidate = application.candidate;
-  const candidateId = candidate?.id;
+  // Normalise both API shapes: `candidate` (docs) and `user` (actual response)
+  const person = application.candidate ?? application.user;
+  const personId = person?.id;
 
-  const fullName = candidate
-    ? `${candidate.first_name ?? ""} ${candidate.last_name ?? ""}`.trim() || "—"
-    : (application.candidate_name ?? "—");
+  const fullName = person
+    ? `${person.first_name ?? ""} ${person.last_name ?? ""}`.trim() || "—"
+    : "—";
 
-  const jobTitle = candidate?.title ?? application.job_title ?? "—";
-  const email = candidate?.email ?? application.candidate_email ?? "";
-  const phone = candidate?.phone ?? "";
+  const jobTitle = person?.title ?? "—";
+  const email = person?.email ?? "";
+  const phone = person?.phone ?? "";
+
+  // profile_image (docs) vs profile_image_url (actual response)
   const profileImage =
-    candidate?.profile_image ??
+    application.candidate?.profile_image ??
+    application.user?.profile_image_url ??
     `https://ui-avatars.com/api/?name=${encodeURIComponent(fullName)}&background=A6C0FE&color=fff&size=128`;
-  const resumeUrl = candidate?.resume;
-  const appliedJob = application.job?.title ?? application.job_title ?? "—";
+
+  // resume (docs) vs resume_url (actual response)
+  const resumeUrl =
+    application.candidate?.resume ?? application.user?.resume_url;
+
+  const appliedJob = application.job?.title ?? "—";
   const testScore = application.test_results?.score;
 
-  const status = (application.status ?? "pending").toLowerCase();
-  const badge = STATUS_STYLES[status] ?? STATUS_STYLES.pending;
-  const nextStatus = STAGE_PROGRESSION[status];
-
-  const appliedAt = application.applied_at
-    ? new Date(application.applied_at).toLocaleDateString("en-US", {
+  // applied_at (docs) vs created_at (actual response)
+  const dateStr = application.applied_at ?? application.created_at;
+  const appliedAt = dateStr
+    ? new Date(dateStr).toLocaleDateString("en-US", {
         month: "short",
         day: "numeric",
         year: "numeric",
       })
     : null;
+
+  const status = (application.status ?? "pending").toLowerCase();
+  const badge = STATUS_STYLES[status] ?? STATUS_STYLES.pending;
+  const nextStatus = STAGE_PROGRESSION[status];
 
   const { mutate: updateStatus, isPending } = useMutation({
     mutationFn: (newStatus: string) =>
@@ -283,8 +305,8 @@ export default function CandidateHiringCard({
     </div>
   );
 
-  return candidateId ? (
-    <Link to={`/employer/candidates/${candidateId}`}>{cardContent}</Link>
+  return personId ? (
+    <Link to={`/employer/candidates/${personId}`}>{cardContent}</Link>
   ) : (
     <div className="cursor-default">{cardContent}</div>
   );

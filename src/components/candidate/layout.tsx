@@ -17,6 +17,10 @@ const navlinks = [
     title: "My Jobs",
     href: "/candidate/my-jobs",
   },
+  {
+    title: "My Tests",
+    href: "/candidate/tests",
+  },
 ];
 
 export default function DashboardLayout() {

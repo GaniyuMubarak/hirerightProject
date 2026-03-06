@@ -891,7 +891,8 @@ export default function PostJob() {
                         Job Ready for Hiring Setup
                       </h3>
                       <p className="text-green-700">
-                        Job ID: #{createdJobId} • Now set up your hiring process
+                          {/* Job ID: #{createdJobId} */}
+                          • Now set up your hiring process
                       </p>
                       <p className="text-sm text-green-600 mt-1">
                         {hiringStages.reduce(
