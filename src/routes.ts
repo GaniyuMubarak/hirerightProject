@@ -54,6 +54,7 @@ export const routes = [
     path: "/forgot-password",
     element: ForgotPassword,
   },
+  
   {
     path: "/onboarding",
     element: Onboarding,

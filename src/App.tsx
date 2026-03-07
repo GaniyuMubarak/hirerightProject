@@ -34,6 +34,8 @@ import EmployerProfileEditPage from "./pages/employer/profile/edit";
 import TestsPage from "@/pages/candidate/tests/tests";
 import TakeTestPage from "@/pages/candidate/tests/take-test";
 import TestResultPage from "@/pages/candidate/tests/test-result";
+// import ResetPassword from "./pages/auth/reset-password";
+import ResetPassword from "@/pages/auth/reset-password";
 export default function App() {
   const queryClient = new QueryClient();
 
@@ -51,6 +53,7 @@ export default function App() {
               element={<EmailVerification />}
             />
             <Route path="/forgot-password" element={<ForgotPassword />} />
+            <Route path="/reset-password" element={<ResetPassword />} />
             <Route path="/jobs/:id" element={<JobDetails />} />
 
             <Route element={<ProtectedRoute />}>
