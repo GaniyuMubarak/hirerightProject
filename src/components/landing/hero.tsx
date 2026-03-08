@@ -10,7 +10,7 @@ export default function () {
         <div className=" lg:w-11/12 max-lg:text-center">
           <h1 className="text-5xl lg:text-7xl font-abhaya font-extrabold">
             Find Your Perfect Job Match with{" "}
-            <span>
+            <span className="text-primary">
               Hire<span className="text-brandOrange">Right</span>!
             </span>
           </h1>

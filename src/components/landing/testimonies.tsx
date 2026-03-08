@@ -11,7 +11,9 @@ export default function Testimonies() {
         <h1 className="text-[#1B1B1C] text-3xl lg:text-5xl font-abhaya font-extrabold tracking-tight">
           Hear from job seekers who found their perfect match and employers who
           hired the right talent, thanks to{" "}
-          <span className="text-primary">HireRight!</span>
+          <span className="text-primary">
+            Hire<span className="text-brandOrange">Right</span>
+          </span>
         </h1>
       </div>
       <div className="grid lg:grid-cols-3 gap-6 py-20">
@@ -39,8 +41,8 @@ export function TestimoniesCard() {
           className="w-16 aspect-square"
         />
         <div>
-          <h4 className="text-[#14151A] font-medium">Aisha,Talent Manager</h4>
-          <span className="text-[#0F132499]">Recruiter at Google</span>
+          <h4 className="text-[#14151A] font-medium">Aisha Bello</h4>
+          <span className="text-[#0F132499]">Talent Manager</span>
         </div>
       </div>
     </div>
@@ -61,10 +63,8 @@ export function TestimoniesCard1() {
           className="w-16 aspect-square"
         />
         <div>
-          <h4 className="text-[#14151A] font-medium">
-            Chioma, People Operations Lead
-          </h4>
-          <span className="text-[#0F132499]">People Operations</span>
+          <h4 className="text-[#14151A] font-medium">Chioma Okafo</h4>
+          <span className="text-[#0F132499]">Operations Lead</span>
         </div>
       </div>
     </div>
@@ -86,10 +86,8 @@ export function TestimoniesCard2() {
           className="w-16 aspect-square"
         />
         <div>
-          <h4 className="text-[#14151A] font-medium">
-            Daniel, Frontend Developer,
-          </h4>
-          <span className="text-[#0F132499]">People Operations</span>
+          <h4 className="text-[#14151A] font-medium">Daniel Olatunji</h4>
+          <span className="text-[#0F132499]">Frontend Developer</span>
         </div>
       </div>
     </div>
