@@ -4,6 +4,8 @@ use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\RateLimiter;
+use Illuminate\Cache\RateLimiting\Limit;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -15,21 +17,22 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function (Middleware $middleware) {
         // Explicitly define API middleware WITHOUT JWT auth globally
         $middleware->group('api', [
+            \Illuminate\Http\Middleware\HandleCors::class,
             \Illuminate\Routing\Middleware\SubstituteBindings::class,
         ]);
                 $middleware->statefulApi();
 
-        
+
         // Register middleware aliases
         $middleware->alias([
             'auth:api' => \Tymon\JWTAuth\Http\Middleware\Authenticate::class,
-            'role' => \App\Http\Middleware\CheckRole::class,  // ✅ ADD THIS LINE
+            'role' => \App\Http\Middleware\CheckRole::class,
         ]);
 
         // ✅ ADD CUSTOM RATE LIMITER
         RateLimiter::for('password-reset', function (Request $request) {
             $email = $request->input('email');
-            
+
             return Limit::perHour(3) // 3 requests per hour
                 ->by($email ?: $request->ip())
                 ->response(function (Request $request, array $headers) {
