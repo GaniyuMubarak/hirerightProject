@@ -25,6 +25,21 @@ return Application::configure(basePath: dirname(__DIR__))
             'auth:api' => \Tymon\JWTAuth\Http\Middleware\Authenticate::class,
             'role' => \App\Http\Middleware\CheckRole::class,  // ✅ ADD THIS LINE
         ]);
+
+        // ✅ ADD CUSTOM RATE LIMITER
+        RateLimiter::for('password-reset', function (Request $request) {
+            $email = $request->input('email');
+            
+            return Limit::perHour(3) // 3 requests per hour
+                ->by($email ?: $request->ip())
+                ->response(function (Request $request, array $headers) {
+                    return response()->json([
+                        'status' => 'error',
+                        'message' => 'Too many password reset attempts. Please try again later.',
+                        'retry_after' => $headers['Retry-After'] ?? 3600
+                    ], 429);
+                });
+        });
     })
     ->withExceptions(function (Exceptions $exceptions) {
         // ✅ FIX: Return JSON for API authentication errors instead of redirecting

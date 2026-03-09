@@ -117,7 +117,13 @@ Route::prefix('auth')->group(function () {
     Route::post('validate/email-otp', [AuthController::class, 'validateEmailOtp']);
     Route::post('validate/phone-otp', [AuthController::class, 'validatePhoneOtp']);
     Route::post('resend-otp', [AuthController::class, 'resendOtp']);
-    Route::post('request-password-reset', [AuthController::class, 'requestPasswordReset']);
+    // Route::post('request-password-reset', [AuthController::class, 'requestPasswordReset']);
+    // Route::post('reset-password', [AuthController::class, 'resetPassword']);
+
+     // ADD THROTTLE HERE - 3 attempts per hour
+    Route::post('request-password-reset', [AuthController::class, 'requestPasswordReset'])
+        ->middleware('throttle:3,60'); // 3 requests per 60 minutes
+    
     Route::post('reset-password', [AuthController::class, 'resetPassword']);
 });
 
