@@ -4,6 +4,8 @@ use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\RateLimiter;  // I ADD THIS
+use Illuminate\Cache\RateLimiting\Limit;      // I ADD THIS
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -17,16 +19,16 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->group('api', [
             \Illuminate\Routing\Middleware\SubstituteBindings::class,
         ]);
-                $middleware->statefulApi();
-
+        
+        $middleware->statefulApi();
         
         // Register middleware aliases
         $middleware->alias([
             'auth:api' => \Tymon\JWTAuth\Http\Middleware\Authenticate::class,
-            'role' => \App\Http\Middleware\CheckRole::class,  // ✅ ADD THIS LINE
+            'role' => \App\Http\Middleware\CheckRole::class,
         ]);
 
-        // ✅ ADD CUSTOM RATE LIMITER
+        //CUSTOM RATE LIMITER FOR PASSWORD RESET
         RateLimiter::for('password-reset', function (Request $request) {
             $email = $request->input('email');
             
@@ -42,7 +44,7 @@ return Application::configure(basePath: dirname(__DIR__))
         });
     })
     ->withExceptions(function (Exceptions $exceptions) {
-        // ✅ FIX: Return JSON for API authentication errors instead of redirecting
+        //Return JSON for API authentication errors
         $exceptions->renderable(function (\Illuminate\Auth\AuthenticationException $e, Request $request) {
             if ($request->is('api/*') || $request->expectsJson()) {
                 return response()->json([
