@@ -17,6 +17,7 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function (Middleware $middleware) {
         // Explicitly define API middleware WITHOUT JWT auth globally
         $middleware->group('api', [
+            \Illuminate\Http\Middleware\HandleCors::class,
             \Illuminate\Routing\Middleware\SubstituteBindings::class,
         ]);
         
@@ -31,7 +32,7 @@ return Application::configure(basePath: dirname(__DIR__))
         //CUSTOM RATE LIMITER FOR PASSWORD RESET
         RateLimiter::for('password-reset', function (Request $request) {
             $email = $request->input('email');
-            
+
             return Limit::perHour(3) // 3 requests per hour
                 ->by($email ?: $request->ip())
                 ->response(function (Request $request, array $headers) {
