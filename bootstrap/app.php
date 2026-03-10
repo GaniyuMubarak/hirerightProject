@@ -38,19 +38,19 @@ return Application::configure(basePath: dirname(__DIR__))
         ]);
 
         //CUSTOM RATE LIMITER FOR PASSWORD RESET
-        RateLimiter::for('password-reset', function (Request $request) {
-            $email = $request->input('email');
+        // RateLimiter::for('password-reset', function (Request $request) {
+        //     $email = $request->input('email');
 
-            return Limit::perHour(3)
-                ->by($email ?: $request->ip())
-                ->response(function (Request $request, array $headers) {
-                    return response()->json([
-                        'status' => 'error',
-                        'message' => 'Too many password reset attempts. Please try again later.',
-                        'retry_after' => $headers['Retry-After'] ?? 3600
-                    ], 429);
-                });
-        });
+        //     return Limit::perHour(3)
+        //         ->by($email ?: $request->ip())
+        //         ->response(function (Request $request, array $headers) {
+        //             return response()->json([
+        //                 'status' => 'error',
+        //                 'message' => 'Too many password reset attempts. Please try again later.',
+        //                 'retry_after' => $headers['Retry-After'] ?? 3600
+        //             ], 429);
+        //         });
+        // });
     })
     ->withExceptions(function (Exceptions $exceptions) {
         $exceptions->renderable(function (\Illuminate\Auth\AuthenticationException $e, Request $request) {
