@@ -123,7 +123,7 @@ Route::prefix('auth')->group(function () {
      // ADD THROTTLE HERE - 3 attempts per hour
     Route::post('request-password-reset', [AuthController::class, 'requestPasswordReset'])
         ->middleware('throttle:3,60'); // 3 requests per 60 minutes
-    
+
     Route::post('reset-password', [AuthController::class, 'resetPassword']);
 });
 
@@ -213,7 +213,7 @@ Route::middleware(['auth:sanctum', 'can:employer'])->prefix('employers')->group(
     // Route::get('candidates/{id}/resume', [CandidateController::class, 'getResume']);
     // Route::get('candidates/{id}/applications', [CandidateController::class, 'getApplications']);
 
-    
+
 
     // Staff Management
     Route::get('company/staffs', [CompanyStaffController::class, 'index']);

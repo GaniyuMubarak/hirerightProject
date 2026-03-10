@@ -9,6 +9,9 @@ use App\Models\User;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\RateLimiter;
+use Illuminate\Cache\RateLimiting\Limit;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -26,6 +29,20 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
 
+        RateLimiter::for('password-reset', function (Request $request) {
+            $email = $request->input('email');
+
+            return Limit::perHour(3)
+                ->by($email ?: $request->ip())
+                ->response(function (Request $request, array $headers) {
+                    return response()->json([
+                        'status' => 'error',
+                        'message' => 'Too many password reset attempts. Please try again later.',
+                        'retry_after' => $headers['Retry-After'] ?? 3600
+                    ], 429);
+                });
+        });
+
         Gate::define('employer', function (User $user) {
             // Log::info("---- 'Can' called. User Role:   " . $user->app_role);
             if ($user->app_role !== 'employer') {
@@ -33,7 +50,7 @@ class AppServiceProvider extends ServiceProvider
             }
             return true;
         });
-    
+
         Gate::define('candidate', function (User $user) {
             //Log::info("---- 'Can' called. User Role:   " . $user->app_role);
             if ($user->app_role !== 'candidate') {
