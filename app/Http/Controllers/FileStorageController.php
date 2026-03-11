@@ -18,13 +18,17 @@ class FileStorageController extends Controller
         $validated = $request->validate([
             'files' => 'required|array',
             'files.*.name' => 'required|string',
-            'files.*.type' => 'required|string',
-            'files.*.size' => 'required|integer',
+            'files.*.type' => 'required|string|in:application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/msword',
+            'files.*.size' => 'required|integer|max:5120',
             'entity_type' => 'required|string',
             'entity_id' => 'required|integer',
             'entity_group' => 'nullable|string',
             'needs_thumbnail' => 'boolean',
             'metadata' => 'array'
+        ], [
+            // Custom messages for the Frontend Dev
+            'files.*.max' => 'The file may not be greater than 5MB.',
+            'files.*.in' => 'Only PDF and Word documents are allowed.',
         ]);
 
         $userId = Auth::id();
@@ -41,12 +45,12 @@ class FileStorageController extends Controller
                 $validated['metadata'] ?? []
             );
         }
-        
+
         return response()->json([
             'status' => 'success',
             'uploads' => $uploads
         ], 200);
-        
+
     } catch (ValidationException $e) {
         return response()->json([
             'status' => 'error',
@@ -60,7 +64,7 @@ class FileStorageController extends Controller
             'trace' => $e->getTraceAsString(),
             'request' => $request->all()
         ]);
-        
+
         return response()->json([
             'status' => 'error',
             'message' => 'File upload initialization failed',

@@ -28,7 +28,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-
+        // Too many attempt for password reset
         RateLimiter::for('password-reset', function (Request $request) {
             $email = $request->input('email');
 
