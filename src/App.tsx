@@ -34,7 +34,6 @@ import EmployerProfileEditPage from "./pages/employer/profile/edit";
 import TestsPage from "@/pages/candidate/tests/tests";
 import TakeTestPage from "@/pages/candidate/tests/take-test";
 import TestResultPage from "@/pages/candidate/tests/test-result";
-// import ResetPassword from "./pages/auth/reset-password";
 import ResetPassword from "@/pages/auth/reset-password";
 export default function App() {
   const queryClient = new QueryClient();

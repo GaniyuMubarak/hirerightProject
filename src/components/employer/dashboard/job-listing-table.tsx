@@ -40,7 +40,8 @@ export default function EmployerJobListingTable({ jobs }: { jobs: any }) {
             <TableRow>
               <TableHead className="lg:w-[22%] w-[60%]">Job Opening</TableHead>
               <TableHead>Salary</TableHead>
-              <TableHead className="max-lg:hidden">Candidates</TableHead>
+              {/* <TableHead className="max-lg:hidden">Candidates</TableHead> */}
+              <TableHead className="max-lg:hidden">Positions</TableHead>
               <TableHead className="max-lg:hidden">Status</TableHead>
               <TableHead className="text-right "></TableHead>
             </TableRow>

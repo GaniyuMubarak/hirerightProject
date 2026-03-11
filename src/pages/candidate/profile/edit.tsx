@@ -124,10 +124,10 @@ export default function EditProfile() {
                 },
               ],
           social_links: d.user?.social_links || {},
-          // profile_picture: undefined,
-          profile_picture: d.user?.profile_image || "",
-          // resume: undefined,
-          resume: d.user?.resume || "",
+          profile_picture: undefined,
+          // profile_picture: d.user?.profile_image || "",
+          resume: undefined,
+          // resume: d.user?.resume || "",
         });
       }
     } catch (error: any) {

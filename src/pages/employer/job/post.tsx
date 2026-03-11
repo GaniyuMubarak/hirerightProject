@@ -229,7 +229,7 @@ export default function PostJob() {
 
           if (response?.status === "success" || response?.data) {
             toast.success("Job Updated Successfully!", {
-              description: `Changes saved for Job #${createdJobId}`,
+              description: `Changes saved for Job`,
               duration: 3000,
             });
 
@@ -265,7 +265,7 @@ export default function PostJob() {
             setCurrentStep(2);
 
             toast.success("Job Created Successfully!", {
-              description: `Job ID: #${jobId} • ${data.title}`,
+              // description: `Job ID: #${jobId} • ${data.title}`,
               duration: 5000,
             });
             return jobId;

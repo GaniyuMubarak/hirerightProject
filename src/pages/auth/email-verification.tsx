@@ -11,13 +11,16 @@ export default function EmailVerification() {
   return (
     <div className="min-h-svh p-6 md:p-10 flex flex-col">
       <div className="flex justify-center gap-2 md:justify-start">
-        <Link
+        {/* <Link
           to="/"
-          className="flex items-center gap-2 text-[#AFAEAD] text-[22px] font-semibold"
-        >
-          <img src="/app_logo.png" alt="Logo" className="size-8" />
+          className="flex items-center gap-2 text-[#AFAEAD] text-[22px] font-semibold"> */}
+          <img
+            src="/App logo.png"
+            alt="Logo"
+            className="h-12 w-auto object-contain"
+          />
           {/* HireRight */}
-        </Link>
+        {/* </Link> */}
       </div>
       <div className="flex-1 flex  flex-col items-center justify-center gap-6 bg-background p-6 md:p-10">
         <div className="w-full max-w-md space-y-6">
@@ -33,10 +36,9 @@ export default function EmailVerification() {
             to="/sign-up"
             className={cn(
               buttonVariants({ variant: "ghost" }),
-              "w-full text-[#475467] text-sm h-auto"
-            )}
-          >
-            <ArrowLeftIcon className="size-4" /> Back to log in
+              "w-full text-[#475467] text-sm h-auto",
+            )}>
+            <ArrowLeftIcon className="size-4" /> Back to sign up
           </Link>
         </div>
       </div>

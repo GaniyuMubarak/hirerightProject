@@ -184,6 +184,8 @@ const useAuthForm = (page: "sign-up" | "login") => {
           errorData?.message || "An error occurred. Please try again.",
         );
       }
+
+      throw err;
     }
   };
 

@@ -173,22 +173,22 @@ export default function CandidateHiringCard({
   const cardContent = (
     <div
       className={cn(
-        "space-y-6 px-4 py-6 border rounded-[6px] flex gap-6",
+        "p-4 lg:p-6 border rounded-[6px] flex flex-col lg:flex-row gap-6",
         aiRecommended && "bg-[#F8F8FD]",
       )}>
       {/* Left column */}
-      <div className="space-y-6 whitespace-nowrap w-[33%]">
+      <div className="space-y-4 lg:space-y-6 lg:w-[33%] lg:whitespace-nowrap">
         <div className="flex items-center gap-3">
           <img
             src={profileImage}
             alt={fullName}
-            className="size-16 aspect-square rounded-full object-cover bg-gray-100 border-2 border-white shadow-sm shrink-0"
+            className="size-14 lg:size-16 aspect-square rounded-full object-cover bg-gray-100 border-2 border-white shadow-sm shrink-0"
           />
-          <div className="flex flex-col justify-between h-full space-y-2">
-            <span className="text-base font-medium tracking-[-0.01em] leading-none">
+          <div className="flex flex-col justify-between h-full space-y-1.5 min-w-0">
+            <span className="text-base font-medium tracking-[-0.01em] leading-none truncate">
               {fullName}
             </span>
-            <span className="text-[#0F132499] tracking-[-0.01em] text-base">
+            <span className="text-[#0F132499] tracking-[-0.01em] text-sm lg:text-base truncate">
               {jobTitle}
             </span>
           </div>
@@ -196,7 +196,7 @@ export default function CandidateHiringCard({
 
         <Separator />
 
-        <ul className="space-y-4 list-disc list-inside text-sm">
+        <ul className="space-y-3 list-disc list-inside text-sm break-all">
           {appliedAt && <li>Applied: {appliedAt}</li>}
           {email && <li>{email}</li>}
           {phone && <li>{phone}</li>}
@@ -204,8 +204,8 @@ export default function CandidateHiringCard({
       </div>
 
       {/* Right column */}
-      <div className="w-full min-h-44 h-full flex flex-col justify-between">
-        {/* AI badge row — renders nothing until aiRecommended is wired up */}
+      <div className="w-full flex flex-col gap-4 lg:gap-0 lg:min-h-44 lg:justify-between">
+        {/* AI badge */}
         <div className="min-h-1">
           {aiRecommended && (
             <div className="flex justify-end text-[#175CD3] text-sm">
@@ -219,31 +219,31 @@ export default function CandidateHiringCard({
         </div>
 
         {/* Stats row */}
-        <div className="flex flex-1 justify-between items-center h-full">
-          <div className="flex gap-12 text-center">
+        <div className="flex flex-wrap justify-between items-center gap-4">
+          <div className="flex flex-wrap gap-6 lg:gap-12 text-center">
             <div>
-              <h3 className="text-[#1B1B1C] text-2xl font-semibold mb-3">
+              <h3 className="text-[#1B1B1C] text-lg lg:text-2xl font-semibold mb-1 lg:mb-3 truncate max-w-[120px] lg:max-w-none">
                 {appliedJob}
               </h3>
-              <span className="text-lg text-[#475467] font-medium">
+              <span className="text-sm lg:text-lg text-[#475467] font-medium">
                 Applied Role
               </span>
             </div>
 
             <div>
-              <h3 className="text-[#1B1B1C] text-2xl font-semibold mb-3">
+              <h3 className="text-[#1B1B1C] text-lg lg:text-2xl font-semibold mb-1 lg:mb-3">
                 {testScore != null ? testScore : "N/A"}
               </h3>
-              <span className="text-lg text-[#475467] font-medium">
+              <span className="text-sm lg:text-lg text-[#475467] font-medium">
                 Test Score
               </span>
             </div>
 
             <div>
-              <div className="mb-3">
+              <div className="mb-1 lg:mb-3">
                 <Badge
                   className={cn(
-                    "rounded-[16px] text-base font-medium capitalize border",
+                    "rounded-[16px] text-sm lg:text-base font-medium capitalize border",
                     badge.bg,
                     badge.border,
                     badge.text,
@@ -251,7 +251,7 @@ export default function CandidateHiringCard({
                   {status}
                 </Badge>
               </div>
-              <span className="text-lg text-[#475467] font-medium">
+              <span className="text-sm lg:text-lg text-[#475467] font-medium">
                 Hiring Stage
               </span>
             </div>
@@ -260,7 +260,7 @@ export default function CandidateHiringCard({
           {resumeUrl ? (
             <Button
               variant="link"
-              className="px-0 h-11"
+              className="px-0 h-9 lg:h-11 text-sm"
               onClick={(e) => {
                 e.preventDefault();
                 window.open(resumeUrl, "_blank");
@@ -271,7 +271,7 @@ export default function CandidateHiringCard({
           ) : (
             <Button
               variant="link"
-              className="px-0 h-11 text-muted-foreground"
+              className="px-0 h-9 lg:h-11 text-sm text-muted-foreground"
               disabled>
               <Icons.download className="min-w-4 min-h-4" />
               No CV
@@ -280,10 +280,10 @@ export default function CandidateHiringCard({
         </div>
 
         {/* Action buttons */}
-        <div className="flex gap-2.5 justify-end">
+        <div className="flex flex-col sm:flex-row gap-2.5 sm:justify-end">
           <Button
             variant="secondary"
-            className="border-[#D0D5DD] px-6 h-11 rounded-[6px]"
+            className="border-[#D0D5DD] px-6 h-10 lg:h-11 rounded-[6px] text-sm"
             disabled={isPending || status === "rejected"}
             onClick={(e) => {
               e.preventDefault();
@@ -292,7 +292,7 @@ export default function CandidateHiringCard({
             Drop Candidate
           </Button>
           <Button
-            className="px-6 h-11 rounded-[6px]"
+            className="px-6 h-10 lg:h-11 rounded-[6px] text-sm"
             disabled={isPending || !nextStatus}
             onClick={(e) => {
               e.preventDefault();

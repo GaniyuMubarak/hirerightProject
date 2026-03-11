@@ -40,20 +40,20 @@ export default function CandidatesList() {
       />
       <Tabs defaultValue="all" className="w-full space-y-8">
         <div className="flex justify-between items-end gap-4">
-          <TabsList className="border-b w-full justify-start">
+          {/* <TabsList className="border-b w-full justify-start">
             <TabsTrigger value="all">
               All {total > 0 ? `(${total})` : ""}
             </TabsTrigger>
             <TabsTrigger value="shortlisted">Shortlisted</TabsTrigger>
             <TabsTrigger value="dropped">Dropped</TabsTrigger>
-          </TabsList>
+          </TabsList> */}
 
-          <Button
+          {/* <Button
             variant="outline"
             className="rounded-[1px] lg:px-6 max-lg:border-none">
             <Icons.filter />
             <span className="max-lg:hidden">Sort</span>
-          </Button>
+          </Button> */}
         </div>
 
         <TabsContent value="all">

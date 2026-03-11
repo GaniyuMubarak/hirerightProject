@@ -2,6 +2,7 @@ import { cn } from "@/lib/utils";
 import { Link } from "react-router";
 import { buttonVariants } from "../ui/button";
 import Icons from "../ui/icons";
+// import { Image, Transformation } from "cloudinary-react";
 
 export default function () {
   return (
@@ -26,14 +27,16 @@ export default function () {
 
           <Link
             to={"/account-type"}
-            className={cn(buttonVariants(), "mt-8 rounded-[6px] px-6")}
-          >
+            className={cn(buttonVariants(), "mt-8 rounded-[6px] px-6")}>
             Explore More <Icons.arrowRight className="min-h-6 min-w-6" />
           </Link>
         </div>
         <div>
-          <img src="/images/landing/hero.png" alt="Happy people" />
-          {/* <img src="/images/landing/landing.png" alt="Happy people" /> */}
+          <img
+            // src="/images/landing/hero.png"
+            alt="Happy people"
+            src="https://res.cloudinary.com/dlqdn0tsm/image/upload/q_auto:best/Hero-Hireright_r1h86t"
+          />
         </div>
       </div>
     </div>

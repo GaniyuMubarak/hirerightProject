@@ -21,11 +21,12 @@ export default function JobOverview({ job }: { job: any }) {
           title={"Experience level"}
           desc={job?.experience_level}
         />
-        <OverviewCard
+        {/* <OverviewCard
           icon={<Icons.wallet />}
           title={"Salary"}
-          desc={"100,000 - 250,000"}
-        />
+          desc={job?.salary_currency}
+        /> */}
+        
         <OverviewCard
           icon={<Icons.briefCase2 />}
           title={"Education"}

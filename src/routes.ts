@@ -1,3 +1,5 @@
+import { useNavigate } from "react-router";
+import { useEffect } from "react";
 import DashboardLayout from "@/components/candidate/layout";
 import AccountTypePage from "@/pages/auth/account-type";
 import EmailVerification from "@/pages/auth/email-verification";
@@ -27,11 +29,20 @@ import EmployerProfilePage from "./pages/employer/profile/profile";
 
 import EmployerProfileEditPage from "./pages/employer/profile/edit";
 
-
-
-import TestsPage from "@/pages/candidate/tests/tests";    
+import TestsPage from "@/pages/candidate/tests/tests";
 import TakeTestPage from "@/pages/candidate/tests/take-test";
 import TestResultPage from "@/pages/candidate/tests/test-result";
+
+
+function RedirectToMyJobs() {
+  const navigate = useNavigate();
+  useEffect(() => {
+    navigate("/candidate/my-jobs", { replace: true });
+  }, []);
+  return null;
+}
+
+
 
 export const routes = [
   {
@@ -54,7 +65,7 @@ export const routes = [
     path: "/forgot-password",
     element: ForgotPassword,
   },
-  
+
   {
     path: "/onboarding",
     element: Onboarding,
@@ -87,11 +98,23 @@ export const routes = [
         path: "my-jobs",
         element: MyJobs,
       },
+
+      // Redirect applications mail route to my-jobs
+      {
+  path: "applications",
+  children: [
+    {
+      path: ":id",
+      element: RedirectToMyJobs,
+    },
+  ],
+},
+      
       // ─── Tests ───────────────────────────────────────────────────────────────
       {
         path: "tests",
         children: [
-          { path: "", element: TestsPage }, 
+          { path: "", element: TestsPage },
           { path: ":assignmentId", element: TakeTestPage },
           { path: ":assignmentId/result", element: TestResultPage },
         ],

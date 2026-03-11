@@ -8,9 +8,9 @@ export default function ForgotPassword() {
   return (
     <div className="min-h-svh p-6 md:p-10 flex flex-col">
       <div className="flex justify-center gap-2 md:justify-start">
-        <Link
+        {/* <Link
           to={"/"}
-          className="flex items-center gap-2 text-[#AFAEAD] text-[22px] font-semibold">
+          className="flex items-center gap-2 text-[#AFAEAD] text-[22px] font-semibold"> */}
           {/* <img src="/app_logo.png" alt="Logo" className="size-8" /> */}
           <img
             src="/logo_app.png"
@@ -19,7 +19,7 @@ export default function ForgotPassword() {
             // className="size-12"
           />
           {/* HireRight */}
-        </Link>
+        {/* </Link> */}
       </div>
       <div className="flex-1 flex  flex-col items-center justify-center gap-6 bg-background p-6 md:p-10">
         <div className="w-full max-w-md space-y-6">

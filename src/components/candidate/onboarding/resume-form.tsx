@@ -1,14 +1,117 @@
-import React from "react";
+// import React from "react";
+// import UploadFileForm from "@/components/shared/upload-file-form";
+// import { getSize } from "@/lib/utils";
+// import { useFormContext } from "react-hook-form";
+// import Icons from "../../ui/icons";
+
+// export default function ResumeForm() {
+//   const form = useFormContext();
+//   const resume = form.watch("resume");
+
+//   console.log("resume ", resume);
+
+//   return (
+//     <div>
+//       <header className="space-y-1 border-b pb-2 w-full">
+//         <h2 className="text-2xl font-semibold text-[#020C10]">
+//           Your CV/Resume
+//         </h2>
+//       </header>
+
+//       <div className="grid lg:grid-cols-[240px_2fr] gap-6 mt-2">
+//         <div>
+//           {/* Safe check: Only render if resume exists */}
+//           {resume && resume.name && (
+//             <div className="flex gap-3 items-center lg:justify-end lg:w-60 border rounded-[12px] py-4 px-6 h-fit">
+//               {/* Use optional chaining for type check */}
+//               {resume.type ===
+//               "application/vnd.openxmlformats-officedocument.wordprocessingml.document" ? (
+//                 <Icons.docx className="min-w-6" />
+//               ) : (
+//                 <Icons.pdf />
+//               )}
+
+//               <div className="flex flex-col">
+//                 {/* Optional chaining for safety */}
+//                 <p className="text-sm font-medium text-[#101828]">
+//                   {resume?.name}
+//                 </p>
+//                 <p className="text-sm text-[#475467]">
+//                   {getSize(resume?.size)}
+//                 </p>
+//               </div>
+//             </div>
+//           )}
+//         </div>
+
+//         <UploadFileForm
+//           fieldName="resume"
+//           className="bg-white py-4 px-6 max-lg:w-full"
+//           fileType="PDF, DOCX or TXT"
+//           iconClassName="border rounded-[8px] bg-white shadow-[0px_1px_2px_0px_#1018280D]"
+//           accept="application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document,text/plain"
+//           review={false}
+//         />
+//       </div>
+//     </div>
+//   );
+// }
+
+import React, { useEffect } from "react";
 import UploadFileForm from "@/components/shared/upload-file-form";
 import { getSize } from "@/lib/utils";
 import { useFormContext } from "react-hook-form";
+import { toast } from "sonner";
 import Icons from "../../ui/icons";
+
+// ─── File validation config ───────────────────────────────────────────────────
+const MAX_FILE_SIZE_MB = 5;
+const MAX_FILE_SIZE_BYTES = MAX_FILE_SIZE_MB * 1024 * 1024;
+
+const ALLOWED_TYPES: Record<string, string> = {
+  "application/pdf": "PDF",
+  "application/vnd.openxmlformats-officedocument.wordprocessingml.document":
+    "DOCX",
+};
+
+function validateResumeFile(file: File): { valid: boolean; error?: string } {
+  if (!ALLOWED_TYPES[file.type]) {
+    return {
+      valid: false,
+      error: `Invalid file type. Only PDF and DOCX files are allowed.`,
+    };
+  }
+  if (file.size > MAX_FILE_SIZE_BYTES) {
+    return {
+      valid: false,
+      error: `File is too large. Maximum size is ${MAX_FILE_SIZE_MB}MB.`,
+    };
+  }
+  return { valid: true };
+}
+// ─────────────────────────────────────────────────────────────────────────────
 
 export default function ResumeForm() {
   const form = useFormContext();
   const resume = form.watch("resume");
 
-  console.log("resume ", resume);
+  // Validate whenever the file changes
+  useEffect(() => {
+    if (!resume || !resume.name) return;
+
+    const { valid, error } = validateResumeFile(resume);
+    if (!valid) {
+      toast.error(error);
+      form.setValue("resume", null);
+      form.setError("resume", { type: "manual", message: error });
+    } else {
+      form.clearErrors("resume");
+    }
+  }, [resume]);
+
+  const isDocx =
+    resume?.type ===
+    "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
 
   return (
     <div>
@@ -16,29 +119,21 @@ export default function ResumeForm() {
         <h2 className="text-2xl font-semibold text-[#020C10]">
           Your CV/Resume
         </h2>
+        <p className="text-sm text-[#475467]">
+          PDF or DOCX · Max {MAX_FILE_SIZE_MB}MB
+        </p>
       </header>
 
       <div className="grid lg:grid-cols-[240px_2fr] gap-6 mt-2">
         <div>
-          {/* Safe check: Only render if resume exists */}
-          {resume && resume.name && (
+          {resume?.name && (
             <div className="flex gap-3 items-center lg:justify-end lg:w-60 border rounded-[12px] py-4 px-6 h-fit">
-              {/* Use optional chaining for type check */}
-              {resume.type ===
-              "application/vnd.openxmlformats-officedocument.wordprocessingml.document" ? (
-                <Icons.docx className="min-w-6" />
-              ) : (
-                <Icons.pdf />
-              )}
-
+              {isDocx ? <Icons.docx className="min-w-6" /> : <Icons.pdf />}
               <div className="flex flex-col">
-                {/* Optional chaining for safety */}
                 <p className="text-sm font-medium text-[#101828]">
-                  {resume?.name}
+                  {resume.name}
                 </p>
-                <p className="text-sm text-[#475467]">
-                  {getSize(resume?.size)}
-                </p>
+                <p className="text-sm text-[#475467]">{getSize(resume.size)}</p>
               </div>
             </div>
           )}
@@ -47,9 +142,9 @@ export default function ResumeForm() {
         <UploadFileForm
           fieldName="resume"
           className="bg-white py-4 px-6 max-lg:w-full"
-          fileType="PDF, DOCX or TXT"
+          fileType="PDF or DOCX (max 5MB)"
           iconClassName="border rounded-[8px] bg-white shadow-[0px_1px_2px_0px_#1018280D]"
-          accept="application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document,text/plain"
+          accept="application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
           review={false}
         />
       </div>

@@ -1,7 +1,6 @@
 import { Button } from "@/components/ui/button";
 import Icons from "@/components/ui/icons";
 import CompanyLogo from "@/components/ui/companyLogo";
-// import { Building2 } from "lucide-react";
 import { Link } from "react-router";
 
 interface CandidateHeaderProps {
@@ -18,17 +17,6 @@ export default function CandidateHeader({
   return (
     <div className="flex max-lg:flex-col justify-between lg:items-center gap-6">
       <div className="flex items-center gap-3">
-        {/* <div className="h-10 lg:h-[100px] w-10 lg:w-[100px] rounded-[6px] shadow-[0px_3px_4px_-1px_#10182814] bg-primary/10 flex items-center justify-center">
-          {companyLogo ? (
-            <img
-              src={companyLogo}
-              alt={companyName}
-              className="object-cover w-full h-full"
-            />
-          ) : (
-            <Building2 className="h-6 lg:h-10 w-6 lg:w-10 text-primary" />
-          )}
-        </div> */}
         <CompanyLogo
           logoUrl={companyLogo}
           companyName={companyName}
@@ -36,7 +24,7 @@ export default function CandidateHeader({
         />
         <div className="flex flex-col justify-between h-full space-y-2">
           <span className="text-[#14151A] text-xl tracking-[-0.012em] font-medium leading-none">
-            {companyName || "Candidates"}
+            {companyName || "Company Name"}
           </span>
           {total != null && (
             <span className="text-sm text-[#475467]">

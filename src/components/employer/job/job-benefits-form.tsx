@@ -22,7 +22,7 @@ const benefits = [
   { label: "Stock Options", value: "stock_options" },
   { label: "Performance Bonus", value: "performance_bonus" },
   { label: "Parental Leave", value: "parental_leave" },
-  { label: "13th Month Pay", value: "month_13_pay" },
+  { label: "13th Month Pay", value: "13th_month_pay" },
 ];
 
 export default function JobbenefitsForm() {

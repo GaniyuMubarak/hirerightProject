@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import {
   Pencil,
   Loader2,
-  Building2,
+  // Building2,
   Mail,
   Phone,
   Globe,
@@ -25,20 +25,13 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner"; 
 import { FaLinkedin, FaTwitter, FaFacebook } from "react-icons/fa";
+import CompanyLogo from "@/components/ui/companyLogo";
 
 interface CompanyProfile {
   id: number;
@@ -56,6 +49,7 @@ interface CompanyProfile {
   size_range: string;
   status: string;
   is_verified: boolean;
+  logo_url?: string;
   social_links: {
     linkedin?: string;
     twitter?: string;
@@ -305,30 +299,6 @@ export default function EmployerProfilePage() {
             <Pencil className="h-4 w-4" />
             Edit Profile
           </Button>
-
-          {/* <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="outline" size="icon">
-                <Bell className="h-4 w-4" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuLabel>Quick Actions</DropdownMenuLabel>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem
-                onClick={() => navigate("/employer/notifications")}>
-                View All Notifications
-              </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => navigate("/employer/settings")}>
-                Account Settings
-              </DropdownMenuItem>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem onClick={handleLogout} className="text-red-600">
-                <LogOut className="h-4 w-4 mr-2" />
-                Logout
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu> */}
         </div>
       </div>
 
@@ -338,9 +308,14 @@ export default function EmployerProfilePage() {
           <Card>
             <CardContent className="pt-6">
               <div className="flex items-start gap-4">
-                <div className="h-20 w-20 rounded-lg bg-primary/10 flex items-center justify-center">
+                {/* <div className="h-20 w-20 rounded-lg bg-primary/10 flex items-center justify-center">
                   <Building2 className="h-10 w-10 text-primary" />
-                </div>
+                </div> */}
+                <CompanyLogo
+                  logoUrl={profile.logo_url}
+                  companyName={profile.name}
+                  className="h-20 w-20 rounded-lg"
+                />
                 <div className="flex-1">
                   <div className="flex items-center gap-2 mb-2">
                     <h2 className="text-2xl font-bold">{profile.name}</h2>

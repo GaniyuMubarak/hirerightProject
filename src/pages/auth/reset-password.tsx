@@ -16,15 +16,15 @@ export default function ResetPassword() {
   return (
     <div className="min-h-svh p-6 md:p-10 flex flex-col">
       <div className="flex justify-center gap-2 md:justify-start">
-        <Link
+        {/* <Link
           to="/"
-          className="flex items-center gap-2 text-[#AFAEAD] text-[22px] font-semibold">
+          className="flex items-center gap-2 text-[#AFAEAD] text-[22px] font-semibold"> */}
           <img
-            src="/logo_app.png"
+            src="/App logo.png"
             alt="Logo"
             className="h-12 w-auto object-contain"
           />
-        </Link>
+        {/* </Link> */}
       </div>
 
       <div className="flex-1 flex flex-col items-center justify-center gap-6 bg-background p-6 md:p-10">

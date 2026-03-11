@@ -1,4 +1,4 @@
-// components/ui/company-logo.tsx
+
 
 import { cn } from "@/lib/utils";
 import { useState } from "react";

@@ -114,6 +114,12 @@ const CompanyServices = {
   getTestSubmissions: async (testId: string) => {
     return requests.get(`/employers/tests/${testId}/submissions`);
   },
+  getTestSubmission: async (testId: string, submissionId: number) => {
+    return requests.get(`/employers/tests/${testId}/submissions/${submissionId}`);
+  },
+  updateTestSubmission: async (testId: string, submissionId: number, body: any) => {
+    return requests.put(`/employers/tests/${testId}/submissions/${submissionId}`, body);
+  },
 };
 
 export default CompanyServices;

@@ -13,6 +13,7 @@ import { Link } from "react-router";
 import { Badge } from "../../ui/badge";
 import { Button, buttonVariants } from "../../ui/button";
 import Icons from "../../ui/icons";
+import CompanyLogo from "@/components/ui/companyLogo";
 
 export default function JobListingTable({ jobs = {} }: { jobs: any }) {
   const { open } = useDialog<any>("apply-dialog");
@@ -33,9 +34,8 @@ export default function JobListingTable({ jobs = {} }: { jobs: any }) {
           to="/candidate/jobs"
           className={cn(
             buttonVariants({ variant: "outline" }),
-            "border-[#D0D5DD] shadow-[0px_1px_2px_0px_#1018280D] h-9 max-lg:px-2"
-          )}
-        >
+            "border-[#D0D5DD] shadow-[0px_1px_2px_0px_#1018280D] h-9 max-lg:px-2",
+          )}>
           View All <ArrowRight />
         </Link>
       </header>
@@ -56,13 +56,18 @@ export default function JobListingTable({ jobs = {} }: { jobs: any }) {
               <TableRow key={job.id}>
                 <TableCell>
                   <div className="flex items-center gap-3">
-                    <div className="w-10  h-10 lg:h-[60px] lg:w-[60px] rounded-[6px] lg:shadow-[0px_3px_4px_-1px_#10182814]">
+                    {/* <div className="w-10  h-10 lg:h-[60px] lg:w-[60px] rounded-[6px] lg:shadow-[0px_3px_4px_-1px_#10182814]">
                       <img
                         src="/logo.svg"
                         alt="Logo"
                         className="object-contain lg:object-cover w-full h-full aspect-square"
                       />
-                    </div>
+                    </div> */}
+                    <CompanyLogo
+                      logoUrl={job.company?.logo_url}
+                      companyName={job.company?.name || job.title}
+                      className="w-10 h-10 lg:h-[60px] lg:w-[60px] lg:shadow-[0px_3px_4px_-1px_#10182814]"
+                    />
                     <div className="flex flex-col justify-between h-full space-y-2">
                       <span className="text-[#020C10] text-base lg:text-lg tracking-[-1px] leading-none">
                         {job.title}
@@ -81,9 +86,9 @@ export default function JobListingTable({ jobs = {} }: { jobs: any }) {
                 </TableCell>
                 <TableCell className="max-lg:hidden">
                   {`${job.salary_currency} ${Number(
-                    job.salary_min
+                    job.salary_min,
                   ).toLocaleString()} - ${Number(
-                    job.salary_max
+                    job.salary_max,
                   ).toLocaleString()}`}
                 </TableCell>
                 <TableCell className="max-lg:hidden">
@@ -93,16 +98,14 @@ export default function JobListingTable({ jobs = {} }: { jobs: any }) {
                   <div className="flex gap-4 justify-end">
                     <Link
                       to={`/candidate/jobs/${job.id}`}
-                      className="max-lg:hidden"
-                    >
+                      className="max-lg:hidden">
                       <Button variant={"secondary"} className="rounded-[6px] ">
                         View Details
                       </Button>
                     </Link>
                     <Button
                       className="max-lg:bg-transparent max-lg:shadow-none px-2 lg:px-6 rounded-[6px]"
-                      onClick={() => open("view", job)}
-                    >
+                      onClick={() => open("view", job)}>
                       <span className="max-lg:hidden">Apply</span>{" "}
                       <Icons.more className="lg:hidden min-w-6 min-h-6" />
                     </Button>

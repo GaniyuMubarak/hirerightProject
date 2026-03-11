@@ -14,6 +14,22 @@ type UploadFileFormProps = {
   review?: boolean;
 };
 
+// ✅ useDropzone requires accept as { "mime/type": [] } — not a comma-separated string
+// This converts "image/*,application/pdf" → { "image/*": [], "application/pdf": [] }
+function parseAccept(accept: string): Record<string, string[]> {
+  return accept
+    .split(",")
+    .map((s) => s.trim())
+    .filter(Boolean)
+    .reduce(
+      (acc, mimeType) => {
+        acc[mimeType] = [];
+        return acc;
+      },
+      {} as Record<string, string[]>,
+    );
+}
+
 export default function UploadFileForm({
   fieldName = "image",
   className,
@@ -40,12 +56,12 @@ export default function UploadFileForm({
         setValue(fieldName, imageData);
       }
     },
-    [fieldName, setValue]
+    [fieldName, setValue],
   );
 
   const { getRootProps, getInputProps } = useDropzone({
     onDrop,
-    accept: { [accept]: [] },
+    accept: parseAccept(accept), // ✅ properly parsed
     multiple: false,
   });
 
@@ -59,9 +75,9 @@ export default function UploadFileForm({
             className="w-full h-48 object-cover rounded-[12px]"
           />
           <button
-            onClick={() => setValue(fieldName, null)}
-            className="absolute top-2 right-2 p-1 bg-white rounded-full shadow-md"
-          >
+            type="button"
+            onClick={() => setValue(fieldName, undefined)} // ✅ null → undefined avoids React warning
+            className="absolute top-2 right-2 p-1 bg-white rounded-full shadow-md">
             <X className="w-4 h-4" />
           </button>
         </div>
@@ -70,15 +86,13 @@ export default function UploadFileForm({
           {...getRootProps()}
           className={cn(
             "flex flex-col gap-3 items-center w-72 border rounded-[12px] p-6 py-12 bg-[#F3F3F3] cursor-pointer",
-            className
-          )}
-        >
+            className,
+          )}>
           <div
             className={cn(
               "h-10 w-10 flex justify-center items-center",
-              iconClassName
-            )}
-          >
+              iconClassName,
+            )}>
             <Icons.cloudUpload />
           </div>
           <div className="flex flex-col text-[#475467] text-center space-y-1">

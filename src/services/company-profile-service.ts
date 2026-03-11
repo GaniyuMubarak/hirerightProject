@@ -84,7 +84,7 @@ class ProfileService {
 
     return {
       basic: {
-        fullName: apiData.owner?.full_name || "", // From owner relationship
+        fullName: apiData.owner?.full_name || "",
         jobTitle: apiData.owner?.title || "",
         email: apiData.email || "",
         phone: apiData.phone || "",
