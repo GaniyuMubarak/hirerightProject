@@ -111,8 +111,8 @@ Route::get('/clear-failed-jobs', function() {
 
 // Auth Routes
 Route::prefix('auth')->group(function () {
-    Route::post('register', [AuthController::class, 'register']);
-    Route::post('login', [AuthController::class, 'login']);
+    Route::post('register', [AuthController::class, 'register'])->middleware('throttle:registration');
+    Route::post('login', [AuthController::class, 'login'])->middleware('throttle:login');
     Route::post('logout', [AuthController::class, 'logout'])->middleware('auth:sanctum');
     Route::post('validate/email-otp', [AuthController::class, 'validateEmailOtp']);
     Route::post('validate/phone-otp', [AuthController::class, 'validatePhoneOtp']);
