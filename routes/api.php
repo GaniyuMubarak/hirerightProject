@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\Candidate\CandidateController;
 use App\Http\Controllers\Candidate\CandidateJobApplicationController;
+use App\Http\Controllers\Candidate\CandidateTestController;
 use App\Http\Controllers\Candidate\ExperienceController;
 use App\Http\Controllers\Candidate\EducationController;
 use App\Http\Controllers\Candidate\CertificationController;
@@ -111,8 +112,13 @@ Route::get('/clear-failed-jobs', function() {
 
 // Auth Routes
 Route::prefix('auth')->group(function () {
-    Route::post('register', [AuthController::class, 'register']);
-    Route::post('login', [AuthController::class, 'login']);
+    // Registration - 3 per hour per IP
+    Route::post('register', [AuthController::class, 'register'])
+        ->middleware('throttle:registration');
+    // Login - 5 attempts per 15 minutes per email
+    Route::post('login', [AuthController::class, 'login'])
+        ->middleware('throttle:login');
+
     Route::post('logout', [AuthController::class, 'logout'])->middleware('auth:sanctum');
     Route::post('validate/email-otp', [AuthController::class, 'validateEmailOtp']);
     Route::post('validate/phone-otp', [AuthController::class, 'validatePhoneOtp']);
@@ -120,11 +126,12 @@ Route::prefix('auth')->group(function () {
     // Route::post('request-password-reset', [AuthController::class, 'requestPasswordReset']);
     // Route::post('reset-password', [AuthController::class, 'resetPassword']);
 
-     // ADD THROTTLE HERE - 3 attempts per hour
+    // Password reset - 3 attempts per hour
     Route::post('request-password-reset', [AuthController::class, 'requestPasswordReset'])
-        ->middleware('throttle:3,60'); // 3 requests per 60 minutes
-
+        ->middleware('throttle:password-reset');
+    
     Route::post('reset-password', [AuthController::class, 'resetPassword']);
+
 });
 
 
@@ -168,6 +175,13 @@ Route::middleware(['auth:sanctum', 'can:candidate'])->prefix('candidates')->grou
     Route::post('jobs/{jobId}/apply', [CandidateJobApplicationController::class, 'apply']);
     Route::get('applications', [CandidateJobApplicationController::class, 'applications']);
     Route::post('applications/{id}/withdraw', [CandidateJobApplicationController::class, 'withdraw']);
+
+     Route::prefix('tests')->group(function () {
+        Route::get('/', [CandidateTestController::class, 'index']);
+        Route::post('/{assignmentId}/start', [CandidateTestController::class, 'start']);
+        Route::post('/{assignmentId}/submit', [CandidateTestController::class, 'submit']);
+        Route::get('/{assignmentId}/result', [CandidateTestController::class, 'result']);
+    });
     //
     Route::post('jobs/{jobId}/save', [SavedJobController::class, 'save']);
     Route::delete('jobs/{jobId}/delete', [SavedJobController::class, 'remove']);

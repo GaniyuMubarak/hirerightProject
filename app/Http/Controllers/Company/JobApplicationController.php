@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\JobApplication;
 use App\Models\JobListing;
 use App\Models\User;
+use App\Models\TestAssignment;  
 use App\Notifications\ApplicationStatusNotification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -295,7 +296,7 @@ class JobApplicationController extends Controller
     //         ], 500);
     //     }
     // }
-    public function updateStatus(Request $request, $id)
+public function updateStatus(Request $request, $id)
 {
     try {
         $user = $request->user();
@@ -331,21 +332,36 @@ class JobApplicationController extends Controller
             ], 422);
         }
 
-        // Update application
-        $application->update([
-            'status' => $request->status,
-            'rejection_reason' => $request->rejection_reason,
-            'reviewed_at' => now(),
-            'reviewed_by' => $user->id
-        ]);
+        // Set reviewed info if first time
+        if (!$application->reviewed_at && $request->status !== 'applied') {
+            $application->reviewed_at = now();
+            $application->reviewed_by = $user->id;
+        }
 
-        // Send notification to candidate
+        // Update status
+        $application->status = $request->status;
+        $application->rejection_reason = $request->rejection_reason;
+        $application->save();
+
+        // ✅ AUTO-ASSIGN TEST WHEN SHORTLISTED
+        if (in_array($request->status, ['shortlisted', 'interview_scheduled', 'test_invited'])) {
+            $this->autoAssignJobTest($application);
+        }
+
+        // Send email notification
         try {
+            $application->load(['user', 'job', 'job.company']);
             $application->user->notify(
-                new ApplicationStatusNotification($application->load('job'), $request->status)
+                new ApplicationStatusNotification($application, $request->status)
             );
+            
+            Log::info('Status email sent', [
+                'application_id' => $application->id,
+                'status' => $request->status
+            ]);
+            
         } catch (\Exception $e) {
-            Log::error('Failed to send status notification: ' . $e->getMessage());
+            Log::error('Email failed', ['error' => $e->getMessage()]);
         }
 
         return response()->json([
@@ -354,14 +370,78 @@ class JobApplicationController extends Controller
             'application' => $application->load(['user:id,first_name,last_name,email', 'job:id,title'])
         ]);
         
+    } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+        return response()->json([
+            'status' => 'error',
+            'message' => 'Application not found or access denied'
+        ], 404);
+        
     } catch (\Exception $e) {
-        Log::error('Error updating application status: ' . $e->getMessage());
+        Log::error('Error updating application status', [
+            'error' => $e->getMessage(),
+            'trace' => $e->getTraceAsString()
+        ]);
         
         return response()->json([
             'status' => 'error',
             'message' => 'Failed to update application status',
             'error' => config('app.debug') ? $e->getMessage() : 'Internal server error'
         ], 500);
+    }
+}
+
+/**
+ * Auto-assign test from job to candidate when shortlisted
+ */
+protected function autoAssignJobTest($application)
+{
+    try {
+        // Load job with test
+        $application->load('job');
+        
+        // Check if job has a test
+        if (!$application->job->test_id) {
+            Log::info('No test attached to job', ['job_id' => $application->job->id]);
+            return;
+        }
+
+        // Check if test already assigned
+        $existingAssignment = TestAssignment::where('job_application_id', $application->id)
+            ->where('test_id', $application->job->test_id)
+            ->first();
+
+        if ($existingAssignment) {
+            Log::info('Test already assigned', [
+                'application_id' => $application->id,
+                'test_id' => $application->job->test_id
+            ]);
+            return;
+        }
+
+        // Create test assignment
+        $deadline = now()->addDays(7); // 7 days to complete test
+
+        TestAssignment::create([
+            'test_id' => $application->job->test_id,
+            'job_application_id' => $application->id,
+            'user_id' => $application->user_id,
+            'source' => 'job_posting',
+            'status' => 'pending',
+            'assigned_at' => now(),
+            'deadline' => $deadline
+        ]);
+
+        Log::info('Test auto-assigned', [
+            'application_id' => $application->id,
+            'test_id' => $application->job->test_id,
+            'deadline' => $deadline
+        ]);
+
+    } catch (\Exception $e) {
+        Log::error('Failed to auto-assign test', [
+            'error' => $e->getMessage(),
+            'application_id' => $application->id
+        ]);
     }
 }
 

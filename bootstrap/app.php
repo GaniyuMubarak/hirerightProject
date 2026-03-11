@@ -4,7 +4,6 @@ use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
 use Illuminate\Http\Request;
-use Illuminate\Http\Middleware\HandleCors;  // Required for CORS
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -14,23 +13,25 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware) {
-        // 1. Force CORS to run first
-        $middleware->prependToGroup('api', [
-            HandleCors::class,
+        $middleware->group('api', [
+            \Illuminate\Routing\Middleware\SubstituteBindings::class,
         ]);
-
+        
         $middleware->statefulApi();
-
+        
         $middleware->alias([
             'auth:api' => \Tymon\JWTAuth\Http\Middleware\Authenticate::class,
             'role' => \App\Http\Middleware\CheckRole::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {
-        // Prevents Laravel from trying to redirect to a 'login' page on error
         $exceptions->renderable(function (\Illuminate\Auth\AuthenticationException $e, Request $request) {
             if ($request->is('api/*') || $request->expectsJson()) {
-                return response()->json(['message' => 'Unauthenticated.'], 401);
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Unauthenticated.',
+                    'error' => $e->getMessage()
+                ], 401);
             }
         });
     })->create();
