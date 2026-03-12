@@ -3,30 +3,30 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\DB;
 
 return new class extends Migration
 {
     public function up()
     {
         Schema::table('test_assignments', function (Blueprint $table) {
-            // Add new columns if they don't exist
+            // Only add if doesn't exist
             if (!Schema::hasColumn('test_assignments', 'job_application_id')) {
-                $table->foreignId('job_application_id')->nullable()->after('test_id')
-                    ->constrained('job_applications')->onDelete('cascade');
+                $table->unsignedBigInteger('job_application_id')->nullable()->after('test_id');
+                $table->foreign('job_application_id')->references('id')->on('job_applications')->onDelete('cascade');
             }
             
             if (!Schema::hasColumn('test_assignments', 'user_id')) {
-                $table->foreignId('user_id')->nullable()->after('job_application_id')
-                    ->constrained('users')->onDelete('cascade');
+                $table->unsignedBigInteger('user_id')->nullable()->after('job_application_id');
+                $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
             }
             
             if (!Schema::hasColumn('test_assignments', 'source')) {
-                $table->enum('source', ['job_posting', 'manual'])
-                    ->default('job_posting')->after('user_id');
+                $table->enum('source', ['job_posting', 'manual'])->default('job_posting')->after('user_id');
             }
             
             if (!Schema::hasColumn('test_assignments', 'session_id')) {
-                $table->string('session_id')->nullable()->unique()->after('source');
+                $table->string('session_id')->nullable()->after('source');
             }
             
             if (!Schema::hasColumn('test_assignments', 'assigned_at')) {
@@ -44,17 +44,23 @@ return new class extends Migration
             if (!Schema::hasColumn('test_assignments', 'feedback')) {
                 $table->text('feedback')->nullable()->after('time_taken_seconds');
             }
-            
-            // Modify status enum to include new values
-            DB::statement("ALTER TABLE test_assignments MODIFY COLUMN status ENUM('pending', 'assigned', 'in_progress', 'completed', 'expired', 'graded') DEFAULT 'pending'");
-            
-            // Add indexes
+        });
+        
+        // Update status enum separately
+        DB::statement("
+            ALTER TABLE test_assignments 
+            MODIFY COLUMN status ENUM('pending', 'assigned', 'in_progress', 'completed', 'expired', 'graded') 
+            DEFAULT 'pending'
+        ");
+        
+        // Add indexes
+        Schema::table('test_assignments', function (Blueprint $table) {
             if (!Schema::hasIndex('test_assignments', 'test_assignments_user_id_status_index')) {
-                $table->index(['user_id', 'status']);
+                $table->index(['user_id', 'status'], 'test_assignments_user_id_status_index');
             }
             
             if (!Schema::hasIndex('test_assignments', 'test_assignments_session_id_index')) {
-                $table->index('session_id');
+                $table->index('session_id', 'test_assignments_session_id_index');
             }
         });
     }
@@ -62,7 +68,12 @@ return new class extends Migration
     public function down()
     {
         Schema::table('test_assignments', function (Blueprint $table) {
-            // Drop new columns in reverse order
+            $table->dropIndex('test_assignments_user_id_status_index');
+            $table->dropIndex('test_assignments_session_id_index');
+            
+            $table->dropForeign(['job_application_id']);
+            $table->dropForeign(['user_id']);
+            
             $table->dropColumn([
                 'feedback',
                 'time_taken_seconds',
@@ -73,13 +84,12 @@ return new class extends Migration
                 'user_id',
                 'job_application_id'
             ]);
-            
-            // Restore original status enum
-            DB::statement("ALTER TABLE test_assignments MODIFY COLUMN status ENUM('assigned', 'in_progress', 'completed', 'expired', 'graded') DEFAULT 'assigned'");
-            
-            // Drop indexes
-            $table->dropIndex(['user_id', 'status']);
-            $table->dropIndex('session_id');
         });
+        
+        DB::statement("
+            ALTER TABLE test_assignments 
+            MODIFY COLUMN status ENUM('assigned', 'in_progress', 'completed', 'expired', 'graded') 
+            DEFAULT 'assigned'
+        ");
     }
 };
