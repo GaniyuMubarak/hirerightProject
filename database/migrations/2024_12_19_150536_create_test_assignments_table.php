@@ -17,7 +17,7 @@ return new class extends Migration {
             $table->string('status')->default('assigned'); // assigned, in_progress, completed, expired, graded
             $table->timestamp('started_at')->nullable();
             $table->timestamp('completed_at')->nullable();
-$table->timestamp('expires_at')->nullable();
+            $table->timestamp('expires_at')->nullable();
             $table->decimal('score', 8, 2)->nullable();
             $table->boolean('passed')->nullable();
             $table->timestamps();
