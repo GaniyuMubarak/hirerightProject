@@ -127,7 +127,6 @@
 //   );
 // }
 
-
 // with admin
 
 import DashboardLayout from "@/components/candidate/layout";
@@ -177,8 +176,10 @@ import AdminJobs from "./pages/admin/jobs/jobs";
 import AdminEmployers from "./pages/admin/employers/employers";
 import AdminCandidates from "./pages/admin/candidates/candidates";
 import AdminTests from "./pages/admin/tests/tests";
+import AdminAnalytics from "./pages/admin/analytics/analytics";
+import AdminLegal from "./pages/admin/legal/legal";
+import { TermsPage, PrivacyPage } from "./pages/admin/legal/legal-public";
 
-// ✅ QueryClient outside component — prevents cache wipe on every render
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
@@ -207,6 +208,9 @@ export default function App() {
             <Route path="/forgot-password" element={<ForgotPassword />} />
             <Route path="/reset-password" element={<ResetPassword />} />
             <Route path="/jobs/:id" element={<JobDetails />} />
+            {/* Legal pages — public, no auth required */}
+            <Route path="/terms" element={<TermsPage />} />
+            <Route path="/privacy" element={<PrivacyPage />} />
 
             {/* Candidate + Employer */}
             <Route element={<ProtectedRoute />}>
@@ -268,16 +272,18 @@ export default function App() {
               </Route>
             </Route>
 
-            {/* Admin — completely isolated, own route guard + layout */}
+            {/* Admin */}
             <Route element={<AdminRoute />}>
               <Route path="admin" element={<AdminLayout />}>
                 <Route index element={<AdminDashboard />} />
                 <Route path="dashboard" element={<AdminDashboard />} />
+                <Route path="analytics" element={<AdminAnalytics />} />
                 <Route path="users" element={<AdminUsers />} />
                 <Route path="jobs" element={<AdminJobs />} />
                 <Route path="employers" element={<AdminEmployers />} />
                 <Route path="candidates" element={<AdminCandidates />} />
                 <Route path="tests" element={<AdminTests />} />
+                <Route path="legal" element={<AdminLegal />} />
               </Route>
             </Route>
           </Routes>
