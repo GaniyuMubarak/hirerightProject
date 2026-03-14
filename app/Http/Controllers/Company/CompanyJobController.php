@@ -181,40 +181,125 @@ class CompanyJobController extends Controller
     /**
      * Display the specified job listing.
      */
-    public function show($id)
-    {
-        try {
-            $userId = Auth::id();
-            $user = User::findOrFail($userId);
+    // public function show($id)
+    // {
+    //     try {
+    //         $userId = Auth::id();
+    //         $user = User::findOrFail($userId);
             
-            if (!$user->company_id) {
-                return response()->json([
-                    'status' => 'error',
-                    'message' => 'Please add a company to your account.',
-                    'error' => ''
-                ], 412);
-            }
+    //         if (!$user->company_id) {
+    //             return response()->json([
+    //                 'status' => 'error',
+    //                 'message' => 'Please add a company to your account.',
+    //                 'error' => ''
+    //             ], 412);
+    //         }
             
-            $job = JobListing::where('company_id', $user->company_id)
-                ->findOrFail($id);
+    //         $job = JobListing::where('company_id', $user->company_id)
+    //             ->findOrFail($id);
 
-            return response()->json([
-                'status' => 'success',
-                'data' => $job
-            ], 200);
-        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+    //         return response()->json([
+    //             'status' => 'success',
+    //             'data' => $job
+    //         ], 200);
+    //     } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+    //         return response()->json([
+    //             'status' => 'error',
+    //             'message' => 'Job listing not found'
+    //         ], 404);
+    //     } catch (\Exception $e) {
+    //         return response()->json([
+    //             'status' => 'error',
+    //             'message' => 'Failed to retrieve job listing',
+    //             'error' => config('app.debug') ? $e->getMessage() : 'Internal server error'
+    //         ], 500);
+    //     }
+    // }
+
+    public function show($id)
+{
+    try {
+        $userId = Auth::id();
+        $user = User::findOrFail($userId);
+        
+        if (!$user->company_id) {
             return response()->json([
                 'status' => 'error',
-                'message' => 'Job listing not found'
-            ], 404);
-        } catch (\Exception $e) {
-            return response()->json([
-                'status' => 'error',
-                'message' => 'Failed to retrieve job listing',
-                'error' => config('app.debug') ? $e->getMessage() : 'Internal server error'
-            ], 500);
+                'message' => 'Please add a company to your account.',
+                'error' => ''
+            ], 412);
         }
+        
+        // ✅ LOAD TEST RELATIONSHIP AND STAGES
+        $job = JobListing::where('company_id', $user->company_id)
+            ->with([
+                'test:id,title,description,time_limit,passing_score',
+                'stages.tests'  // Load recruitment stages with their tests
+            ])
+            ->findOrFail($id);
+
+        // ✅ FORMAT STAGES FOR FRONTEND
+        $stagesData = [];
+        if ($job->stages) {
+            foreach ($job->stages as $stage) {
+                $stagesData[] = [
+                    'id' => $stage->id,
+                    'name' => $stage->name,
+                    'description' => $stage->description,
+                    'order' => $stage->order,
+                    'tests' => $stage->tests
+                ];
+            }
+        }
+
+        return response()->json([
+            'status' => 'success',
+            'data' => [
+                'id' => $job->id,
+                'title' => $job->title,
+                'description' => $job->description,
+                'requirements' => $job->requirements,
+                'responsibilities' => $job->responsibilities,
+                'benefits' => $job->benefits,
+                'employment_type' => $job->employment_type,
+                'work_mode' => $job->work_mode,
+                'positions_available' => $job->positions_available,
+                'experience_level' => $job->experience_level,
+                'min_years_experience' => $job->min_years_experience,
+                'salary_min' => $job->salary_min,
+                'salary_max' => $job->salary_max,
+                'salary_currency' => $job->salary_currency,
+                'hide_salary' => $job->hide_salary,
+                'location' => $job->location,
+                'remote_regions' => $job->remote_regions,
+                'deadline' => $job->deadline,
+                'status' => $job->status,
+                'test_id' => $job->test_id,  // ✅ Single test ID
+                'test' => $job->test,        // ✅ Single test details
+                'stages' => $stagesData,     // ✅ Multiple stages with tests
+                'company_id' => $job->company_id,
+                'created_at' => $job->created_at,
+                'updated_at' => $job->updated_at,
+            ]
+        ], 200);
+    } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+        return response()->json([
+            'status' => 'error',
+            'message' => 'Job listing not found'
+        ], 404);
+    } catch (\Exception $e) {
+        Log::error('Error fetching job', [
+            'error' => $e->getMessage(),
+            'job_id' => $id
+        ]);
+        
+        return response()->json([
+            'status' => 'error',
+            'message' => 'Failed to retrieve job listing',
+            'error' => config('app.debug') ? $e->getMessage() : 'Internal server error'
+        ], 500);
     }
+}
 
     /**
      * Update the specified job listing.

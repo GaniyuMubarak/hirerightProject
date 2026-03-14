@@ -4,7 +4,6 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class RecruitmentStage extends Model
 {
@@ -24,8 +23,21 @@ class RecruitmentStage extends Model
     /**
      * Get the job posting this stage belongs to.
      */
-    public function jobPosting(): BelongsTo
+    public function job()
     {
-        return $this->belongsTo(JobListing::class);
+        return $this->belongsTo(JobListing::class, 'job_id');
+    }
+
+    /**
+     * Get the tests assigned to this stage.
+     */
+    public function tests()
+    {
+        return $this->belongsToMany(
+            Test::class,
+            'stage_test_mappings',
+            'stage_id',
+            'test_id'
+        )->withPivot('is_required');
     }
 }

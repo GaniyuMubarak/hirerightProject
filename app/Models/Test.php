@@ -5,6 +5,8 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;  
+
 
 class Test extends Model
 {
@@ -44,4 +46,22 @@ public function questions(): HasMany
 {
     return $this->hasMany(TestQuestion::class)->orderBy('order');
 }
+
+
+public function stages()
+{
+    return $this->belongsToMany(
+        RecruitmentStage::class,
+        'stage_test_mappings',
+        'test_id',
+        'stage_id'
+    )->withPivot('is_required');
 }
+
+public function jobListings()
+{
+    return $this->hasMany(JobListing::class, 'test_id');
+}
+
+}
+

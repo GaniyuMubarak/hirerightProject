@@ -5,24 +5,15 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class JobListing extends Model
 {
     use HasFactory, SoftDeletes;
 
-    /**
-     * The table associated with the model.
-     *
-     * @var string
-     */
     protected $table = 'job_listings';
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array<string>
-     */
     protected $fillable = [
         'title',
         'slug',
@@ -52,11 +43,6 @@ class JobListing extends Model
         'test_id'
     ];
 
-    /**
-     * The attributes that should be cast.
-     *
-     * @var array<string, string>
-     */
     protected $casts = [
         'remote_regions' => 'array',
         'salary_min' => 'decimal:2',
@@ -69,9 +55,7 @@ class JobListing extends Model
         'deadline' => 'datetime',
     ];
 
-    /**
-     * Constants for employment types
-     */
+    // Constants
     public const EMPLOYMENT_TYPES = [
         'full_time',
         'part_time',
@@ -81,24 +65,36 @@ class JobListing extends Model
         'internship'
     ];
 
-    /**
-     * Constants for work modes
-     */
     public const WORK_MODES = [
         'remote',
         'hybrid',
         'onsite'
     ];
 
-    /**
-     * Constants for status
-     */
     public const STATUSES = [
         'draft',
         'published',
         'closed',
         'archived'
     ];
+    
+    // Relationships
+    
+    /**
+     * Single test assigned to job (legacy/simple method)
+     */
+    public function test(): BelongsTo
+    {
+        return $this->belongsTo(Test::class, 'test_id');
+    }
+
+    /**
+     * Recruitment stages (for multi-stage hiring with multiple tests)
+     */
+    public function stages(): HasMany
+    {
+        return $this->hasMany(RecruitmentStage::class, 'job_id');
+    }
 
     /**
      * Get the company that owns the job.
@@ -116,6 +112,16 @@ class JobListing extends Model
         return $this->belongsTo(User::class, 'created_by');
     }
 
+    /**
+     * Get applications for this job.
+     */
+    public function applications(): HasMany
+    {
+        return $this->hasMany(JobApplication::class, 'job_id');
+    }
+
+    // Helper Methods
+    
     /**
      * Check if the job is active/open
      */
@@ -152,6 +158,8 @@ class JobListing extends Model
         return null;
     }
 
+    // Scopes
+    
     /**
      * Scope a query to only include active jobs.
      */
@@ -172,9 +180,4 @@ class JobListing extends Model
     {
         return $query->where('is_featured', true);
     }
-
-    public function applications()
-{
-    return $this->hasMany(\App\Models\JobApplication::class, 'job_id');
-}
 }
