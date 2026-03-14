@@ -272,6 +272,8 @@
 //   );
 // }
 
+// ─────────────────────────────────────────────────────────────────────────
+
 import CandidateHiringCard, {
   type Application,
 } from "@/components/employer/job/candidate-hiring-card";

@@ -758,7 +758,7 @@ export default function PostJob() {
                   <div className="p-3 bg-blue-50 border border-blue-200 rounded-md">
                     <div className="flex items-center gap-2 text-blue-800 font-medium">
                       <AlertCircle className="h-4 w-4" />
-                      <span>Editing Job #{createdJobId}</span>
+                      <span>Editing Job Details</span>
                     </div>
                     <p className="text-sm text-blue-700 mt-1">
                       Make your changes and click "Update & Continue" to save
@@ -891,8 +891,8 @@ export default function PostJob() {
                         Job Ready for Hiring Setup
                       </h3>
                       <p className="text-green-700">
-                          {/* Job ID: #{createdJobId} */}
-                          • Now set up your hiring process
+                        {/* Job ID: #{createdJobId} */}• Now set up your hiring
+                        process
                       </p>
                       <p className="text-sm text-green-600 mt-1">
                         {hiringStages.reduce(

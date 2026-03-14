@@ -15,7 +15,6 @@ export default function AccountTypePage() {
               src="/logo_app.png"
               alt="Logo"
               className="h-12 w-auto object-contain"
-              // className="size-12"
             />
           </Link>
         </div>
