@@ -1,36 +1,30 @@
-import Cookies from "js-cookie";
 import React, { createContext, useContext, useReducer } from "react";
+import { readSessionFromCookie } from "@/lib/auth";
+import type { AuthResponse } from "@/lib/types/auth";
 
-export const UserContext = createContext<{
-  state: {
-    userInfo: any | null;
-  };
-  dispatch: React.Dispatch<any>;
-}>({
+interface UserContextType {
+  state: { userInfo: AuthResponse | null };
+  dispatch: React.Dispatch<{ type: string; payload?: any }>;
+}
+
+export const UserContext = createContext<UserContextType>({
   state: { userInfo: null },
   dispatch: () => null,
 });
 
 const initialState = {
-  userInfo: Cookies.get("HRuserInfo")
-    ? JSON.parse(Cookies.get("HRuserInfo") || "{}")
-    : null,
+  userInfo: readSessionFromCookie(),
 };
 
 function reducer(
-  state: { userInfo: any | null },
-  action: { type: string; payload?: any }
+  state: { userInfo: AuthResponse | null },
+  action: { type: string; payload?: any },
 ) {
   switch (action.type) {
     case "USER_LOGIN":
       return { ...state, userInfo: action.payload };
-
     case "USER_LOGOUT":
-      return {
-        ...state,
-        userInfo: null,
-      };
-
+      return { ...state, userInfo: null };
     default:
       return state;
   }
@@ -39,13 +33,16 @@ function reducer(
 export const useUser = () => {
   const context = useContext(UserContext);
   if (context === undefined) {
-    throw new Error("useAdmin must be used within a AdminProvider");
+    throw new Error("useUser must be used within a UserProvider");
   }
   return context;
 };
 
 export const UserProvider = ({ children }: { children: React.ReactNode }) => {
   const [state, dispatch] = useReducer(reducer, initialState);
-  const value = { state, dispatch };
-  return <UserContext.Provider value={value}>{children}</UserContext.Provider>;
+  return (
+    <UserContext.Provider value={{ state, dispatch }}>
+      {children}
+    </UserContext.Provider>
+  );
 };

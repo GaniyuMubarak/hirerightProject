@@ -96,6 +96,7 @@ import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router";
 import { toast } from "sonner";
 import { z } from "zod";
+import { getApiErrorMessage } from "@/lib/api-error";
 
 const MAX_REQUESTS = 3;
 const WINDOW_MS = 60 * 60 * 1000; // 1 hour
@@ -157,11 +158,14 @@ export function ForgotPasswordForm({
       toast.success(result.message ?? "OTP sent! Check your email.");
       navigate("/reset-password", { state: { email: data.email } });
     } catch (error: any) {
-      const message =
-        error?.response?.data?.message ??
-        error?.message ??
-        "Something went wrong. Please try again.";
-      toast.error(message);
+      // const message =
+      //   error?.response?.data?.message ??
+      //   error?.message ??
+      //   "Something went wrong. Please try again.";
+      // toast.error(message);
+      toast.error(
+        getApiErrorMessage(error, "Something went wrong. Please try again."),
+      );
     }
   }
 

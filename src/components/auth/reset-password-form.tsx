@@ -18,7 +18,36 @@
 // import { toast } from "sonner";
 // import { z } from "zod";
 
-// const OTP_EXPIRY_SECONDS = 10 * 60;
+// const OTP_EXPIRY_SECONDS = 10 * 60; // 10 minutes
+
+// // Shared rate limit map — same instance as forgot-password-form if bundled together,
+// // but works independently too since it's keyed by email.
+// const MAX_REQUESTS = 3;
+// const WINDOW_MS = 60 * 60 * 1000; // 1 hour
+// const rateLimitMap = new Map<string, { count: number; windowStart: number }>();
+
+// function checkRateLimit(email: string): {
+//   allowed: boolean;
+//   minutesLeft?: number;
+// } {
+//   const now = Date.now();
+//   const key = email.toLowerCase().trim();
+//   const entry = rateLimitMap.get(key);
+
+//   if (!entry || now - entry.windowStart >= WINDOW_MS) {
+//     rateLimitMap.set(key, { count: 1, windowStart: now });
+//     return { allowed: true };
+//   }
+
+//   if (entry.count >= MAX_REQUESTS) {
+//     const msLeft = WINDOW_MS - (now - entry.windowStart);
+//     const minutesLeft = Math.ceil(msLeft / 1000 / 60);
+//     return { allowed: false, minutesLeft };
+//   }
+
+//   entry.count += 1;
+//   return { allowed: true };
+// }
 
 // const FormSchema = z
 //   .object({
@@ -76,6 +105,15 @@
 //   }
 
 //   async function handleResend() {
+//     const { allowed, minutesLeft } = checkRateLimit(email);
+
+//     if (!allowed) {
+//       toast.error(
+//         `Too many requests. Please try again in ${minutesLeft} minute${minutesLeft === 1 ? "" : "s"}.`,
+//       );
+//       return;
+//     }
+
 //     setIsResending(true);
 //     try {
 //       const result = await AuthServices.requestPasswordReset(email);
@@ -255,6 +293,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
+import { resetPasswordSchema } from "@/lib/validators/auth";
 import AuthServices from "@/services/auth-services";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { EyeIcon, EyeOffIcon } from "lucide-react";
@@ -263,13 +302,12 @@ import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router";
 import { toast } from "sonner";
 import { z } from "zod";
-
+import { getApiErrorMessage } from "@/lib/api-error";
 const OTP_EXPIRY_SECONDS = 10 * 60; // 10 minutes
 
-// Shared rate limit map — same instance as forgot-password-form if bundled together,
-// but works independently too since it's keyed by email.
+// ─── Rate limit ───────────────────────────────────────────────────────────────
 const MAX_REQUESTS = 3;
-const WINDOW_MS = 60 * 60 * 1000; // 1 hour
+const WINDOW_MS = 60 * 60 * 1000;
 const rateLimitMap = new Map<string, { count: number; windowStart: number }>();
 
 function checkRateLimit(email: string): {
@@ -279,22 +317,20 @@ function checkRateLimit(email: string): {
   const now = Date.now();
   const key = email.toLowerCase().trim();
   const entry = rateLimitMap.get(key);
-
   if (!entry || now - entry.windowStart >= WINDOW_MS) {
     rateLimitMap.set(key, { count: 1, windowStart: now });
     return { allowed: true };
   }
-
   if (entry.count >= MAX_REQUESTS) {
     const msLeft = WINDOW_MS - (now - entry.windowStart);
-    const minutesLeft = Math.ceil(msLeft / 1000 / 60);
-    return { allowed: false, minutesLeft };
+    return { allowed: false, minutesLeft: Math.ceil(msLeft / 1000 / 60) };
   }
-
   entry.count += 1;
   return { allowed: true };
 }
+// ─────────────────────────────────────────────────────────────────────────────
 
+// Local form schema — OTP + password fields only (email comes from props)
 const FormSchema = z
   .object({
     otp: z.string().min(1, { message: "OTP is required" }),
@@ -352,14 +388,12 @@ export function ResetPasswordForm({
 
   async function handleResend() {
     const { allowed, minutesLeft } = checkRateLimit(email);
-
     if (!allowed) {
       toast.error(
         `Too many requests. Please try again in ${minutesLeft} minute${minutesLeft === 1 ? "" : "s"}.`,
       );
       return;
     }
-
     setIsResending(true);
     try {
       const result = await AuthServices.requestPasswordReset(email);
@@ -368,11 +402,14 @@ export function ResetPasswordForm({
       setSecondsLeft(OTP_EXPIRY_SECONDS);
       startTimer();
     } catch (error: any) {
-      const message =
-        error?.response?.data?.message ??
-        error?.message ??
-        "Failed to resend OTP. Please try again.";
-      toast.error(message);
+      // const message =
+      //   error?.response?.data?.message ??
+      //   error?.message ??
+      //   "Failed to resend OTP. Please try again.";
+      // toast.error(message);
+      toast.error(
+        getApiErrorMessage(error, "Failed to resend OTP. Please try again."),
+      );
     } finally {
       setIsResending(false);
     }
@@ -388,21 +425,28 @@ export function ResetPasswordForm({
       toast.error("OTP has expired. Please request a new one.");
       return;
     }
+
+    // ✅ Fix #3: no `as any` — ResetPasswordSchemaType now matches this shape
+    const payload: z.infer<typeof resetPasswordSchema> = {
+      email,
+      otp: data.otp,
+      password: data.password,
+      password_confirmation: data.confirmPassword,
+    };
+
     try {
-      const result = await AuthServices.resetPassword({
-        email,
-        otp: data.otp,
-        password: data.password,
-        password_confirmation: data.confirmPassword,
-      } as any);
+      const result = await AuthServices.resetPassword(payload);
       toast.success(result.message ?? "Password reset successfully!");
       navigate("/sign-in");
     } catch (error: any) {
-      const message =
-        error?.response?.data?.message ??
-        error?.message ??
-        "Something went wrong. Please try again.";
-      toast.error(message);
+      // const message =
+      //   error?.response?.data?.message ??
+      //   error?.message ??
+      //   "Something went wrong. Please try again.";
+      // toast.error(message);
+      toast.error(
+        getApiErrorMessage(error, "Something went wrong. Please try again."),
+      );
     }
   }
 

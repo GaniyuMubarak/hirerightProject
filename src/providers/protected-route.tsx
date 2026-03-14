@@ -1,43 +1,26 @@
-// import { useCurrentUser } from "@/hooks/use-current-user";
-// import React from "react";
-// import { Navigate, Outlet } from "react-router";
-
-// export default function ProtectedRoute() {
-//   const user = useCurrentUser();
-//   if (!user?.app_role) {
-//     // return <Navigate to={`/${user?.app_role}/dashboard`} />;
-//     return <Navigate to={`/auth/login`} />;
-//   }
-//   return (
-//     <React.Fragment>
-//       <Outlet />
-//     </React.Fragment>
-//   );
-// }
-
 import { useUser } from "@/providers/user-context";
+import { hasValidTokenCookie } from "@/lib/auth";
 import React from "react";
 import { Navigate, Outlet } from "react-router";
 
+// ✅ Fix: guards on BOTH session data AND token cookie.
+// Previously only checked session data (HRsessionInfo) — if the token
+// cookie (HRuserInfo) was missing but session cookie survived, the user
+// passed this guard but every API call returned 401, creating an
+// infinite broken loop. Now both must be present to proceed.
 export default function ProtectedRoute() {
   const { state } = useUser();
 
-  // Check both possible structures
-  const userInfo = state.userInfo;
-  const isLoggedIn = !!(
-    userInfo?.user ||
-    userInfo?.id ||
-    userInfo?.email ||
-    userInfo?.app_role
+  const hasSessionData = !!(
+    state.userInfo?.user ||
+    state.userInfo?.id ||
+    state.userInfo?.app_role
   );
 
-  // const user = useCurrentUser();
-  // if (!user?.app_role) {
-  //   return <Navigate to={`/auth/login`} />;
-  // }
+  const hasToken = hasValidTokenCookie();
 
-  if (!isLoggedIn) {
-    return <Navigate to="/sign-in" />;
+  if (!hasSessionData || !hasToken) {
+    return <Navigate to="/sign-in" replace />;
   }
 
   return (

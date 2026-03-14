@@ -5,6 +5,7 @@ import { z } from "zod";
 import { toast } from "sonner";
 import { jobPostingSchema } from "@/lib/validators/job";
 import JobServices from "@/services/job-services";
+import { getApiErrorMessage } from "@/lib/api-error";
 
 // ── Schema ────────────────────────────────────────────────────────────────────
 
@@ -112,7 +113,8 @@ const useEditJobForm = ({ onSuccess }: UseEditJobFormOptions = {}) => {
     } catch (err: any) {
       toast.error("Failed to load job", {
         description:
-          err?.response?.data?.message || "Could not fetch job details",
+          // err?.response?.data?.message || "Could not fetch job details",
+          getApiErrorMessage(err, "Could not fetch job details"),
         duration: 4000,
       });
       setEditJob(null);
@@ -231,7 +233,8 @@ const useEditJobForm = ({ onSuccess }: UseEditJobFormOptions = {}) => {
       } else {
         toast.error("Failed to update job", {
           description:
-            err?.response?.data?.message || "An unexpected error occurred",
+            // err?.response?.data?.message || "An unexpected error occurred",
+            getApiErrorMessage(err, "An unexpected error occurred"),
           duration: 4000,
         });
       }

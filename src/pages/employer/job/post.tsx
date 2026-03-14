@@ -23,6 +23,7 @@ import { Separator } from "@/components/ui/separator";
 import { toast } from "sonner";
 import JobServices from "@/services/job-services";
 import { useNavigate } from "react-router";
+import { getApiErrorMessage } from "@/lib/api-error";
 
 // Constants for localStorage keys
 const JOB_STORAGE_KEY = "post-job-created-id";
@@ -331,15 +332,17 @@ export default function PostJob() {
             toast.error("Authentication Required", {
               description: "Please log in again to continue",
               duration: 3000,
-              action: { label: "Login", onClick: () => navigate("/login") },
+              // action: { label: "Login", onClick: () => navigate("/login") },
+              action: { label: "Sign In", onClick: () => navigate("/sign-in") },
             });
           } else {
             toast.error(
               createdJobId ? "Job Update Failed" : "Job Creation Failed",
               {
                 description:
-                  error?.response?.data?.message ||
-                  "An unexpected error occurred",
+                  // error?.response?.data?.message ||
+                  // "An unexpected error occurred",
+                  getApiErrorMessage(error, "An unexpected error occurred"),
                 duration: 4000,
               },
             );
@@ -541,7 +544,8 @@ export default function PostJob() {
       } else {
         toast.error("Assignment Error", {
           description:
-            error?.response?.data?.message || "Failed to assign tests",
+            // error?.response?.data?.message || "Failed to assign tests",
+            getApiErrorMessage(error, "Failed to assign tests"),
           duration: 3000,
         });
       }
@@ -758,7 +762,7 @@ export default function PostJob() {
                   <div className="p-3 bg-blue-50 border border-blue-200 rounded-md">
                     <div className="flex items-center gap-2 text-blue-800 font-medium">
                       <AlertCircle className="h-4 w-4" />
-                      <span>Editing Job #{createdJobId}</span>
+                      <span>Editing Job</span>
                     </div>
                     <p className="text-sm text-blue-700 mt-1">
                       Make your changes and click "Update & Continue" to save

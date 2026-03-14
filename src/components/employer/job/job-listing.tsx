@@ -67,6 +67,7 @@ import JobVisibilityForm from "@/components/employer/job/job-visibility-form";
 
 import JobServices from "@/services/job-services";
 import useEditJobForm from "@/hooks/forms/use-edit-job-form";
+import { getApiErrorMessage } from "@/lib/api-error";
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
@@ -153,7 +154,8 @@ export default function EmployerJobListing({
       setDeleteJobId(null);
       onJobUpdated?.();
     } catch (err: any) {
-      toast.error(err?.response?.data?.message || "Failed to delete job");
+      // toast.error(err?.response?.data?.message || "Failed to delete job");
+      toast.error(getApiErrorMessage(err, "Failed to delete job"));
     } finally {
       setIsDeleting(false);
     }

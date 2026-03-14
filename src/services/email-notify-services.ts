@@ -1,3 +1,4 @@
+import { getApiErrorMessage } from "@/lib/api-error";
 import requests from "@/services/https-services";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -28,8 +29,12 @@ export async function sendOTPEmail(payload: OTPPayload): Promise<SendResult> {
     });
     return { success: true };
   } catch (error: any) {
-    const message =
-      error?.response?.data?.message ?? "Failed to send OTP email";
+    // const message =
+    //   error?.response?.data?.message ?? "Failed to send OTP email";
+    const message = getApiErrorMessage(
+      error,
+      "Failed to send OTP email",
+    );
     console.error("[email-notify] sendOTPEmail failed:", message);
     return { success: false, error: message };
   }

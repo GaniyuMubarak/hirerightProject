@@ -27,9 +27,8 @@ export default function EmployerJobListingTable({ jobs }: { jobs: any }) {
           to="/employer/jobs"
           className={cn(
             buttonVariants({ variant: "outline" }),
-            "border-[#D0D5DD] shadow-[0px_1px_2px_0px_#1018280D] h-9"
-          )}
-        >
+            "border-[#D0D5DD] shadow-[0px_1px_2px_0px_#1018280D] h-9",
+          )}>
           View All <ArrowRight />
         </Link>
       </header>
@@ -50,7 +49,6 @@ export default function EmployerJobListingTable({ jobs }: { jobs: any }) {
             {/* {jobs?.data?.data?.map((job: any) => ( */}
             {/* used this to limit the number of jobs displayed to 5 on dashboard */}
             {jobs?.data?.data?.slice(0, 5).map((job: any) => (
-
               <TableRow key={job.id}>
                 <TableCell>
                   <div className="flex flex-col justify-between h-full space-y-2">
@@ -67,17 +65,26 @@ export default function EmployerJobListingTable({ jobs }: { jobs: any }) {
                 <TableCell>
                   <span className="max-lg:hidden whitespace-nowrap">
                     {`${job.salary_currency} ${Number(
-                      job.salary_min
+                      job.salary_min,
                     ).toLocaleString()} - ${Number(
-                      job.salary_max
+                      job.salary_max,
                     ).toLocaleString()}`}
                   </span>
                   <span className="lg:hidden whitespace-nowrap overflow-hidden">
                     {`${job.salary_currency} ${Number(
-                      job.salary_min
+                      job.salary_min,
                     ).toLocaleString()} -`}
                   </span>
                 </TableCell>
+                {/* To display the number of applicants */}
+                {/* <TableCell className="max-lg:hidden">
+                  <div className="flex items-center gap-3">
+                    <Icons.peopleSm />
+                    {job.applications_count ?? 0} Applicant
+                    {job.applications_count !== 1 ? "s" : ""}
+                  </div>
+                </TableCell> */}
+
                 <TableCell className="max-lg:hidden">
                   <div className="flex items-center gap-3">
                     <Icons.peopleSm />
@@ -91,16 +98,14 @@ export default function EmployerJobListingTable({ jobs }: { jobs: any }) {
                   <div className="flex gap-4 justify-end">
                     <Link
                       to={`/employer/jobs/${job.id}/applications`}
-                      className="max-lg:hidden"
-                    >
+                      className="max-lg:hidden">
                       <Button className="rounded-[6px]">
                         View Applications
                       </Button>
                     </Link>
                     <Button
                       variant={"ghost"}
-                      className=" lg:border-b rounded-none"
-                    >
+                      className=" lg:border-b rounded-none">
                       {/* <Icons.more className="min-h-6 min-w-6" /> */}
                     </Button>
                   </div>

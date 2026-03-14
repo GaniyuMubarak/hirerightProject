@@ -1,4 +1,3 @@
-import React from "react";
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -12,7 +11,7 @@ import {
 import { Input } from "@/components/ui/input";
 import useEmailVerificationForm from "@/hooks/forms/use-email-verification-form";
 import { cn } from "@/lib/utils";
-import { Loader, Mail } from "lucide-react";
+import { Loader } from "lucide-react";
 import { useState, useEffect } from "react";
 
 export function EmailVerificationForm({

@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { toast } from "sonner";
 import requests from "@/services/https-services";
+import { getApiErrorMessage } from "@/lib/api-error";
 
 interface SubscribePayload {
   email: string;
@@ -31,8 +32,10 @@ export function useNewsletter() {
           ? "This email is already subscribed."
           : status === 422
             ? "Please enter a valid email address."
-            : (error?.response?.data?.message ??
-              "Something went wrong. Please try again.");
+            :
+            // (error?.response?.data?.message ??
+            //   "Something went wrong. Please try again.");
+            getApiErrorMessage(error, "Something went wrong. Please try again.");
 
       toast.error(message);
       return false;

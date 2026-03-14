@@ -17,6 +17,7 @@ export default function EmployerDashboard() {
     queryKey: ["employer-dashboard"],
     queryFn: () => CompanyServices.dashboard(),
   });
+  // console.log("[EmployerDashboard] dashboard data:", data);
 
   const { data: jobList } = useQuery({
     queryKey: ["job-listing"],
@@ -67,3 +68,69 @@ export default function EmployerDashboard() {
     </div>
   );
 }
+
+// import StatsCard from "@/components/candidate/dashboard/stats-cad";
+// import EmployerJobListingTable from "@/components/employer/dashboard/job-listing-table";
+// import { buttonVariants } from "@/components/ui/button";
+// import Icons from "@/components/ui/icons";
+// import { cn } from "@/lib/utils";
+// import CompanyServices from "@/services/company-services";
+// import { useQuery } from "@tanstack/react-query";
+// import { Link } from "react-router";
+// import { useCurrentUser } from "@/hooks/use-current-user";
+
+// export default function EmployerDashboard() {
+//   const user = useCurrentUser();
+
+//   const { data } = useQuery({
+//     queryKey: ["employer-dashboard"],
+//     queryFn: () => CompanyServices.dashboard(),
+//   });
+
+//   const { data: jobList } = useQuery({
+//     queryKey: ["employer-jobs"],
+//     queryFn: () => CompanyServices.getJobs(),
+//   });
+
+//   return (
+//     <div>
+//       <div className="max-w-7xl mx-auto px-4 pt-8 space-y-8">
+//         <header className="lg:border-b lg:pb-5 flex max-lg:flex-col justify-between lg:items-center">
+//           <div className="space-y-1 lg:space-y-3 max-lg:border-b pb-2 mb-4">
+//             <h1 className="text-2xl lg:text-3xl font-medium">
+//               Welcome, {user?.first_name}
+//             </h1>
+//             <p className="text-[#475467] text-sm">
+//               Your current summary and activity.
+//             </p>
+//           </div>
+//           <Link
+//             to={"/employer/jobs/post"}
+//             className={cn(
+//               buttonVariants(),
+//               "rounded-[6px] max-lg:w-fit max-lg:self-end",
+//             )}>
+//             Post a Job
+//           </Link>
+//         </header>
+
+//         <div className="flex gap-6 items-center lg:w-8/12 overflow-x-scroll scroll-thumb-hidden">
+//           <StatsCard
+//             className="bg-[#78439326] border-[#784393] min-w-[280px]"
+//             value={data?.data?.total_jobs}
+//             description={"Jobs"}
+//             icon={<Icons.briefcase />}
+//           />
+//           <StatsCard
+//             className="bg-[#5E934326] border-[#5E9343] min-w-[280px]"
+//             value={data?.data?.total_applicants}
+//             description={"Applicants"}
+//             icon={<Icons.people />}
+//           />
+//         </div>
+
+//         <EmployerJobListingTable jobs={jobList} />
+//       </div>
+//     </div>
+//   );
+// }

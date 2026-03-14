@@ -570,18 +570,41 @@
 
 // export default useOnboardingForm;
 
-
-
-
-
-
-
-import { OnboardingFormData } from "@/types/profile";
+import {
+  OnboardingFormData,
+  CandidateProfileApiResponse,
+} from "@/types/profile";
+import { getApiErrorMessage } from "@/lib/api-error";
+import { hasValidTokenCookie } from "@/lib/auth";
+import { useUser } from "@/providers/user-context";
+import requests from "@/services/https-services";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router";
 import { toast } from "sonner";
 import { useCurrentUser } from "../use-current-user";
+
+// Safely extracts a File from whatever shape the upload component stores.
+// UploadFileForm stores: { file: File, url, name, type, size }
+// Direct file input stores: File
+// Returns null if no valid File found.
+function extractFile(value: any): File | null {
+  if (!value) return null;
+  if (value instanceof File) return value;
+  if (value?.file instanceof File) return value.file;
+  return null;
+}
+
+// Ensures website is sent as a valid URL.
+// Adds https:// prefix if missing.
+function formatUrl(url: string): string | null {
+  if (!url || url.trim() === "") return null;
+  const trimmed = url.trim();
+  if (!trimmed.startsWith("http://") && !trimmed.startsWith("https://")) {
+    return `https://${trimmed}`;
+  }
+  return trimmed;
+}
 
 const useOnboardingForm = ({
   onSuccess,
@@ -593,6 +616,7 @@ const useOnboardingForm = ({
   const [loading, setLoading] = useState(false);
   const navigator = useNavigate();
   const user = useCurrentUser();
+  const { dispatch, state } = useUser();
 
   const form = useForm<OnboardingFormData>({
     defaultValues: {
@@ -604,8 +628,8 @@ const useOnboardingForm = ({
         address: user?.address || "",
         bio: user?.bio || "",
         title: user?.title || "",
-        website: user?.website || "",   // ✅ was undefined → caused uncontrolled warning
-        location: user?.location || "", // ✅ was undefined → caused uncontrolled warning
+        website: user?.website || "",
+        location: user?.location || "",
       },
       education: [
         {
@@ -628,7 +652,7 @@ const useOnboardingForm = ({
           location: "",
           employment_type: "full_time" as const,
           start_date: "",
-          end_date: "", // ✅ null causes React "value prop should not be null" warning
+          end_date: "",
           is_current: false,
         },
       ],
@@ -638,7 +662,7 @@ const useOnboardingForm = ({
           name: "",
           organization: "",
           issue_date: "",
-          expiration_date: "", // ✅ null causes React "value prop should not be null" warning
+          expiration_date: "",
           has_expiry: false,
           is_expired: false,
         },
@@ -651,26 +675,10 @@ const useOnboardingForm = ({
   const onSubmit = async (data: OnboardingFormData) => {
     setLoading(true);
 
-    console.log("=== RAW FORM DATA ===");
-    console.log("User:", data.user);
-    console.log("Education:", data.education);
-    console.log("Experience:", data.experience);
-    console.log("Certifications:", data.certifications);
-    console.log("=== END RAW DATA ===");
-
     try {
-      const token = localStorage.getItem("token");
-
-      if (!token) {
-        toast.error("Please complete registration first");
-        navigator("/auth/register");
-        return;
-      }
-
-      const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
-
-      if (!API_BASE_URL) {
-        toast.error("API configuration error. Please contact support.");
+      if (!hasValidTokenCookie()) {
+        toast.error("Please sign in to continue.");
+        navigator("/sign-in");
         return;
       }
 
@@ -686,29 +694,20 @@ const useOnboardingForm = ({
       if (data.user?.phone) formData.append("phone", data.user.phone);
       if (data.user?.address) formData.append("address", data.user.address);
       if (data.user?.location) formData.append("location", data.user.location);
-      if (data.user?.website) formData.append("website", data.user.website);
 
-      // Profile picture
-      if (data.profile_picture) {
-        if (data.profile_picture instanceof File) {
-          formData.append("profile_image", data.profile_picture);
-        } else if (data.profile_picture.file instanceof File) {
-          formData.append("profile_image", data.profile_picture.file);
-        }
-      }
+      // ✅ website formatted before sending — backend rejects bare domains
+      const formattedWebsite = formatUrl(data.user?.website ?? "");
+      if (formattedWebsite) formData.append("website", formattedWebsite);
 
-      // Resume
-      if (data.resume) {
-        if (data.resume instanceof File) {
-          formData.append("resume", data.resume);
-        } else if (data.resume.file instanceof File) {
-          formData.append("resume", data.resume.file);
-        }
-      }
+      // ✅ extractFile handles both File and { file: File, url, name, ... } shapes
+      const profileImage = extractFile(data.profile_picture);
+      if (profileImage) formData.append("profile_image", profileImage);
+
+      const resume = extractFile(data.resume);
+      if (resume) formData.append("resume", resume);
 
       // Education
-      if (data.education && Array.isArray(data.education)) {
-        // ✅ degree restored — backend validates it as required
+      if (Array.isArray(data.education)) {
         const validEducation = data.education.filter(
           (edu) => edu.institution && edu.degree && edu.field_of_study,
         );
@@ -736,7 +735,7 @@ const useOnboardingForm = ({
       }
 
       // Experience
-      if (data.experience && Array.isArray(data.experience)) {
+      if (Array.isArray(data.experience)) {
         const validExperience = data.experience.filter(
           (exp) => exp.company_name && exp.job_title,
         );
@@ -775,7 +774,7 @@ const useOnboardingForm = ({
       }
 
       // Certifications
-      if (data.certifications && Array.isArray(data.certifications)) {
+      if (Array.isArray(data.certifications)) {
         const validCertifications = data.certifications.filter(
           (cert) => cert.name && cert.organization,
         );
@@ -804,48 +803,26 @@ const useOnboardingForm = ({
         });
       }
 
-      const url = updateMode
-        ? `${API_BASE_URL}/profile`
-        : `${API_BASE_URL}/candidates/profile`;
+      // No manual Content-Type — Axios auto-detects multipart/form-data boundary
+      const url = updateMode ? "/profile" : "/candidates/profile";
+      const response: CandidateProfileApiResponse = updateMode
+        ? await requests.put(url, formData)
+        : await requests.post(url, formData);
 
-      const method = updateMode ? "PUT" : "POST";
-
-      console.log(`Submitting to: ${url} [${method}]`);
-      
-      // Temporary debug — remove after backend fixes the 500
-      console.log("=== FORM DATA BEING SENT ===");
-      for (const [key, value] of formData.entries()) {
-        console.log(key, value);
+      // Update UserContext with fresh user data so top bar reflects changes immediately
+      const freshUser = response?.data?.user;
+      if (freshUser && state.userInfo) {
+        dispatch({
+          type: "USER_LOGIN",
+          payload: {
+            ...state.userInfo,
+            user: {
+              ...state.userInfo.user,
+              ...freshUser,
+            },
+          },
+        });
       }
-
-      const response = await fetch(url, {
-        method,
-        headers: {
-          Authorization: `Bearer ${token}`,
-          Accept: "application/json",
-        },
-        body: formData,
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        console.error("API Error:", errorData);
-
-        if (errorData.errors) {
-          Object.keys(errorData.errors).forEach((field) => {
-            const message = Array.isArray(errorData.errors[field])
-              ? errorData.errors[field][0]
-              : errorData.errors[field];
-            toast.error(`${field}: ${message}`);
-          });
-        } else {
-          toast.error(errorData.message || "Failed to save profile");
-        }
-        return;
-      }
-
-      const result = await response.json();
-      console.log("Success:", result);
 
       toast.success(
         updateMode
@@ -859,8 +836,21 @@ const useOnboardingForm = ({
         navigator("/candidate/dashboard");
       }
     } catch (err: any) {
-      console.error("Onboarding error:", err);
-      toast.error(err.message || "An error occurred");
+      const status = err?.response?.status;
+      const errorData = err?.response?.data;
+
+      if (status === 422 && errorData?.errors) {
+        Object.entries(errorData.errors).forEach(([field, messages]) => {
+          const message = Array.isArray(messages)
+            ? messages[0]
+            : String(messages);
+          toast.error(`${field}: ${message}`);
+        });
+      } else {
+        toast.error(
+          getApiErrorMessage(err, "Failed to save profile. Please try again."),
+        );
+      }
     } finally {
       setLoading(false);
     }
