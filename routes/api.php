@@ -181,7 +181,7 @@ Route::middleware(['auth:sanctum', 'can:candidate'])->prefix('candidates')->grou
         Route::post('/{assignmentId}/start', [CandidateTestController::class, 'start']);
         Route::post('/{assignmentId}/submit', [CandidateTestController::class, 'submit']);
         Route::get('/{assignmentId}/result', [CandidateTestController::class, 'result']);
-Route::post('tests/{testId}/assign', [CompanyTestController::class, 'assignToCandidate']);
+// Route::post('tests/{testId}/assign', [CompanyTestController::class, 'assignToCandidate']);
     });
     //
     Route::post('jobs/{jobId}/save', [SavedJobController::class, 'save']);

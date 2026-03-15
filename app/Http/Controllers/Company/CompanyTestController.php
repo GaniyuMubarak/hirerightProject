@@ -551,4 +551,105 @@ public function assignTestToCandidate(Request $request, $testId)
         'message' => 'Test assigned and invitation sent successfully'
     ]);
 }
+
+    /**
+ * Manually assign test to a candidate
+ * POST /employers/tests/{testId}/assign
+ */
+public function assignToCandidate(Request $request, $testId)
+{
+    try {
+        $user = $request->user();
+        
+        $validator = Validator::make($request->all(), [
+            'candidate_id' => 'required|exists:users,id',
+            'job_application_id' => 'nullable|exists:job_applications,id',
+            'deadline_days' => 'nullable|integer|min:1|max:30'
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'status' => 'error',
+                'errors' => $validator->errors()
+            ], 422);
+        }
+
+        // Verify test belongs to company
+        $test = Test::where('id', $testId)
+            ->where('creator_type', Company::class)
+            ->where('creator_id', $user->company_id)
+            ->firstOrFail();
+
+        // Verify candidate exists
+        $candidate = User::where('id', $request->candidate_id)
+            ->where('app_role', 'candidate')
+            ->firstOrFail();
+
+        // Check if already assigned
+        $existing = TestAssignment::where('test_id', $testId)
+            ->where('user_id', $candidate->id)
+            ->where('job_application_id', $request->job_application_id)
+            ->first();
+
+        if ($existing) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Test already assigned to this candidate'
+            ], 400);
+        }
+
+        // Create assignment
+        $deadline = now()->addDays($request->deadline_days ?? 7);
+
+        $assignment = TestAssignment::create([
+            'test_id' => $testId,
+            'user_id' => $candidate->id,
+            'job_application_id' => $request->job_application_id,
+            'source' => 'manual',
+            'status' => 'pending',
+            'assigned_at' => now(),
+            'deadline' => $deadline
+        ]);
+
+        // Send notification
+        try {
+            $candidate->notify(new TestAssignedNotification($assignment));
+        } catch (\Exception $e) {
+            Log::warning('Failed to send test assignment notification', [
+                'error' => $e->getMessage()
+            ]);
+        }
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Test assigned and invitation sent successfully',
+            'data' => [
+                'assignment_id' => $assignment->id,
+                'candidate' => [
+                    'id' => $candidate->id,
+                    'name' => $candidate->first_name . ' ' . $candidate->last_name,
+                    'email' => $candidate->email
+                ],
+                'deadline' => $deadline->toISOString()
+            ]
+        ]);
+
+    } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+        return response()->json([
+            'status' => 'error',
+            'message' => 'Test or candidate not found'
+        ], 404);
+
+    } catch (\Exception $e) {
+        Log::error('Error assigning test', [
+            'error' => $e->getMessage(),
+            'test_id' => $testId
+        ]);
+
+        return response()->json([
+            'status' => 'error',
+            'message' => 'Failed to assign test'
+        ], 500);
+    }
+}
 }

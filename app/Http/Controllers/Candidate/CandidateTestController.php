@@ -345,62 +345,121 @@ class CandidateTestController extends Controller
      * 4️⃣ GET /candidates/tests/:assignmentId/result
      * Get test result
      */
+    // public function result(Request $request, $assignmentId)
+    // {
+    //     try {
+    //         $user = $request->user();
+
+    //         $assignment = TestAssignment::where('id', $assignmentId)
+    //             ->where('user_id', $user->id)
+    //             ->with(['test', 'jobApplication.job.company', 'answers.question'])
+    //             ->firstOrFail();
+
+    //         // Must be completed
+    //         if (!$assignment->isCompleted()) {
+    //             return response()->json([
+    //                 'status' => 'error',
+    //                 'message' => 'Test not yet completed'
+    //             ], 400);
+    //         }
+
+    //         return response()->json([
+    //             'status' => 'success',
+    //             'data' => [
+    //                 'score' => $assignment->score,
+    //                 'passed' => $assignment->passed,
+    //                 'total_questions' => $assignment->answers->count(),
+    //                 'correct_answers' => $assignment->answers->where('is_correct', true)->count(),
+    //                 'time_taken_minutes' => round($assignment->time_taken_seconds / 60, 1),
+    //                 'completed_at' => $assignment->completed_at->toISOString(),
+    //                 'feedback' => $assignment->feedback,
+    //                 'job' => [
+    //                     'id' => $assignment->jobApplication->job->id,
+    //                     'title' => $assignment->jobApplication->job->title,
+    //                     'company_name' => $assignment->jobApplication->job->company->name
+    //                 ]
+    //             ]
+    //         ]);
+
+    //     } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+    //         return response()->json([
+    //             'status' => 'error',
+    //             'message' => 'Test result not found'
+    //         ], 404);
+
+    //     } catch (\Exception $e) {
+    //         Log::error('Error fetching test result', [
+    //             'error' => $e->getMessage(),
+    //             'trace' => $e->getTraceAsString(),
+    //             'assignment_id' => $assignmentId
+    //         ]);
+
+    //         return response()->json([
+    //             'status' => 'error',
+    //             'message' => 'Failed to fetch result',
+    //             'error' => config('app.debug') ? $e->getMessage() : null
+    //         ], 500);
+    //     }
+    // }
+
     public function result(Request $request, $assignmentId)
-    {
-        try {
-            $user = $request->user();
+{
+    try {
+        $user = $request->user();
 
-            $assignment = TestAssignment::where('id', $assignmentId)
-                ->where('user_id', $user->id)
-                ->with(['test', 'jobApplication.job.company', 'answers.question'])
-                ->firstOrFail();
+        $assignment = TestAssignment::where('id', $assignmentId)
+            ->where('user_id', $user->id)
+            ->with(['test', 'jobApplication.job.company', 'answers'])
+            ->firstOrFail();
 
-            // Must be completed
-            if (!$assignment->isCompleted()) {
-                return response()->json([
-                    'status' => 'error',
-                    'message' => 'Test not yet completed'
-                ], 400);
-            }
-
-            return response()->json([
-                'status' => 'success',
-                'data' => [
-                    'score' => $assignment->score,
-                    'passed' => $assignment->passed,
-                    'total_questions' => $assignment->answers->count(),
-                    'correct_answers' => $assignment->answers->where('is_correct', true)->count(),
-                    'time_taken_minutes' => round($assignment->time_taken_seconds / 60, 1),
-                    'completed_at' => $assignment->completed_at->toISOString(),
-                    'feedback' => $assignment->feedback,
-                    'job' => [
-                        'id' => $assignment->jobApplication->job->id,
-                        'title' => $assignment->jobApplication->job->title,
-                        'company_name' => $assignment->jobApplication->job->company->name
-                    ]
-                ]
-            ]);
-
-        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+        // Must be completed
+        if (!$assignment->isCompleted()) {
             return response()->json([
                 'status' => 'error',
-                'message' => 'Test result not found'
-            ], 404);
-
-        } catch (\Exception $e) {
-            Log::error('Error fetching test result', [
-                'error' => $e->getMessage(),
-                'trace' => $e->getTraceAsString(),
-                'assignment_id' => $assignmentId
-            ]);
-
-            return response()->json([
-                'status' => 'error',
-                'message' => 'Failed to fetch result',
-                'error' => config('app.debug') ? $e->getMessage() : null
-            ], 500);
+                'message' => 'Test not yet completed'
+            ], 400);
         }
+
+        return response()->json([
+            'status' => 'success',
+            'data' => [
+                'score' => $assignment->score ?? 0,
+                'passed' => $assignment->passed ?? false,
+                'total_questions' => $assignment->answers->count(),
+                'correct_answers' => $assignment->answers->where('is_correct', true)->count(),
+                'time_taken_minutes' => $assignment->time_taken_seconds 
+                    ? round($assignment->time_taken_seconds / 60, 1) 
+                    : 0,
+                'completed_at' => $assignment->completed_at?->toISOString(),
+                'feedback' => $assignment->feedback,
+                'job' => [
+                    'id' => $assignment->jobApplication->job->id,
+                    'title' => $assignment->jobApplication->job->title,
+                    'company_name' => $assignment->jobApplication->job->company->name
+                ]
+            ]
+        ]);
+
+    } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+        return response()->json([
+            'status' => 'error',
+            'message' => 'Test result not found'
+        ], 404);
+
+    } catch (\Exception $e) {
+        Log::error('Error fetching test result', [
+            'error' => $e->getMessage(),
+            'trace' => $e->getTraceAsString(),
+            'assignment_id' => $assignmentId
+        ]);
+
+        return response()->json([
+            'status' => 'error',
+            'message' => 'Failed to fetch result',
+            'error' => config('app.debug') ? $e->getMessage() : null
+        ], 500);
     }
+}
 
     /**
      * Grade the test and save answers
@@ -500,104 +559,5 @@ class CandidateTestController extends Controller
         }
     }
 
-    /**
- * Manually assign test to a candidate
- * POST /employers/tests/{testId}/assign
- */
-public function assignToCandidate(Request $request, $testId)
-{
-    try {
-        $user = $request->user();
-        
-        $validator = Validator::make($request->all(), [
-            'candidate_id' => 'required|exists:users,id',
-            'job_application_id' => 'nullable|exists:job_applications,id',
-            'deadline_days' => 'nullable|integer|min:1|max:30'
-        ]);
 
-        if ($validator->fails()) {
-            return response()->json([
-                'status' => 'error',
-                'errors' => $validator->errors()
-            ], 422);
-        }
-
-        // Verify test belongs to company
-        $test = Test::where('id', $testId)
-            ->where('creator_type', Company::class)
-            ->where('creator_id', $user->company_id)
-            ->firstOrFail();
-
-        // Verify candidate exists
-        $candidate = User::where('id', $request->candidate_id)
-            ->where('app_role', 'candidate')
-            ->firstOrFail();
-
-        // Check if already assigned
-        $existing = TestAssignment::where('test_id', $testId)
-            ->where('user_id', $candidate->id)
-            ->where('job_application_id', $request->job_application_id)
-            ->first();
-
-        if ($existing) {
-            return response()->json([
-                'status' => 'error',
-                'message' => 'Test already assigned to this candidate'
-            ], 400);
-        }
-
-        // Create assignment
-        $deadline = now()->addDays($request->deadline_days ?? 7);
-
-        $assignment = TestAssignment::create([
-            'test_id' => $testId,
-            'user_id' => $candidate->id,
-            'job_application_id' => $request->job_application_id,
-            'source' => 'manual',
-            'status' => 'pending',
-            'assigned_at' => now(),
-            'deadline' => $deadline
-        ]);
-
-        // Send notification
-        try {
-            $candidate->notify(new TestAssignedNotification($assignment));
-        } catch (\Exception $e) {
-            Log::warning('Failed to send test assignment notification', [
-                'error' => $e->getMessage()
-            ]);
-        }
-
-        return response()->json([
-            'status' => 'success',
-            'message' => 'Test assigned and invitation sent successfully',
-            'data' => [
-                'assignment_id' => $assignment->id,
-                'candidate' => [
-                    'id' => $candidate->id,
-                    'name' => $candidate->first_name . ' ' . $candidate->last_name,
-                    'email' => $candidate->email
-                ],
-                'deadline' => $deadline->toISOString()
-            ]
-        ]);
-
-    } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
-        return response()->json([
-            'status' => 'error',
-            'message' => 'Test or candidate not found'
-        ], 404);
-
-    } catch (\Exception $e) {
-        Log::error('Error assigning test', [
-            'error' => $e->getMessage(),
-            'test_id' => $testId
-        ]);
-
-        return response()->json([
-            'status' => 'error',
-            'message' => 'Failed to assign test'
-        ], 500);
-    }
-}
 }
