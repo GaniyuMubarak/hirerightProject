@@ -5,7 +5,8 @@ namespace App\Http\Controllers\Candidate;
 use App\Http\Controllers\Controller;
 use App\Models\TestAssignment;
 use App\Models\TestAnswer;
-use App\Models\Question;
+use App\Models\TestQuestion;
+use App\Models\QuestionOption;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -24,7 +25,7 @@ class CandidateTestController extends Controller
 
             $assignments = TestAssignment::where('user_id', $user->id)
                 ->with([
-                    'test:id,title,description,duration_minutes,passing_score',
+                    'test:id,title,description,time_limit,passing_score',
                     'jobApplication.job:id,title,company_id',
                     'jobApplication.job.company:id,name'
                 ])
@@ -46,7 +47,7 @@ class CandidateTestController extends Controller
                         'id' => $assignment->test->id,
                         'title' => $assignment->test->title,
                         'description' => $assignment->test->description,
-                        'duration_minutes' => $assignment->test->duration_minutes,
+                        'duration_minutes' => $assignment->test->time_limit,
                         'passing_score' => $assignment->test->passing_score,
                         'total_questions' => $assignment->test->questions()->count()
                     ],
@@ -85,12 +86,14 @@ class CandidateTestController extends Controller
         } catch (\Exception $e) {
             Log::error('Error fetching candidate tests', [
                 'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
                 'user_id' => $request->user()->id
             ]);
 
             return response()->json([
                 'status' => 'error',
-                'message' => 'Failed to fetch tests'
+                'message' => 'Failed to fetch tests',
+                'error' => config('app.debug') ? $e->getMessage() : null
             ], 500);
         }
     }
@@ -139,7 +142,7 @@ class CandidateTestController extends Controller
 
             // Start the test
             $sessionId = $assignment->generateSessionId();
-            $expiresAt = now()->addMinutes($assignment->test->duration_minutes);
+            $expiresAt = now()->addMinutes($assignment->test->time_limit);
 
             $assignment->update([
                 'status' => 'in_progress',
@@ -147,9 +150,10 @@ class CandidateTestController extends Controller
                 'expires_at' => $expiresAt
             ]);
 
-            // Get questions with options
-            $questions = Question::where('test_id', $assignment->test_id)
+            // Get questions with options (hide correct answers)
+            $questions = TestQuestion::where('test_id', $assignment->test_id)
                 ->with('options:id,question_id,option_text')
+                ->orderBy('order')
                 ->get()
                 ->map(function ($question) {
                     return [
@@ -176,7 +180,8 @@ class CandidateTestController extends Controller
                         'id' => $assignment->test->id,
                         'title' => $assignment->test->title,
                         'description' => $assignment->test->description,
-                        'duration_minutes' => $assignment->test->duration_minutes,
+                        'instructions' => $assignment->test->instructions,
+                        'duration_minutes' => $assignment->test->time_limit,
                         'passing_score' => $assignment->test->passing_score,
                         'total_questions' => $questions->count()
                     ],
@@ -203,12 +208,14 @@ class CandidateTestController extends Controller
         } catch (\Exception $e) {
             Log::error('Error starting test', [
                 'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
                 'assignment_id' => $assignmentId
             ]);
 
             return response()->json([
                 'status' => 'error',
-                'message' => 'Failed to start test'
+                'message' => 'Failed to start test',
+                'error' => config('app.debug') ? $e->getMessage() : null
             ], 500);
         }
     }
@@ -224,9 +231,9 @@ class CandidateTestController extends Controller
 
             // Validate request
             $validator = Validator::make($request->all(), [
-                'session_id' => 'nullable|string',
+                'session_id' => 'required|string',
                 'answers' => 'required|array',
-                'answers.*.question_id' => 'required|exists:questions,id',
+                'answers.*.question_id' => 'required|exists:test_questions,id',
                 'answers.*.answer' => 'required'
             ]);
 
@@ -253,14 +260,14 @@ class CandidateTestController extends Controller
                 ], 400);
             }
 
-            if ($request->session_id && $assignment->session_id !== $request->session_id) {
+            if ($assignment->session_id !== $request->session_id) {
                 return response()->json([
                     'status' => 'error',
                     'message' => 'Invalid session'
-                ], 400);
+                ], 403);
             }
 
-            // SERVER-SIDE TIME VALIDATION (CRITICAL)
+            // SERVER-SIDE TIME VALIDATION
             if ($assignment->expires_at && now()->isAfter($assignment->expires_at)) {
                 $assignment->update(['status' => 'expired']);
                 return response()->json([
@@ -269,39 +276,49 @@ class CandidateTestController extends Controller
                 ], 400);
             }
 
-            // Process answers and calculate score
-            $result = $this->gradeTest($assignment, $request->answers);
+            DB::beginTransaction();
 
-            // Update assignment
-            $timeTaken = now()->diffInSeconds($assignment->started_at);
+            try {
+                // Process answers and calculate score
+                $result = $this->gradeTest($assignment, $request->answers);
 
-            $assignment->update([
-                'status' => 'completed',
-                'completed_at' => now(),
-                'score' => $result['score'],
-                'passed' => $result['passed'],
-                'time_taken_seconds' => $timeTaken,
-                'feedback' => $this->generateFeedback($result)
-            ]);
+                // Update assignment
+                $timeTaken = now()->diffInSeconds($assignment->started_at);
 
-            return response()->json([
-                'status' => 'success',
-                'message' => $result['passed'] ? 'Congratulations! You passed the test.' : 'Test completed.',
-                'data' => [
+                $assignment->update([
+                    'status' => 'completed',
+                    'completed_at' => now(),
                     'score' => $result['score'],
                     'passed' => $result['passed'],
-                    'total_questions' => $result['total_questions'],
-                    'correct_answers' => $result['correct_answers'],
-                    'time_taken_minutes' => round($timeTaken / 60, 2),
-                    'completed_at' => $assignment->completed_at->toISOString(),
-                    'feedback' => $assignment->feedback,
-                    'job' => [
-                        'id' => $assignment->jobApplication->job->id,
-                        'title' => $assignment->jobApplication->job->title,
-                        'company_name' => $assignment->jobApplication->job->company->name
+                    'time_taken_seconds' => $timeTaken,
+                    'feedback' => $this->generateFeedback($result)
+                ]);
+
+                DB::commit();
+
+                return response()->json([
+                    'status' => 'success',
+                    'message' => $result['passed'] ? 'Congratulations! You passed the test.' : 'Test completed.',
+                    'data' => [
+                        'score' => $result['score'],
+                        'passed' => $result['passed'],
+                        'total_questions' => $result['total_questions'],
+                        'correct_answers' => $result['correct_answers'],
+                        'time_taken_minutes' => round($timeTaken / 60, 1),
+                        'completed_at' => $assignment->completed_at->toISOString(),
+                        'feedback' => $assignment->feedback,
+                        'job' => [
+                            'id' => $assignment->jobApplication->job->id,
+                            'title' => $assignment->jobApplication->job->title,
+                            'company_name' => $assignment->jobApplication->job->company->name
+                        ]
                     ]
-                ]
-            ]);
+                ]);
+
+            } catch (\Exception $e) {
+                DB::rollBack();
+                throw $e;
+            }
 
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             return response()->json([
@@ -312,13 +329,14 @@ class CandidateTestController extends Controller
         } catch (\Exception $e) {
             Log::error('Error submitting test', [
                 'error' => $e->getMessage(),
-                'assignment_id' => $assignmentId,
-                'trace' => $e->getTraceAsString()
+                'trace' => $e->getTraceAsString(),
+                'assignment_id' => $assignmentId
             ]);
 
             return response()->json([
                 'status' => 'error',
-                'message' => 'Failed to submit test'
+                'message' => 'Failed to submit test',
+                'error' => config('app.debug') ? $e->getMessage() : null
             ], 500);
         }
     }
@@ -345,14 +363,14 @@ class CandidateTestController extends Controller
                 ], 400);
             }
 
-            $response = [
+            return response()->json([
                 'status' => 'success',
                 'data' => [
                     'score' => $assignment->score,
                     'passed' => $assignment->passed,
                     'total_questions' => $assignment->answers->count(),
                     'correct_answers' => $assignment->answers->where('is_correct', true)->count(),
-                    'time_taken_minutes' => round($assignment->time_taken_seconds / 60, 2),
+                    'time_taken_minutes' => round($assignment->time_taken_seconds / 60, 1),
                     'completed_at' => $assignment->completed_at->toISOString(),
                     'feedback' => $assignment->feedback,
                     'job' => [
@@ -361,21 +379,7 @@ class CandidateTestController extends Controller
                         'company_name' => $assignment->jobApplication->job->company->name
                     ]
                 ]
-            ];
-
-            // Optional: Add per-question breakdown
-            if ($request->query('detailed')) {
-                $response['data']['question_feedback'] = $assignment->answers->map(function ($answer) {
-                    return [
-                        'question_id' => $answer->question_id,
-                        'correct' => $answer->is_correct,
-                        'points_earned' => $answer->points_earned,
-                        'feedback' => $answer->is_correct ? 'Correct' : 'Incorrect'
-                    ];
-                });
-            }
-
-            return response()->json($response);
+            ]);
 
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             return response()->json([
@@ -386,12 +390,14 @@ class CandidateTestController extends Controller
         } catch (\Exception $e) {
             Log::error('Error fetching test result', [
                 'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
                 'assignment_id' => $assignmentId
             ]);
 
             return response()->json([
                 'status' => 'error',
-                'message' => 'Failed to fetch result'
+                'message' => 'Failed to fetch result',
+                'error' => config('app.debug') ? $e->getMessage() : null
             ], 500);
         }
     }
@@ -401,7 +407,7 @@ class CandidateTestController extends Controller
      */
     protected function gradeTest($assignment, $answers)
     {
-        $questions = Question::where('test_id', $assignment->test_id)
+        $questions = TestQuestion::where('test_id', $assignment->test_id)
             ->with('options')
             ->get()
             ->keyBy('id');
@@ -493,4 +499,105 @@ class CandidateTestController extends Controller
             return 'Unfortunately, you did not pass. Please review the material and try again.';
         }
     }
+
+    /**
+ * Manually assign test to a candidate
+ * POST /employers/tests/{testId}/assign
+ */
+public function assignToCandidate(Request $request, $testId)
+{
+    try {
+        $user = $request->user();
+        
+        $validator = Validator::make($request->all(), [
+            'candidate_id' => 'required|exists:users,id',
+            'job_application_id' => 'nullable|exists:job_applications,id',
+            'deadline_days' => 'nullable|integer|min:1|max:30'
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'status' => 'error',
+                'errors' => $validator->errors()
+            ], 422);
+        }
+
+        // Verify test belongs to company
+        $test = Test::where('id', $testId)
+            ->where('creator_type', Company::class)
+            ->where('creator_id', $user->company_id)
+            ->firstOrFail();
+
+        // Verify candidate exists
+        $candidate = User::where('id', $request->candidate_id)
+            ->where('app_role', 'candidate')
+            ->firstOrFail();
+
+        // Check if already assigned
+        $existing = TestAssignment::where('test_id', $testId)
+            ->where('user_id', $candidate->id)
+            ->where('job_application_id', $request->job_application_id)
+            ->first();
+
+        if ($existing) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Test already assigned to this candidate'
+            ], 400);
+        }
+
+        // Create assignment
+        $deadline = now()->addDays($request->deadline_days ?? 7);
+
+        $assignment = TestAssignment::create([
+            'test_id' => $testId,
+            'user_id' => $candidate->id,
+            'job_application_id' => $request->job_application_id,
+            'source' => 'manual',
+            'status' => 'pending',
+            'assigned_at' => now(),
+            'deadline' => $deadline
+        ]);
+
+        // Send notification
+        try {
+            $candidate->notify(new TestAssignedNotification($assignment));
+        } catch (\Exception $e) {
+            Log::warning('Failed to send test assignment notification', [
+                'error' => $e->getMessage()
+            ]);
+        }
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Test assigned and invitation sent successfully',
+            'data' => [
+                'assignment_id' => $assignment->id,
+                'candidate' => [
+                    'id' => $candidate->id,
+                    'name' => $candidate->first_name . ' ' . $candidate->last_name,
+                    'email' => $candidate->email
+                ],
+                'deadline' => $deadline->toISOString()
+            ]
+        ]);
+
+    } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+        return response()->json([
+            'status' => 'error',
+            'message' => 'Test or candidate not found'
+        ], 404);
+
+    } catch (\Exception $e) {
+        Log::error('Error assigning test', [
+            'error' => $e->getMessage(),
+            'test_id' => $testId
+        ]);
+
+        return response()->json([
+            'status' => 'error',
+            'message' => 'Failed to assign test'
+        ], 500);
+    }
+}
 }

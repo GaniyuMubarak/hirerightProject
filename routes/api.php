@@ -181,6 +181,7 @@ Route::middleware(['auth:sanctum', 'can:candidate'])->prefix('candidates')->grou
         Route::post('/{assignmentId}/start', [CandidateTestController::class, 'start']);
         Route::post('/{assignmentId}/submit', [CandidateTestController::class, 'submit']);
         Route::get('/{assignmentId}/result', [CandidateTestController::class, 'result']);
+Route::post('tests/{testId}/assign', [CompanyTestController::class, 'assignToCandidate']);
     });
     //
     Route::post('jobs/{jobId}/save', [SavedJobController::class, 'save']);
@@ -200,6 +201,7 @@ Route::middleware(['auth:sanctum', 'can:candidate'])->prefix('candidates')->grou
     Route::post('tests/{test}/questions/{question}/upload', [TestController::class, 'uploadAttachment']);
     Route::post('tests/{test}/submit', [TestController::class, 'submit']);
     Route::get('tests/{test}/result', [TestController::class, 'viewResult']);
+    
 
     Route::apiResource('notifications', NotificationController::class)->only(['index', 'update', 'destroy']);
 });
